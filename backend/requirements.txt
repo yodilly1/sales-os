@@ -1,0 +1,51 @@
+# Sales OS Backend Requirements
+# =============================
+
+# Core Framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Environment & Configuration
+python-dotenv>=1.0.0
+
+# Database
+sqlalchemy>=2.0.0
+alembic>=1.13.0
+aiosqlite>=0.19.0  # Async SQLite for development
+
+# HTTP Client
+httpx>=0.26.0
+
+# File Handling
+python-multipart>=0.0.6
+aiofiles>=23.2.0
+
+# Authentication
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+
+# AI/ML (for SPICED analysis and content generation)
+# anthropic>=0.18.0  # Claude API
+# openai>=1.10.0     # OpenAI API (fallback)
+
+# CRM Integrations
+# hubspot-api-client>=8.2.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.23.0
+pytest-cov>=4.1.0
+pytest-timeout>=2.2.0
+pytest-env>=1.1.0
+pytest-xdist>=3.5.0
+pytest-mock>=3.12.0
+factory-boy>=3.3.0
+faker>=22.0.0
+respx>=0.20.0
+
+# Code Quality
+mypy>=1.8.0
+ruff>=0.1.0
+pre-commit>=3.6.0
