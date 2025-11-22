@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sales-os.example.com/schemas/user.schema.json",
+  "title": "User, Team, and Organization Schemas",
+  "description": "JSON Schema definitions for user management entities",
+  "definitions": {
+    "UserRole": {
+      "type": "string",
+      "enum": ["admin", "manager", "sales_rep", "viewer"],
+      "description": "User role within the organization"
+    },
+    "Organization": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "Organization name"
+        },
+        "industry": {
+          "type": ["string", "null"],
+          "maxLength": 100,
+          "description": "Industry sector"
+        },
+        "size": {
+          "type": ["string", "null"],
+          "maxLength": 50,
+          "description": "Company size category"
+        },
+        "domain": {
+          "type": ["string", "null"],
+          "maxLength": 255,
+          "description": "Primary domain name"
+        },
+        "logo_url": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "maxLength": 500,
+          "description": "URL to organization logo"
+        },
+        "settings": {
+          "type": ["object", "null"],
+          "description": "Organization settings JSON"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "name"],
+      "additionalProperties": false
+    },
+    "Team": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"]
+        },
+        "organization_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "manager_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "name", "organization_id"],
+      "additionalProperties": false
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 255
+        },
+        "first_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "last_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "role": {
+          "$ref": "#/definitions/UserRole"
+        },
+        "is_active": {
+          "type": "boolean",
+          "default": true
+        },
+        "is_verified": {
+          "type": "boolean",
+          "default": false
+        },
+        "avatar_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "phone": {
+          "type": ["string", "null"],
+          "maxLength": 50
+        },
+        "timezone": {
+          "type": "string",
+          "default": "UTC"
+        },
+        "last_login_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "organization_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "team_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "email", "first_name", "last_name", "role", "organization_id"],
+      "additionalProperties": false
+    },
+    "UserCreate": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "password": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 100
+        },
+        "first_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "last_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "role": {
+          "$ref": "#/definitions/UserRole"
+        },
+        "organization_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "team_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        }
+      },
+      "required": ["email", "password", "first_name", "last_name", "organization_id"]
+    },
+    "UserLogin": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": ["email", "password"]
+    }
+  }
+}

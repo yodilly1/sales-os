@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sales-os.example.com/schemas/spiced.schema.json",
+  "title": "SPICED Analysis Schema",
+  "description": "JSON Schema for SPICED methodology analysis based on Winning by Design",
+  "definitions": {
+    "SPICEDScore": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Score from 1-5 for quality of information gathered"
+    },
+    "SPICEDScores": {
+      "type": "object",
+      "properties": {
+        "situation": {
+          "$ref": "#/definitions/SPICEDScore"
+        },
+        "pain": {
+          "$ref": "#/definitions/SPICEDScore"
+        },
+        "impact": {
+          "$ref": "#/definitions/SPICEDScore"
+        },
+        "critical_event": {
+          "$ref": "#/definitions/SPICEDScore"
+        },
+        "expected_decision": {
+          "$ref": "#/definitions/SPICEDScore"
+        },
+        "decision_criteria": {
+          "$ref": "#/definitions/SPICEDScore"
+        }
+      },
+      "description": "Individual scores for each SPICED component"
+    },
+    "SPICEDAnalysis": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "call_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "situation": {
+          "type": ["string", "null"],
+          "description": "S - Current state and context of the prospect"
+        },
+        "pain": {
+          "type": ["string", "null"],
+          "description": "P - Key challenges and problems identified"
+        },
+        "impact": {
+          "type": ["string", "null"],
+          "description": "I - Business impact of the pain points"
+        },
+        "critical_event": {
+          "type": ["string", "null"],
+          "description": "C - Timeline drivers and urgency factors"
+        },
+        "expected_decision": {
+          "type": ["string", "null"],
+          "description": "E - Decision process and expected outcomes"
+        },
+        "decision_criteria": {
+          "type": ["string", "null"],
+          "description": "D - Factors that will influence the decision"
+        },
+        "situation_score": {
+          "$ref": "#/definitions/SPICEDScore"
+        },
+        "pain_score": {
+          "$ref": "#/definitions/SPICEDScore"
+        },
+        "impact_score": {
+          "$ref": "#/definitions/SPICEDScore"
+        },
+        "critical_event_score": {
+          "$ref": "#/definitions/SPICEDScore"
+        },
+        "expected_decision_score": {
+          "$ref": "#/definitions/SPICEDScore"
+        },
+        "decision_criteria_score": {
+          "$ref": "#/definitions/SPICEDScore"
+        },
+        "overall_score": {
+          "type": ["number", "null"],
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Average score across all SPICED components"
+        },
+        "confidence_score": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence in the analysis accuracy"
+        },
+        "call_summary": {
+          "type": ["string", "null"],
+          "description": "Brief summary of the call"
+        },
+        "call_notes": {
+          "type": ["string", "null"],
+          "description": "Detailed notes from the call"
+        },
+        "follow_up_tasks": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Recommended follow-up tasks"
+        },
+        "key_quotes": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Important quotes from the prospect"
+        },
+        "action_items": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Action items identified during the call"
+        },
+        "gaps_identified": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Gaps in the discovery process"
+        },
+        "recommended_questions": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Questions to ask in follow-up"
+        },
+        "model_version": {
+          "type": ["string", "null"],
+          "description": "AI model version used for analysis"
+        },
+        "analyzed_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "call_id"]
+    },
+    "SPICEDExtractionRequest": {
+      "type": "object",
+      "properties": {
+        "call_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "include_coaching": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_action_items": {
+          "type": "boolean",
+          "default": true
+        },
+        "include_follow_up_tasks": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "required": ["call_id"]
+    }
+  }
+}

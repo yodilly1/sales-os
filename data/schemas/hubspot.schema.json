@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sales-os.example.com/schemas/hubspot.schema.json",
+  "title": "HubSpot Integration Schema",
+  "description": "JSON Schema definitions for HubSpot CRM integration",
+  "definitions": {
+    "SyncStatus": {
+      "type": "string",
+      "enum": ["success", "partial", "failed", "pending"],
+      "description": "Status of the sync operation"
+    },
+    "HubSpotIntegration": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "organization_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "access_token": {
+          "type": "string",
+          "description": "OAuth2 access token (encrypted)"
+        },
+        "refresh_token": {
+          "type": "string",
+          "description": "OAuth2 refresh token (encrypted)"
+        },
+        "token_expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "scopes": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Granted OAuth2 scopes"
+        },
+        "hub_id": {
+          "type": "string",
+          "description": "HubSpot portal ID"
+        },
+        "hub_domain": {
+          "type": ["string", "null"]
+        },
+        "hub_name": {
+          "type": ["string", "null"]
+        },
+        "is_active": {
+          "type": "boolean",
+          "default": true
+        },
+        "last_sync_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "last_sync_status": {
+          "oneOf": [
+            { "$ref": "#/definitions/SyncStatus" },
+            { "type": "null" }
+          ]
+        },
+        "last_sync_error": {
+          "type": ["string", "null"]
+        },
+        "contacts_synced": {
+          "type": "integer",
+          "default": 0
+        },
+        "companies_synced": {
+          "type": "integer",
+          "default": 0
+        },
+        "deals_synced": {
+          "type": "integer",
+          "default": 0
+        },
+        "contact_field_mapping": {
+          "type": ["object", "null"],
+          "description": "Mapping between Sales OS and HubSpot contact fields"
+        },
+        "company_field_mapping": {
+          "type": ["object", "null"],
+          "description": "Mapping between Sales OS and HubSpot company fields"
+        },
+        "deal_field_mapping": {
+          "type": ["object", "null"],
+          "description": "Mapping between Sales OS and HubSpot deal fields"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "organization_id", "access_token", "refresh_token", "token_expires_at", "hub_id"]
+    },
+    "FieldMapping": {
+      "type": "object",
+      "properties": {
+        "sales_os_field": {
+          "type": "string",
+          "description": "Field name in Sales OS"
+        },
+        "hubspot_field": {
+          "type": "string",
+          "description": "Field name in HubSpot"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["to_hubspot", "from_hubspot", "bidirectional"],
+          "description": "Sync direction"
+        },
+        "transform": {
+          "type": ["string", "null"],
+          "description": "Optional transformation to apply"
+        }
+      },
+      "required": ["sales_os_field", "hubspot_field", "direction"]
+    },
+    "HubSpotOAuthRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "OAuth2 authorization code"
+        },
+        "redirect_uri": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": ["code", "redirect_uri"]
+    },
+    "HubSpotSyncRequest": {
+      "type": "object",
+      "properties": {
+        "organization_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sync_contacts": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_companies": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_deals": {
+          "type": "boolean",
+          "default": false
+        },
+        "full_sync": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, perform a full sync instead of incremental"
+        }
+      },
+      "required": ["organization_id"]
+    },
+    "HubSpotContactSync": {
+      "type": "object",
+      "properties": {
+        "hubspot_contact_id": {
+          "type": "string"
+        },
+        "prospect_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "synced_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sync_direction": {
+          "type": "string",
+          "enum": ["to_hubspot", "from_hubspot"]
+        }
+      },
+      "required": ["hubspot_contact_id", "prospect_id", "synced_at"]
+    },
+    "HubSpotCompanySync": {
+      "type": "object",
+      "properties": {
+        "hubspot_company_id": {
+          "type": "string"
+        },
+        "company_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "domain": {
+          "type": ["string", "null"]
+        },
+        "synced_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sync_direction": {
+          "type": "string",
+          "enum": ["to_hubspot", "from_hubspot"]
+        }
+      },
+      "required": ["hubspot_company_id", "company_id", "synced_at"]
+    }
+  }
+}
