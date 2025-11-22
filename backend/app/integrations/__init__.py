@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """External service integrations."""
 =======
 """
@@ -79,3 +80,11 @@ from app.integrations.zoom import ZoomClient
 
 __all__ = ["ZoomClient"]
 >>>>>>> origin/claude/zoom-integration-01Dy2JADoQefKcjQi2GPsjPP
+=======
+"""
+Sales OS Integrations Package
+
+This package contains integrations with external services
+for conversation intelligence and CRM data.
+"""
+>>>>>>> origin/claude/gong-integration-01Mysb6zKfXmpQEHrWqe4iA8
