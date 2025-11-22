@@ -1,0 +1,126 @@
+{
+  "template_id": "battlecard_competitive",
+  "template_name": "Competitive Battlecard",
+  "description": "A comprehensive competitive intelligence reference for sales teams",
+  "version": "1.0",
+  "content_type": "battlecard_competitive",
+  "structure": {
+    "header": {
+      "title_template": "{{competitor_name}} Competitive Battlecard",
+      "last_updated": "{{last_updated_date}}",
+      "confidence_level": "high|medium|low"
+    },
+    "sections": [
+      {
+        "section_id": "quick_reference",
+        "title": "Quick Reference",
+        "purpose": "At-a-glance competitive summary",
+        "fields": [
+          {"field": "competitor_name", "type": "text"},
+          {"field": "company_size", "type": "text"},
+          {"field": "target_market", "type": "text"},
+          {"field": "key_products", "type": "list"},
+          {"field": "pricing_model", "type": "text"}
+        ]
+      },
+      {
+        "section_id": "their_strengths",
+        "title": "Their Strengths",
+        "purpose": "What they do well",
+        "item_count": 5,
+        "format": "bullets",
+        "guidelines": "Be honest about where they excel - credibility matters"
+      },
+      {
+        "section_id": "their_weaknesses",
+        "title": "Their Weaknesses",
+        "purpose": "Where they fall short",
+        "item_count": 5,
+        "format": "bullets",
+        "guidelines": "Focus on factual weaknesses, not FUD"
+      },
+      {
+        "section_id": "our_advantages",
+        "title": "Our Advantages",
+        "purpose": "How we differentiate",
+        "item_count": 5,
+        "format": "bullets",
+        "guidelines": "Tie advantages to customer outcomes"
+      },
+      {
+        "section_id": "head_to_head",
+        "title": "Feature Comparison",
+        "purpose": "Side-by-side capability comparison",
+        "format": "table",
+        "columns": ["Feature", "Us", "Them", "Winner"],
+        "guidelines": "Be accurate - prospects will verify"
+      },
+      {
+        "section_id": "competitive_positioning",
+        "title": "How to Position Against Them",
+        "purpose": "Messaging guidance",
+        "fields": [
+          {"field": "positioning_statement", "type": "text"},
+          {"field": "key_messages", "type": "list"},
+          {"field": "proof_points", "type": "list"}
+        ]
+      },
+      {
+        "section_id": "trap_questions",
+        "title": "Trap Questions",
+        "purpose": "Questions that highlight our advantages",
+        "format": "qa_pairs",
+        "item_count": 5,
+        "fields": [
+          {"field": "question", "type": "text"},
+          {"field": "why_it_helps", "type": "text"}
+        ]
+      },
+      {
+        "section_id": "landmines",
+        "title": "Landmines to Avoid",
+        "purpose": "Topics where we're weaker",
+        "format": "qa_pairs",
+        "item_count": 3,
+        "fields": [
+          {"field": "topic", "type": "text"},
+          {"field": "how_to_handle", "type": "text"},
+          {"field": "pivot_to", "type": "text"}
+        ]
+      },
+      {
+        "section_id": "win_themes",
+        "title": "Win Themes",
+        "purpose": "Key themes for winning deals",
+        "item_count": 3,
+        "format": "bullets"
+      },
+      {
+        "section_id": "common_objections",
+        "title": "Common Objections When Competing",
+        "purpose": "Objections and responses",
+        "format": "qa_pairs",
+        "item_count": 5,
+        "fields": [
+          {"field": "objection", "type": "text"},
+          {"field": "response", "type": "text"}
+        ]
+      }
+    ]
+  },
+  "usage_guidelines": {
+    "when_to_use": "When competing directly against this vendor",
+    "how_to_use": [
+      "Review before competitive calls",
+      "Use trap questions to guide discovery",
+      "Reference proof points when making claims",
+      "Be prepared to handle landmines gracefully"
+    ],
+    "ethical_guidelines": [
+      "Never disparage the competitor personally",
+      "Stick to facts that can be verified",
+      "Focus on customer outcomes, not FUD",
+      "Acknowledge competitor strengths when asked"
+    ]
+  }
+}

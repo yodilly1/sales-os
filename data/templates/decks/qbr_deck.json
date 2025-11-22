@@ -1,0 +1,126 @@
+{
+  "template_id": "qbr_deck_standard",
+  "template_name": "Standard QBR Deck",
+  "description": "A comprehensive 12-slide quarterly business review presentation",
+  "version": "1.0",
+  "content_type": "deck_qbr",
+  "default_duration_minutes": 45,
+  "structure": {
+    "total_slides": 12,
+    "slides": [
+      {
+        "slide_number": 1,
+        "title_template": "Quarterly Business Review",
+        "subtitle_template": "{{customer_name}} | {{quarter}} {{year}}",
+        "content_type": "title",
+        "purpose": "Title slide",
+        "visual_suggestion": "Both company logos"
+      },
+      {
+        "slide_number": 2,
+        "title_template": "Executive Summary",
+        "content_type": "bullets",
+        "purpose": "High-level overview for executives",
+        "content_placeholders": ["key_highlight_1", "key_highlight_2", "key_highlight_3", "recommendation"],
+        "speaker_notes": "Keep concise for executive attention spans",
+        "visual_suggestion": "Summary icons or scorecard"
+      },
+      {
+        "slide_number": 3,
+        "title_template": "Performance Scorecard",
+        "content_type": "chart",
+        "purpose": "Overall health metrics",
+        "content_placeholders": ["health_score", "adoption_score", "satisfaction_score", "roi_score"],
+        "speaker_notes": "Use traffic light colors for quick understanding",
+        "visual_suggestion": "Scorecard dashboard"
+      },
+      {
+        "slide_number": 4,
+        "title_template": "Goals vs. Actuals",
+        "content_type": "chart",
+        "purpose": "Compare planned vs achieved",
+        "content_placeholders": ["goal_1_planned", "goal_1_actual", "goal_2_planned", "goal_2_actual"],
+        "speaker_notes": "Be honest about misses and explain actions taken",
+        "visual_suggestion": "Progress bars or comparison chart"
+      },
+      {
+        "slide_number": 5,
+        "title_template": "Key Wins",
+        "content_type": "bullets",
+        "purpose": "Celebrate successes",
+        "content_placeholders": ["win_1", "win_2", "win_3"],
+        "speaker_notes": "Acknowledge their team's role in these wins",
+        "visual_suggestion": "Success stories with icons"
+      },
+      {
+        "slide_number": 6,
+        "title_template": "Challenges & Solutions",
+        "content_type": "bullets",
+        "purpose": "Address issues transparently",
+        "content_placeholders": ["challenge_1", "solution_1", "challenge_2", "solution_2"],
+        "speaker_notes": "Show proactive problem-solving",
+        "visual_suggestion": "Problem/solution format"
+      },
+      {
+        "slide_number": 7,
+        "title_template": "Usage Analytics",
+        "content_type": "chart",
+        "purpose": "Detailed usage data",
+        "content_placeholders": ["daily_active_users", "feature_usage", "engagement_trends"],
+        "speaker_notes": "Highlight positive trends and address declining metrics",
+        "visual_suggestion": "Usage dashboard"
+      },
+      {
+        "slide_number": 8,
+        "title_template": "Product Updates",
+        "content_type": "bullets",
+        "purpose": "Recent releases and improvements",
+        "content_placeholders": ["release_1", "release_2", "release_3"],
+        "speaker_notes": "Connect releases to their feedback and needs",
+        "visual_suggestion": "Release timeline or feature cards"
+      },
+      {
+        "slide_number": 9,
+        "title_template": "Roadmap Preview",
+        "content_type": "chart",
+        "purpose": "Upcoming features and timeline",
+        "content_placeholders": ["upcoming_q1", "upcoming_q2", "upcoming_h2"],
+        "speaker_notes": "Seek input on prioritization",
+        "visual_suggestion": "Roadmap timeline"
+      },
+      {
+        "slide_number": 10,
+        "title_template": "Recommendations",
+        "content_type": "bullets",
+        "purpose": "Actionable suggestions",
+        "content_placeholders": ["recommendation_1", "recommendation_2", "recommendation_3"],
+        "speaker_notes": "Be specific and tie to their goals",
+        "visual_suggestion": "Action items with priorities"
+      },
+      {
+        "slide_number": 11,
+        "title_template": "Goals for Next Quarter",
+        "content_type": "bullets",
+        "purpose": "Set expectations for Q+1",
+        "content_placeholders": ["goal_1", "goal_2", "goal_3", "success_metrics"],
+        "speaker_notes": "Collaboratively set goals with customer input",
+        "visual_suggestion": "Goal framework"
+      },
+      {
+        "slide_number": 12,
+        "title_template": "Discussion & Next Steps",
+        "content_type": "bullets",
+        "purpose": "Q&A and action items",
+        "content_placeholders": ["discussion_topics", "action_item_1", "action_item_2", "next_meeting"],
+        "speaker_notes": "Capture feedback and assign owners",
+        "visual_suggestion": "Clean action item list"
+      }
+    ]
+  },
+  "customization_options": {
+    "can_add_slides": true,
+    "can_remove_slides": true,
+    "can_reorder_slides": true,
+    "required_slides": [1, 2, 3, 4, 11, 12]
+  }
+}

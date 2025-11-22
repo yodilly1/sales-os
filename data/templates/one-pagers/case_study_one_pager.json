@@ -1,0 +1,75 @@
+{
+  "template_id": "one_pager_case_study",
+  "template_name": "Case Study One-Pager",
+  "description": "A compelling single-page customer success story",
+  "version": "1.0",
+  "content_type": "one_pager_case_study",
+  "structure": {
+    "header": {
+      "title_template": "Customer Success Story",
+      "customer_logo_position": "top-right",
+      "company_logo_position": "top-left"
+    },
+    "sections": [
+      {
+        "section_id": "customer_profile",
+        "title": "About {{customer_name}}",
+        "max_characters": 150,
+        "purpose": "Brief customer introduction",
+        "placeholders": ["customer_name", "customer_industry", "customer_size", "customer_description"]
+      },
+      {
+        "section_id": "challenge",
+        "title": "The Challenge",
+        "max_characters": 200,
+        "purpose": "Business problem faced",
+        "placeholders": ["challenge_description", "pain_points", "business_impact"]
+      },
+      {
+        "section_id": "solution",
+        "title": "The Solution",
+        "max_characters": 200,
+        "purpose": "How we helped",
+        "placeholders": ["solution_description", "implementation_approach", "key_features_used"]
+      },
+      {
+        "section_id": "results",
+        "title": "The Results",
+        "item_count": 3,
+        "purpose": "Quantifiable outcomes",
+        "placeholders": [
+          {"metric": "result_metric_1", "description": "result_description_1"},
+          {"metric": "result_metric_2", "description": "result_description_2"},
+          {"metric": "result_metric_3", "description": "result_description_3"}
+        ]
+      },
+      {
+        "section_id": "testimonial",
+        "title": "Customer Quote",
+        "max_characters": 200,
+        "purpose": "Voice of customer",
+        "placeholders": ["quote_text", "quote_attribution", "quote_title", "quote_company"]
+      },
+      {
+        "section_id": "cta",
+        "title": "Ready to Achieve Similar Results?",
+        "purpose": "Call to action",
+        "placeholders": ["cta_text", "contact_info"]
+      }
+    ]
+  },
+  "design_guidelines": {
+    "max_word_count": 300,
+    "recommended_visuals": ["Customer logo", "Results chart/graph", "Photo of customer contact"],
+    "highlight_metrics": true,
+    "quote_styling": "prominent"
+  },
+  "wbd_alignment": {
+    "spiced_mapping": {
+      "situation": ["customer_profile"],
+      "pain": ["challenge"],
+      "impact": ["challenge", "results"],
+      "decision_criteria": ["solution", "results"]
+    }
+  }
+}

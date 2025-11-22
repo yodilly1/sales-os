@@ -1,145 +1,379 @@
-"""Content and ContentTemplate models."""
+"""Content generation data models and schemas."""
+
 from datetime import datetime
-from enum import Enum
-from typing import TYPE_CHECKING, List, Optional
+from typing import Any, Optional, Union
+from uuid import UUID, uuid4
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from pydantic import BaseModel, Field
 
-from app.db.base import Base, SoftDeleteMixin, TimestampMixin
-
-if TYPE_CHECKING:
-    from app.models.prospect import Company, Prospect
-    from app.models.user import User
+from app.core.constants import AudienceType, BrandVoice, ContentStatus, ContentType
 
 
-class ContentType(str, Enum):
-    """Type of generated content."""
-
-    SALES_DECK = "sales_deck"
-    PROPOSAL = "proposal"
-    ONE_PAGER = "one_pager"
-    BATTLECARD = "battlecard"
-    CASE_STUDY = "case_study"
-    EMAIL_SEQUENCE = "email_sequence"
-    FOLLOW_UP_EMAIL = "follow_up_email"
-    EXECUTIVE_SUMMARY = "executive_summary"
-    ROI_CALCULATOR = "roi_calculator"
-    OTHER = "other"
+# =============================================================================
+# Input Models
+# =============================================================================
 
 
-class ContentStatus(str, Enum):
-    """Status of content generation."""
+class ProductInfo(BaseModel):
+    """Product information for content generation."""
 
-    DRAFT = "draft"
-    GENERATING = "generating"
-    GENERATED = "generated"
-    REVIEWED = "reviewed"
-    APPROVED = "approved"
-    PUBLISHED = "published"
-    ARCHIVED = "archived"
-    FAILED = "failed"
-
-
-class ContentTemplate(Base, TimestampMixin, SoftDeleteMixin):
-    """Template for content generation."""
-
-    __tablename__ = "content_templates"
-
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
-    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    content_type: Mapped[str] = mapped_column(String(50), nullable=False)
-
-    # Template structure (JSON)
-    template_structure: Mapped[str] = mapped_column(Text, nullable=False)
-
-    # Styling and branding
-    brand_guidelines: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON
-    color_scheme: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON
-    font_family: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-
-    # Template settings
-    is_default: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    is_public: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
-
-    # Usage tracking
-    usage_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-
-    # Foreign Keys
-    organization_id: Mapped[Optional[str]] = mapped_column(
-        UUID(as_uuid=False), ForeignKey("organizations.id"), nullable=True
+    name: str = Field(..., description="Product or solution name")
+    description: str = Field(..., description="Brief product description")
+    key_features: list[str] = Field(
+        default_factory=list, description="Key product features"
+    )
+    value_propositions: list[str] = Field(
+        default_factory=list, description="Main value propositions"
+    )
+    pricing_info: Optional[str] = Field(None, description="Pricing information if applicable")
+    differentiators: list[str] = Field(
+        default_factory=list, description="Key differentiators from competitors"
+    )
+    use_cases: list[str] = Field(
+        default_factory=list, description="Primary use cases"
+    )
+    customer_segments: list[str] = Field(
+        default_factory=list, description="Target customer segments"
     )
 
-    # Relationships
-    content: Mapped[List["Content"]] = relationship("Content", back_populates="template")
 
-    def __repr__(self) -> str:
-        return f"<ContentTemplate {self.name}>"
+class AudienceInfo(BaseModel):
+    """Target audience information."""
 
-
-class Content(Base, TimestampMixin, SoftDeleteMixin):
-    """Generated content model."""
-
-    __tablename__ = "content"
-
-    title: Mapped[str] = mapped_column(String(500), nullable=False)
-    content_type: Mapped[str] = mapped_column(String(50), nullable=False)
-    status: Mapped[str] = mapped_column(String(50), default=ContentStatus.DRAFT.value, nullable=False)
-
-    # Input data for generation
-    goal: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    product_info: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON
-    audience_info: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON
-    additional_context: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-
-    # Generated content (JSON structure)
-    content_data: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-
-    # Rendered output
-    rendered_html: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    rendered_pdf_url: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
-    rendered_pptx_url: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
-
-    # Version control
-    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
-    parent_id: Mapped[Optional[str]] = mapped_column(
-        UUID(as_uuid=False), ForeignKey("content.id"), nullable=True
+    audience_type: AudienceType = Field(
+        default=AudienceType.VP_DIRECTOR, description="Primary audience type"
+    )
+    company_name: Optional[str] = Field(None, description="Target company name")
+    industry: Optional[str] = Field(None, description="Target industry")
+    company_size: Optional[str] = Field(None, description="Company size (e.g., 'Enterprise', 'SMB')")
+    pain_points: list[str] = Field(
+        default_factory=list, description="Known pain points of the audience"
+    )
+    priorities: list[str] = Field(
+        default_factory=list, description="Known priorities or goals"
+    )
+    decision_criteria: list[str] = Field(
+        default_factory=list, description="How they evaluate solutions"
+    )
+    stakeholders: list[str] = Field(
+        default_factory=list, description="Key stakeholders involved"
     )
 
-    # Metadata
-    tags: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON array
-    generated_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    model_version: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
-    # Foreign Keys
-    created_by_id: Mapped[str] = mapped_column(
-        UUID(as_uuid=False), ForeignKey("users.id"), nullable=False
+class CompetitorInfo(BaseModel):
+    """Competitor information for battlecards."""
+
+    name: str = Field(..., description="Competitor name")
+    description: Optional[str] = Field(None, description="Brief competitor description")
+    strengths: list[str] = Field(
+        default_factory=list, description="Competitor strengths"
     )
-    template_id: Mapped[Optional[str]] = mapped_column(
-        UUID(as_uuid=False), ForeignKey("content_templates.id"), nullable=True
+    weaknesses: list[str] = Field(
+        default_factory=list, description="Competitor weaknesses"
     )
-    prospect_id: Mapped[Optional[str]] = mapped_column(
-        UUID(as_uuid=False), ForeignKey("prospects.id"), nullable=True
-    )
-    company_id: Mapped[Optional[str]] = mapped_column(
-        UUID(as_uuid=False), ForeignKey("companies.id"), nullable=True
+    pricing: Optional[str] = Field(None, description="Competitor pricing info")
+    common_objections: list[str] = Field(
+        default_factory=list, description="Common objections when competing"
     )
 
-    # Relationships
-    created_by: Mapped["User"] = relationship("User", back_populates="content")
-    template: Mapped[Optional["ContentTemplate"]] = relationship(
-        "ContentTemplate", back_populates="content"
+
+class ObjectionInfo(BaseModel):
+    """Objection information for objection handling battlecards."""
+
+    objection: str = Field(..., description="The objection text")
+    category: Optional[str] = Field(
+        None, description="Category (e.g., 'pricing', 'features', 'timing')"
     )
-    prospect: Mapped[Optional["Prospect"]] = relationship("Prospect", back_populates="content")
-    company: Mapped[Optional["Company"]] = relationship("Company", back_populates="content")
-    revisions: Mapped[List["Content"]] = relationship(
-        "Content", back_populates="parent", remote_side="Content.id"
+    frequency: Optional[str] = Field(
+        None, description="How often this objection comes up"
     )
-    parent: Mapped[Optional["Content"]] = relationship(
-        "Content", back_populates="revisions", remote_side=[parent_id]
+    context: Optional[str] = Field(
+        None, description="When this objection typically arises"
     )
 
-    def __repr__(self) -> str:
-        return f"<Content {self.title}>"
+
+class SPICEDContext(BaseModel):
+    """SPICED framework context for WbD alignment."""
+
+    situation: Optional[str] = Field(None, description="Current situation context")
+    pain: Optional[str] = Field(None, description="Key pain points identified")
+    impact: Optional[str] = Field(None, description="Business impact of the problem")
+    critical_event: Optional[str] = Field(None, description="Timeline drivers")
+    expected_decision: Optional[str] = Field(None, description="Decision process info")
+    decision_criteria: Optional[str] = Field(None, description="Evaluation criteria")
+
+
+# =============================================================================
+# Content Structure Models
+# =============================================================================
+
+
+class DeckSlide(BaseModel):
+    """Individual slide in a sales deck."""
+
+    slide_number: int = Field(..., description="Slide number (1-indexed)")
+    title: str = Field(..., description="Slide title")
+    subtitle: Optional[str] = Field(None, description="Slide subtitle")
+    content_type: str = Field(
+        default="text", description="Content type: text, bullets, chart, image, quote"
+    )
+    main_content: Union[str, list[str]] = Field(
+        ..., description="Main slide content (text or bullet points)"
+    )
+    speaker_notes: Optional[str] = Field(None, description="Speaker notes for this slide")
+    visual_suggestions: Optional[str] = Field(
+        None, description="Suggested visuals or graphics"
+    )
+    transition_note: Optional[str] = Field(
+        None, description="How to transition to next slide"
+    )
+
+
+class DeckContent(BaseModel):
+    """Complete sales deck content."""
+
+    title: str = Field(..., description="Deck title")
+    subtitle: Optional[str] = Field(None, description="Deck subtitle")
+    deck_type: str = Field(..., description="Type: pitch, renewal, qbr")
+    slides: list[DeckSlide] = Field(..., description="List of slides")
+    total_slides: int = Field(..., description="Total number of slides")
+    estimated_duration_minutes: int = Field(
+        default=30, description="Estimated presentation duration"
+    )
+    key_messages: list[str] = Field(
+        default_factory=list, description="Key messages to convey"
+    )
+    call_to_action: str = Field(..., description="Primary call to action")
+
+
+class ProposalSection(BaseModel):
+    """Individual section in a proposal."""
+
+    section_number: int = Field(..., description="Section number")
+    title: str = Field(..., description="Section title")
+    content: str = Field(..., description="Section content (markdown supported)")
+    subsections: Optional[list[dict[str, str]]] = Field(
+        None, description="Optional subsections"
+    )
+
+
+class ProposalContent(BaseModel):
+    """Complete proposal content."""
+
+    title: str = Field(..., description="Proposal title")
+    proposal_type: str = Field(..., description="Type: custom, templated")
+    executive_summary: str = Field(..., description="Executive summary")
+    sections: list[ProposalSection] = Field(..., description="Proposal sections")
+    pricing_table: Optional[dict[str, Any]] = Field(
+        None, description="Pricing breakdown"
+    )
+    terms_and_conditions: Optional[str] = Field(
+        None, description="Terms and conditions"
+    )
+    next_steps: list[str] = Field(
+        default_factory=list, description="Recommended next steps"
+    )
+    validity_period: Optional[str] = Field(
+        None, description="Proposal validity period"
+    )
+    signature_block: Optional[dict[str, str]] = Field(
+        None, description="Signature block info"
+    )
+
+
+class OnePagerContent(BaseModel):
+    """Complete one-pager content."""
+
+    title: str = Field(..., description="One-pager title")
+    one_pager_type: str = Field(..., description="Type: product, solution, case_study")
+    headline: str = Field(..., description="Main headline")
+    subheadline: Optional[str] = Field(None, description="Supporting subheadline")
+    overview: str = Field(..., description="Brief overview paragraph")
+    key_points: list[dict[str, str]] = Field(
+        ..., description="Key points with title and description"
+    )
+    benefits: list[str] = Field(..., description="Key benefits")
+    proof_points: Optional[list[dict[str, str]]] = Field(
+        None, description="Stats, quotes, or case study snippets"
+    )
+    call_to_action: str = Field(..., description="Call to action")
+    contact_info: Optional[dict[str, str]] = Field(
+        None, description="Contact information"
+    )
+    # Case study specific fields
+    customer_name: Optional[str] = Field(None, description="Customer name for case study")
+    challenge: Optional[str] = Field(None, description="Challenge faced")
+    solution: Optional[str] = Field(None, description="Solution provided")
+    results: Optional[list[dict[str, str]]] = Field(
+        None, description="Results achieved (metrics)"
+    )
+    customer_quote: Optional[str] = Field(None, description="Customer testimonial")
+
+
+class BattlecardContent(BaseModel):
+    """Complete battlecard content."""
+
+    title: str = Field(..., description="Battlecard title")
+    battlecard_type: str = Field(..., description="Type: competitive, objection")
+    last_updated: datetime = Field(
+        default_factory=datetime.utcnow, description="Last update timestamp"
+    )
+
+    # Competitive battlecard fields
+    competitor_name: Optional[str] = Field(None, description="Competitor name")
+    competitor_overview: Optional[str] = Field(None, description="Competitor overview")
+    their_strengths: Optional[list[str]] = Field(
+        None, description="Competitor strengths"
+    )
+    their_weaknesses: Optional[list[str]] = Field(
+        None, description="Competitor weaknesses"
+    )
+    our_advantages: Optional[list[str]] = Field(
+        None, description="Our advantages vs competitor"
+    )
+    head_to_head: Optional[list[dict[str, str]]] = Field(
+        None, description="Feature comparison table"
+    )
+    competitive_positioning: Optional[str] = Field(
+        None, description="How to position against them"
+    )
+    trap_questions: Optional[list[dict[str, str]]] = Field(
+        None, description="Questions to ask that favor us"
+    )
+    landmines: Optional[list[dict[str, str]]] = Field(
+        None, description="Topics to avoid or handle carefully"
+    )
+    win_themes: Optional[list[str]] = Field(
+        None, description="Key themes when competing"
+    )
+
+    # Objection handling fields
+    objections: Optional[list[dict[str, str]]] = Field(
+        None, description="Objections with responses"
+    )
+    category: Optional[str] = Field(
+        None, description="Objection category for objection battlecard"
+    )
+    quick_responses: Optional[list[dict[str, str]]] = Field(
+        None, description="Quick one-liner responses"
+    )
+    detailed_responses: Optional[list[dict[str, str]]] = Field(
+        None, description="Detailed responses with context"
+    )
+    prevention_tips: Optional[list[str]] = Field(
+        None, description="How to prevent objections"
+    )
+    related_proof_points: Optional[list[str]] = Field(
+        None, description="Evidence to support responses"
+    )
+
+
+# =============================================================================
+# Request/Response Models
+# =============================================================================
+
+
+class ContentGenerationRequest(BaseModel):
+    """Request model for content generation."""
+
+    content_type: ContentType = Field(..., description="Type of content to generate")
+    goal: str = Field(..., description="Goal or purpose of the content")
+    product_info: ProductInfo = Field(..., description="Product information")
+    audience: AudienceInfo = Field(
+        default_factory=AudienceInfo, description="Target audience info"
+    )
+
+    # Optional customization
+    brand_voice: BrandVoice = Field(
+        default=BrandVoice.PROFESSIONAL, description="Brand voice to use"
+    )
+    spiced_context: Optional[SPICEDContext] = Field(
+        None, description="SPICED context for WbD alignment"
+    )
+    custom_instructions: Optional[str] = Field(
+        None, description="Additional custom instructions"
+    )
+
+    # Type-specific inputs
+    competitors: Optional[list[CompetitorInfo]] = Field(
+        None, description="Competitor info for battlecards"
+    )
+    objections: Optional[list[ObjectionInfo]] = Field(
+        None, description="Objections for objection battlecards"
+    )
+    case_study_data: Optional[dict[str, Any]] = Field(
+        None, description="Case study data for case study one-pagers"
+    )
+
+    # Output preferences
+    include_speaker_notes: bool = Field(
+        default=True, description="Include speaker notes for decks"
+    )
+    include_visual_suggestions: bool = Field(
+        default=True, description="Include visual suggestions"
+    )
+    max_slides: Optional[int] = Field(
+        None, description="Max slides for decks (overrides default)"
+    )
+
+
+class ContentMetadata(BaseModel):
+    """Metadata about generated content."""
+
+    content_id: UUID = Field(default_factory=uuid4, description="Unique content ID")
+    content_type: ContentType = Field(..., description="Type of content generated")
+    status: ContentStatus = Field(
+        default=ContentStatus.COMPLETED, description="Generation status"
+    )
+    created_at: datetime = Field(
+        default_factory=datetime.utcnow, description="Creation timestamp"
+    )
+    generation_time_ms: Optional[int] = Field(
+        None, description="Generation time in milliseconds"
+    )
+    model_used: Optional[str] = Field(None, description="Claude model used")
+    tokens_used: Optional[int] = Field(None, description="Total tokens used")
+    version: str = Field(default="1.0", description="Content version")
+
+
+class ContentGenerationResponse(BaseModel):
+    """Response model for content generation."""
+
+    metadata: ContentMetadata = Field(..., description="Content metadata")
+    content: Union[DeckContent, ProposalContent, OnePagerContent, BattlecardContent] = Field(
+        ..., description="Generated content"
+    )
+    raw_content: Optional[dict[str, Any]] = Field(
+        None, description="Raw content JSON for debugging"
+    )
+    suggestions: Optional[list[str]] = Field(
+        None, description="Suggestions for improvement"
+    )
+    wbd_alignment_score: Optional[float] = Field(
+        None, description="WbD methodology alignment score (0-1)"
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "metadata": {
+                    "content_id": "123e4567-e89b-12d3-a456-426614174000",
+                    "content_type": "deck_pitch",
+                    "status": "completed",
+                    "created_at": "2024-01-15T10:30:00Z",
+                    "generation_time_ms": 3500,
+                    "model_used": "claude-sonnet-4-20250514",
+                    "tokens_used": 2500,
+                    "version": "1.0",
+                },
+                "content": {
+                    "title": "Transform Your Sales with AI",
+                    "deck_type": "pitch",
+                    "total_slides": 10,
+                    "estimated_duration_minutes": 30,
+                    "slides": [],
+                    "key_messages": ["AI-powered efficiency", "Proven ROI"],
+                    "call_to_action": "Schedule a demo today",
+                },
+            }
+        }

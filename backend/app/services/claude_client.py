@@ -1,282 +1,191 @@
-"""Claude API client service for AI-powered analysis."""
+"""Claude API client for intelligent content generation."""
+
 import json
 import logging
-from pathlib import Path
-from typing import Any, Optional, TypeVar
+from typing import Any, Optional
 
-from anthropic import Anthropic, APIError, APIConnectionError, RateLimitError
+import anthropic
 from pydantic import BaseModel
 
-from app.core.config import settings
+from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
-T = TypeVar("T", bound=BaseModel)
 
+class ClaudeResponse(BaseModel):
+    """Response from Claude API."""
 
-class ClaudeClientError(Exception):
-    """Base exception for Claude client errors."""
-
-    pass
-
-
-class ClaudeAPIError(ClaudeClientError):
-    """Error from the Claude API."""
-
-    pass
-
-
-class ClaudeParseError(ClaudeClientError):
-    """Error parsing Claude's response."""
-
-    pass
+    content: str
+    model: str
+    input_tokens: int
+    output_tokens: int
+    stop_reason: str
 
 
 class ClaudeClient:
-    """Client for interacting with Claude API.
+    """Client for interacting with Claude API."""
 
-    Provides methods for sending prompts and parsing structured responses.
-    """
-
-    PROMPTS_DIR = Path(__file__).parent.parent.parent.parent / "claude" / "prompts"
-
-    def __init__(
-        self,
-        api_key: Optional[str] = None,
-        model: Optional[str] = None,
-    ):
+    def __init__(self, api_key: Optional[str] = None):
         """Initialize the Claude client.
 
         Args:
-            api_key: Anthropic API key. Defaults to settings.
-            model: Model to use. Defaults to settings.
+            api_key: Optional API key. If not provided, uses config.
         """
-        self.api_key = api_key or settings.anthropic_api_key
-        self.model = model or settings.claude_model
+        settings = get_settings()
+        self.api_key = api_key or settings.claude_api_key
+        self.default_model = settings.claude_model
+        self.max_tokens = settings.claude_max_tokens
 
         if not self.api_key:
-            raise ClaudeClientError(
-                "ANTHROPIC_API_KEY not configured. "
-                "Set it in your environment or .env file."
-            )
+            logger.warning("Claude API key not configured")
 
-        self.client = Anthropic(api_key=self.api_key)
+        self._client: Optional[anthropic.Anthropic] = None
 
-    def load_prompt(self, prompt_name: str) -> str:
-        """Load a prompt template from the prompts directory.
+    @property
+    def client(self) -> anthropic.Anthropic:
+        """Get or create the Anthropic client."""
+        if self._client is None:
+            self._client = anthropic.Anthropic(api_key=self.api_key)
+        return self._client
 
-        Args:
-            prompt_name: Name of the prompt file (without .md extension)
-
-        Returns:
-            The prompt template content
-
-        Raises:
-            FileNotFoundError: If prompt file doesn't exist
-        """
-        prompt_path = self.PROMPTS_DIR / f"{prompt_name}.md"
-
-        if not prompt_path.exists():
-            raise FileNotFoundError(
-                f"Prompt template not found: {prompt_path}. "
-                f"Available prompts: {list(self.PROMPTS_DIR.glob('*.md'))}"
-            )
-
-        return prompt_path.read_text(encoding="utf-8")
-
-    async def analyze(
+    async def generate(
         self,
         prompt: str,
-        content: str,
         system_prompt: Optional[str] = None,
-        max_tokens: int = 4096,
-        temperature: float = 0.0,
-    ) -> str:
-        """Send content to Claude for analysis.
+        model: Optional[str] = None,
+        max_tokens: Optional[int] = None,
+        temperature: float = 0.7,
+    ) -> ClaudeResponse:
+        """Generate content using Claude.
 
         Args:
-            prompt: The analysis prompt/instructions
-            content: The content to analyze
-            system_prompt: Optional system prompt
-            max_tokens: Maximum tokens in response
-            temperature: Response temperature (0.0 = deterministic)
+            prompt: The user prompt to send.
+            system_prompt: Optional system prompt for context.
+            model: Optional model override.
+            max_tokens: Optional max tokens override.
+            temperature: Temperature for generation (0-1).
 
         Returns:
-            Claude's response text
-
-        Raises:
-            ClaudeAPIError: If API call fails
+            ClaudeResponse with generated content and metadata.
         """
-        full_prompt = f"{prompt}\n\n---\n\n{content}"
+        model = model or self.default_model
+        max_tokens = max_tokens or self.max_tokens
 
         try:
             message = self.client.messages.create(
-                model=self.model,
+                model=model,
                 max_tokens=max_tokens,
                 temperature=temperature,
-                system=system_prompt or "You are an expert sales analyst.",
-                messages=[
-                    {"role": "user", "content": full_prompt},
-                ],
+                system=system_prompt or "",
+                messages=[{"role": "user", "content": prompt}],
             )
 
-            return message.content[0].text
+            return ClaudeResponse(
+                content=message.content[0].text,
+                model=message.model,
+                input_tokens=message.usage.input_tokens,
+                output_tokens=message.usage.output_tokens,
+                stop_reason=message.stop_reason,
+            )
 
-        except RateLimitError as e:
-            logger.error(f"Claude rate limit exceeded: {e}")
-            raise ClaudeAPIError(f"Rate limit exceeded: {e}") from e
-        except APIConnectionError as e:
-            logger.error(f"Failed to connect to Claude API: {e}")
-            raise ClaudeAPIError(f"Connection error: {e}") from e
-        except APIError as e:
+        except anthropic.APIError as e:
             logger.error(f"Claude API error: {e}")
-            raise ClaudeAPIError(f"API error: {e}") from e
+            raise
+        except Exception as e:
+            logger.error(f"Unexpected error calling Claude: {e}")
+            raise
 
-    async def analyze_structured(
+    async def generate_json(
         self,
         prompt: str,
-        content: str,
-        response_model: type[T],
         system_prompt: Optional[str] = None,
-        max_tokens: int = 4096,
-        temperature: float = 0.0,
-    ) -> T:
-        """Send content to Claude and parse response into a Pydantic model.
+        model: Optional[str] = None,
+        max_tokens: Optional[int] = None,
+        temperature: float = 0.3,
+    ) -> tuple[dict[str, Any], ClaudeResponse]:
+        """Generate JSON content using Claude.
 
         Args:
-            prompt: The analysis prompt/instructions
-            content: The content to analyze
-            response_model: Pydantic model class to parse response into
-            system_prompt: Optional system prompt
-            max_tokens: Maximum tokens in response
-            temperature: Response temperature
+            prompt: The user prompt to send.
+            system_prompt: Optional system prompt for context.
+            model: Optional model override.
+            max_tokens: Optional max tokens override.
+            temperature: Temperature for generation (lower for structured output).
 
         Returns:
-            Parsed Pydantic model instance
-
-        Raises:
-            ClaudeAPIError: If API call fails
-            ClaudeParseError: If response parsing fails
+            Tuple of (parsed JSON dict, ClaudeResponse).
         """
-        # Add JSON instruction to prompt
-        json_schema = response_model.model_json_schema()
-        enhanced_prompt = (
-            f"{prompt}\n\n"
-            f"Respond with a valid JSON object matching this schema:\n"
-            f"```json\n{json.dumps(json_schema, indent=2)}\n```\n\n"
-            f"Output ONLY the JSON object, no additional text."
-        )
+        # Enhance prompt to request JSON output
+        json_prompt = f"""{prompt}
 
-        response = await self.analyze(
-            prompt=enhanced_prompt,
-            content=content,
+IMPORTANT: Return your response as valid JSON only. Do not include any text before or after the JSON.
+Do not wrap the JSON in markdown code blocks."""
+
+        response = await self.generate(
+            prompt=json_prompt,
             system_prompt=system_prompt,
+            model=model,
             max_tokens=max_tokens,
             temperature=temperature,
         )
 
-        return self._parse_json_response(response, response_model)
-
-    def _parse_json_response(self, response: str, model: type[T]) -> T:
-        """Parse a JSON response into a Pydantic model.
-
-        Args:
-            response: Raw response text from Claude
-            model: Pydantic model class
-
-        Returns:
-            Parsed model instance
-
-        Raises:
-            ClaudeParseError: If parsing fails
-        """
-        # Clean up response - remove markdown code blocks if present
-        cleaned = response.strip()
-
-        if cleaned.startswith("```"):
-            # Remove markdown code block
-            lines = cleaned.split("\n")
-            # Remove first line (```json or ```)
-            if lines[0].startswith("```"):
-                lines = lines[1:]
-            # Remove last line (```)
-            if lines and lines[-1].strip() == "```":
-                lines = lines[:-1]
-            cleaned = "\n".join(lines)
-
+        # Parse JSON from response
         try:
-            data = json.loads(cleaned)
-            return model.model_validate(data)
-        except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse JSON response: {e}\nResponse: {response}")
-            raise ClaudeParseError(f"Invalid JSON in response: {e}") from e
-        except Exception as e:
-            logger.error(f"Failed to validate response model: {e}\nData: {cleaned}")
-            raise ClaudeParseError(f"Response validation failed: {e}") from e
+            # Try to extract JSON if wrapped in code blocks
+            content = response.content.strip()
+            if content.startswith("```json"):
+                content = content[7:]
+            if content.startswith("```"):
+                content = content[3:]
+            if content.endswith("```"):
+                content = content[:-3]
+            content = content.strip()
 
-    async def extract_json(
+            parsed = json.loads(content)
+            return parsed, response
+
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse JSON from Claude response: {e}")
+            logger.debug(f"Raw response: {response.content[:500]}...")
+            raise ValueError(f"Claude returned invalid JSON: {e}")
+
+    async def generate_with_retry(
         self,
         prompt: str,
-        content: str,
         system_prompt: Optional[str] = None,
-        max_tokens: int = 4096,
-    ) -> dict[str, Any]:
-        """Extract a JSON object from content using Claude.
+        max_retries: int = 3,
+        **kwargs,
+    ) -> ClaudeResponse:
+        """Generate content with automatic retry on failure.
 
         Args:
-            prompt: Extraction instructions
-            content: Content to extract from
-            system_prompt: Optional system prompt
-            max_tokens: Maximum tokens in response
+            prompt: The user prompt to send.
+            system_prompt: Optional system prompt for context.
+            max_retries: Maximum number of retry attempts.
+            **kwargs: Additional arguments passed to generate().
 
         Returns:
-            Extracted JSON as a dictionary
-
-        Raises:
-            ClaudeAPIError: If API call fails
-            ClaudeParseError: If JSON parsing fails
+            ClaudeResponse with generated content.
         """
-        enhanced_prompt = (
-            f"{prompt}\n\n"
-            "Respond with ONLY a valid JSON object, no additional text or explanation."
-        )
+        last_error = None
 
-        response = await self.analyze(
-            prompt=enhanced_prompt,
-            content=content,
-            system_prompt=system_prompt,
-            max_tokens=max_tokens,
-        )
+        for attempt in range(max_retries):
+            try:
+                return await self.generate(
+                    prompt=prompt,
+                    system_prompt=system_prompt,
+                    **kwargs,
+                )
+            except anthropic.RateLimitError:
+                logger.warning(f"Rate limited, attempt {attempt + 1}/{max_retries}")
+                if attempt == max_retries - 1:
+                    raise
+                import asyncio
+                await asyncio.sleep(2 ** attempt)  # Exponential backoff
+            except anthropic.APIError as e:
+                last_error = e
+                logger.warning(f"API error on attempt {attempt + 1}: {e}")
+                if attempt == max_retries - 1:
+                    raise
 
-        cleaned = response.strip()
-        if cleaned.startswith("```"):
-            lines = cleaned.split("\n")[1:]
-            if lines and lines[-1].strip() == "```":
-                lines = lines[:-1]
-            cleaned = "\n".join(lines)
-
-        try:
-            return json.loads(cleaned)
-        except json.JSONDecodeError as e:
-            raise ClaudeParseError(f"Failed to parse JSON: {e}") from e
-
-
-# Singleton instance
-_client: Optional[ClaudeClient] = None
-
-
-def get_claude_client() -> ClaudeClient:
-    """Get the Claude client singleton.
-
-    Returns:
-        Configured ClaudeClient instance
-
-    Raises:
-        ClaudeClientError: If client cannot be initialized
-    """
-    global _client
-
-    if _client is None:
-        _client = ClaudeClient()
-
-    return _client
+        raise last_error or RuntimeError("Max retries exceeded")

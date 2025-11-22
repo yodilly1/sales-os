@@ -1,0 +1,103 @@
+{
+  "template_id": "proposal_standard",
+  "template_name": "Standard Sales Proposal",
+  "description": "A comprehensive proposal template for custom and templated proposals",
+  "version": "1.0",
+  "content_type": "proposal",
+  "structure": {
+    "sections": [
+      {
+        "section_number": 1,
+        "title": "Executive Summary",
+        "purpose": "High-level overview of the proposal",
+        "content_guidelines": "2-3 paragraphs summarizing the opportunity, solution, and value proposition",
+        "placeholders": ["customer_challenge_summary", "proposed_solution_summary", "expected_outcomes", "investment_summary"]
+      },
+      {
+        "section_number": 2,
+        "title": "Understanding Your Challenges",
+        "purpose": "Demonstrate understanding of customer needs (SPICED alignment)",
+        "content_guidelines": "Reflect the customer's situation, pain points, and business impact",
+        "subsections": [
+          {"title": "Current Situation", "placeholders": ["situation_description"]},
+          {"title": "Key Challenges", "placeholders": ["pain_point_1", "pain_point_2", "pain_point_3"]},
+          {"title": "Business Impact", "placeholders": ["impact_metrics", "cost_of_inaction"]}
+        ]
+      },
+      {
+        "section_number": 3,
+        "title": "Proposed Solution",
+        "purpose": "Present the solution tailored to their needs",
+        "content_guidelines": "Connect solution capabilities to stated challenges",
+        "subsections": [
+          {"title": "Solution Overview", "placeholders": ["solution_description"]},
+          {"title": "Key Capabilities", "placeholders": ["capability_1", "capability_2", "capability_3"]},
+          {"title": "How We Address Your Challenges", "placeholders": ["challenge_solution_mapping"]}
+        ]
+      },
+      {
+        "section_number": 4,
+        "title": "Implementation Approach",
+        "purpose": "Outline the delivery methodology",
+        "content_guidelines": "Provide clear timeline and milestones",
+        "subsections": [
+          {"title": "Implementation Phases", "placeholders": ["phase_1", "phase_2", "phase_3"]},
+          {"title": "Timeline", "placeholders": ["start_date", "key_milestones", "go_live_date"]},
+          {"title": "Success Criteria", "placeholders": ["success_metric_1", "success_metric_2"]}
+        ]
+      },
+      {
+        "section_number": 5,
+        "title": "Investment & ROI",
+        "purpose": "Present pricing and value justification",
+        "content_guidelines": "Frame investment in terms of value and ROI",
+        "subsections": [
+          {"title": "Pricing Summary", "placeholders": ["pricing_table"]},
+          {"title": "ROI Analysis", "placeholders": ["roi_calculation", "payback_period"]},
+          {"title": "Payment Terms", "placeholders": ["payment_schedule", "terms"]}
+        ]
+      },
+      {
+        "section_number": 6,
+        "title": "Why Choose Us",
+        "purpose": "Differentiation and credibility",
+        "content_guidelines": "Highlight unique strengths and relevant experience",
+        "subsections": [
+          {"title": "Our Differentiators", "placeholders": ["differentiator_1", "differentiator_2"]},
+          {"title": "Relevant Experience", "placeholders": ["case_study_reference", "industry_expertise"]},
+          {"title": "Customer Success", "placeholders": ["testimonial", "success_metrics"]}
+        ]
+      },
+      {
+        "section_number": 7,
+        "title": "Next Steps",
+        "purpose": "Clear call to action",
+        "content_guidelines": "Be specific about what happens next",
+        "placeholders": ["next_step_1", "next_step_2", "next_step_3", "contact_info", "validity_period"]
+      }
+    ]
+  },
+  "appendix_options": [
+    "Detailed Technical Specifications",
+    "Full Case Studies",
+    "Team Bios",
+    "Terms and Conditions",
+    "Security & Compliance Documentation"
+  ],
+  "customization_options": {
+    "can_add_sections": true,
+    "can_remove_sections": true,
+    "can_reorder_sections": true,
+    "required_sections": [1, 3, 5, 7]
+  },
+  "wbd_alignment": {
+    "spiced_mapping": {
+      "situation": [2],
+      "pain": [2],
+      "impact": [2, 5],
+      "critical_event": [4],
+      "expected_decision": [5, 7],
+      "decision_criteria": [3, 6]
+    }
+  }
+}
