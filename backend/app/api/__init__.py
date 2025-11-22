@@ -8,6 +8,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -54,15 +55,27 @@ API routes for Sales OS.
 
 This package contains all REST API route definitions organized
 by domain area.
+=======
+"""
+API Routes for Sales OS
+
+FastAPI router definitions for all API endpoints.
+>>>>>>> origin/claude/email-integration-017ZiRSG6H1WHpye9kKe1ehW
 """
 
 from fastapi import APIRouter
 
+<<<<<<< HEAD
 from .notifications import router as notifications_router
+=======
+from .email import router as email_router
+
+>>>>>>> origin/claude/email-integration-017ZiRSG6H1WHpye9kKe1ehW
 
 # Create main API router
 api_router = APIRouter()
 
+<<<<<<< HEAD
 # Include domain routers
 api_router.include_router(notifications_router)
 
@@ -123,3 +136,10 @@ from . import export, import_api
 
 __all__ = ["export", "import_api"]
 >>>>>>> origin/claude/export-import-service-01K8LsZNbidmjJoTxFQ47hx3
+=======
+# Include sub-routers
+api_router.include_router(email_router)
+
+
+__all__ = ["api_router", "email_router"]
+>>>>>>> origin/claude/email-integration-017ZiRSG6H1WHpye9kKe1ehW
