@@ -7,6 +7,7 @@ module.exports = {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 =======
 };
@@ -20,3 +21,6 @@ module.exports = {
 =======
 }
 >>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
+=======
+};
+>>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF

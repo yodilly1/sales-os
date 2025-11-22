@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import type { Metadata } from 'next';
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -65,10 +66,24 @@ export const metadata: Metadata = {
   keywords: ['sales', 'AI', 'CRM', 'sales intelligence', 'call analytics', 'sales coaching'],
 }
 >>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
+=======
+/**
+ * Root layout for Sales OS frontend.
+ */
+
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Sales OS",
+  description: "AI-powered sales operations platform",
+};
+>>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
 
 export default function RootLayout({
   children,
 }: {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   children: React.ReactNode;
@@ -178,4 +193,15 @@ export default function RootLayout({
     </html>
   )
 >>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
+=======
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className="min-h-screen bg-gray-50 antialiased">
+        {children}
+      </body>
+    </html>
+  );
+>>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
 }

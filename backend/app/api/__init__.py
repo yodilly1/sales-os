@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -42,3 +43,26 @@ api_router = APIRouter()
 api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 api_router.include_router(health_router, prefix="/health", tags=["Health"])
 >>>>>>> origin/claude/auth-security-jwt-01NGdma4oBRc5QyZNZQsX6Ef
+=======
+"""
+API routes for Sales OS.
+
+This package contains all REST API route definitions organized
+by domain area.
+"""
+
+from fastapi import APIRouter
+
+from .notifications import router as notifications_router
+
+# Create main API router
+api_router = APIRouter()
+
+# Include domain routers
+api_router.include_router(notifications_router)
+
+__all__ = [
+    "api_router",
+    "notifications_router",
+]
+>>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF

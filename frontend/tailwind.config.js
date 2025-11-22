@@ -1,16 +1,23 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
+<<<<<<< HEAD
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
 <<<<<<< HEAD
     './lib/**/*.{js,ts,jsx,tsx,mdx}',
 =======
 >>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
+=======
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./lib/**/*.{js,ts,jsx,tsx,mdx}",
+>>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
   ],
   theme: {
     extend: {
       colors: {
+<<<<<<< HEAD
 <<<<<<< HEAD
         // Sales OS Brand Colors
         primary: {
@@ -101,9 +108,16 @@ module.exports = {
     require('@tailwindcss/typography'),
   ],
 =======
+=======
+        // Custom brand colors can be added here
+>>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
       },
     },
   },
   plugins: [],
+<<<<<<< HEAD
 >>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
 }
+=======
+};
+>>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
