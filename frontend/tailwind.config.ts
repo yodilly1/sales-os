@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+<<<<<<< HEAD
         // Sales OS Professional Color Palette
         primary: {
           50: '#f0f9ff',
@@ -84,10 +85,40 @@ const config: Config = {
           800: '#262626',
           900: '#171717',
           950: '#0a0a0a',
+=======
+        brand: {
+          50: '#f0f7ff',
+          100: '#e0effe',
+          200: '#bae0fd',
+          300: '#7cc8fb',
+          400: '#36abf6',
+          500: '#0c8ee7',
+          600: '#0070c5',
+          700: '#0159a0',
+          800: '#064c84',
+          900: '#0b406e',
+          950: '#072849',
+        },
+        success: {
+          50: '#f0fdf4',
+          500: '#22c55e',
+          600: '#16a34a',
+        },
+        warning: {
+          50: '#fffbeb',
+          500: '#f59e0b',
+          600: '#d97706',
+        },
+        error: {
+          50: '#fef2f2',
+          500: '#ef4444',
+          600: '#dc2626',
+>>>>>>> origin/claude/frontend-content-ui-01SUCiGQU6dN2Z9rPASZfehV
         },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+<<<<<<< HEAD
         mono: ['JetBrains Mono', 'Menlo', 'monospace'],
       },
       boxShadow: {
@@ -112,6 +143,12 @@ const config: Config = {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.7' },
         },
+=======
+      },
+      animation: {
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'spin-slow': 'spin 2s linear infinite',
+>>>>>>> origin/claude/frontend-content-ui-01SUCiGQU6dN2Z9rPASZfehV
       },
     },
   },
