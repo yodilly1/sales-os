@@ -1,0 +1,85 @@
+# Render.com Blueprint
+# Deploy with: render blueprint apply
+
+services:
+  # Backend API
+  - type: web
+    name: sales-os-api
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    region: oregon
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sales-os-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: sales-os-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: HUBSPOT_API_KEY
+        sync: false
+
+  # Frontend
+  - type: web
+    name: sales-os-web
+    env: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    region: oregon
+    plan: starter
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: sales-os-api
+          property: url
+      - key: NEXT_PUBLIC_APP_URL
+        fromService:
+          type: web
+          name: sales-os-web
+          property: url
+
+  # Background Worker
+  - type: worker
+    name: sales-os-worker
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    region: oregon
+    plan: starter
+    dockerCommand: celery -A app.worker worker --loglevel=info
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sales-os-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: sales-os-redis
+          property: connectionString
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+databases:
+  - name: sales-os-db
+    databaseName: salesos
+    user: salesos
+    plan: starter
+    region: oregon
+
+  - name: sales-os-redis
+    type: redis
+    plan: starter
+    region: oregon
