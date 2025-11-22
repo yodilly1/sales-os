@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import type { Metadata } from 'next';
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -92,10 +93,20 @@ export const metadata: Metadata = {
   description: 'VP of Sales Operating System',
 };
 >>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
+=======
+import type { Metadata } from 'next'
+import './globals.css'
+
+export const metadata: Metadata = {
+  title: 'Sales OS - Analytics Dashboard',
+  description: 'Comprehensive analytics dashboard for sales performance insights',
+}
+>>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw
 
 export default function RootLayout({
   children,
 }: {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -156,10 +167,13 @@ export default function RootLayout({
     </html>
   );
 =======
+=======
+>>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw
   children: React.ReactNode
 }) {
   return (
     <html lang="en">
+<<<<<<< HEAD
       <body className={inter.className}>
         <div className="min-h-screen flex flex-col">
           <header className="bg-white border-b border-gray-200">
@@ -226,4 +240,9 @@ export default function RootLayout({
     </html>
   );
 >>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
+=======
+      <body className="min-h-screen">{children}</body>
+    </html>
+  )
+>>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw
 }

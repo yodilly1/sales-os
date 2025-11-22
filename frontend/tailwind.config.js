@@ -3,6 +3,7 @@ module.exports = {
   content: [
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
 <<<<<<< HEAD
@@ -19,6 +20,11 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
 >>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
+=======
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './lib/**/*.{js,ts,jsx,tsx,mdx}',
+>>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw
   ],
   theme: {
     extend: {
@@ -26,9 +32,12 @@ module.exports = {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         // Sales OS Brand Colors
 =======
 >>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
+=======
+>>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',
@@ -40,6 +49,7 @@ module.exports = {
           700: '#0369a1',
           800: '#075985',
           900: '#0c4a6e',
+<<<<<<< HEAD
 <<<<<<< HEAD
           950: '#082f49',
         },
@@ -60,10 +70,19 @@ module.exports = {
           50: '#f0fdf4',
           500: '#22c55e',
           700: '#15803d',
+=======
+          950: '#082f49',
+        },
+        success: {
+          50: '#f0fdf4',
+          500: '#22c55e',
+          600: '#16a34a',
+>>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw
         },
         warning: {
           50: '#fffbeb',
           500: '#f59e0b',
+<<<<<<< HEAD
           700: '#b45309',
         },
         error: {
@@ -76,10 +95,19 @@ module.exports = {
           secondary: '#3B82F6',
           accent: '#10B981',
 >>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
+=======
+          600: '#d97706',
+        },
+        danger: {
+          50: '#fef2f2',
+          500: '#ef4444',
+          600: '#dc2626',
+>>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw
         },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+<<<<<<< HEAD
 <<<<<<< HEAD
         mono: ['JetBrains Mono', 'monospace'],
       },
@@ -124,10 +152,13 @@ module.exports = {
 =======
         },
 >>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
+=======
+>>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw
       },
     },
   },
   plugins: [],
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
@@ -138,3 +169,6 @@ module.exports = {
 =======
 }
 >>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
+=======
+}
+>>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw

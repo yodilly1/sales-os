@@ -2,6 +2,7 @@
 const nextConfig = {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   output: 'standalone',
   reactStrictMode: true,
 
@@ -73,3 +74,12 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+=======
+  reactStrictMode: true,
+  experimental: {
+    serverActions: true,
+  },
+}
+
+module.exports = nextConfig
+>>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw

@@ -9,6 +9,7 @@ module.exports = {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 =======
 };
@@ -28,3 +29,6 @@ module.exports = {
 =======
 }
 >>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
+=======
+}
+>>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw
