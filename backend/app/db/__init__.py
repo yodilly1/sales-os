@@ -1,1 +1,4 @@
-"""Database configuration and session management (to be implemented by AGENT-011)."""
+"""Database configuration and utilities.
+
+This module will be fully implemented by AGENT-011 for database schema setup.
+"""
