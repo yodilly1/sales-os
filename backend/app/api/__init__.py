@@ -4,6 +4,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -79,3 +80,14 @@ api_router.include_router(files_router, prefix="/files", tags=["files"])
 
 __all__ = ["api_router"]
 >>>>>>> origin/claude/file-upload-service-01Fp4Hpux99bpp7yFrPVgU3s
+=======
+"""
+API routes for Sales OS.
+
+This module exports all API routers.
+"""
+
+from .search import router as search_router
+
+__all__ = ["search_router"]
+>>>>>>> origin/claude/search-filtering-service-013Ca1SFsW8utCJ4NV94ST1R
