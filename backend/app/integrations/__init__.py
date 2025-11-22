@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """External service integrations."""
 =======
 """
@@ -28,3 +29,35 @@ from . import email
 
 __all__ = ["email"]
 >>>>>>> origin/claude/email-integration-017ZiRSG6H1WHpye9kKe1ehW
+=======
+"""
+Sales OS Integrations
+
+This module contains integrations with external services.
+"""
+
+from .linkedin import (
+    LinkedInClient,
+    LinkedInService,
+    LinkedInRateLimiter,
+    LinkedInURLParser,
+    LinkedInError,
+    LinkedInAuthError,
+    LinkedInRateLimitError,
+    LinkedInNotFoundError,
+    LinkedInAPIError,
+)
+
+__all__ = [
+    # LinkedIn Integration
+    "LinkedInClient",
+    "LinkedInService",
+    "LinkedInRateLimiter",
+    "LinkedInURLParser",
+    "LinkedInError",
+    "LinkedInAuthError",
+    "LinkedInRateLimitError",
+    "LinkedInNotFoundError",
+    "LinkedInAPIError",
+]
+>>>>>>> origin/claude/linkedin-integration-01VmE4MUdZtsYVbAeCay7X3m

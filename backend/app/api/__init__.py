@@ -9,6 +9,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -143,3 +144,16 @@ api_router.include_router(email_router)
 
 __all__ = ["api_router", "email_router"]
 >>>>>>> origin/claude/email-integration-017ZiRSG6H1WHpye9kKe1ehW
+=======
+"""
+Sales OS API Routes
+
+This module contains all FastAPI route handlers.
+"""
+
+from .linkedin import router as linkedin_router
+
+__all__ = [
+    "linkedin_router",
+]
+>>>>>>> origin/claude/linkedin-integration-01VmE4MUdZtsYVbAeCay7X3m
