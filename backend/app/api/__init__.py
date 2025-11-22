@@ -14,6 +14,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -188,3 +189,12 @@ Sales OS API Routes Package
 FastAPI route handlers for all API endpoints.
 """
 >>>>>>> origin/claude/gong-integration-01Mysb6zKfXmpQEHrWqe4iA8
+=======
+"""
+API routes for Sales OS.
+"""
+
+from .battlecards import router as battlecards_router
+
+__all__ = ["battlecards_router"]
+>>>>>>> origin/claude/battlecard-engine-01BqFWt3icJnvnL8Axa5JjUe

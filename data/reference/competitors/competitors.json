@@ -1,0 +1,173 @@
+[
+  {
+    "id": "comp-001",
+    "name": "Salesforce",
+    "website": "https://www.salesforce.com",
+    "description": "Enterprise CRM platform with extensive customization capabilities and a broad ecosystem of apps and integrations.",
+    "target_market": "Enterprise and mid-market companies across all industries",
+    "pricing_model": "Per-user subscription, tiered by feature set (Essentials, Professional, Enterprise, Unlimited)",
+    "key_products": [
+      "Sales Cloud",
+      "Service Cloud",
+      "Marketing Cloud",
+      "Commerce Cloud",
+      "Platform/AppExchange"
+    ],
+    "strengths": [
+      {
+        "area": "Market Leadership",
+        "description": "Largest CRM market share with extensive brand recognition",
+        "impact": "Prospects often default to considering Salesforce; requires differentiation strategy"
+      },
+      {
+        "area": "Ecosystem",
+        "description": "Thousands of apps on AppExchange and large partner network",
+        "impact": "Can address almost any use case through integrations"
+      },
+      {
+        "area": "Customization",
+        "description": "Highly customizable platform with extensive development options",
+        "impact": "Appeals to enterprises with complex, unique requirements"
+      }
+    ],
+    "weaknesses": [
+      {
+        "area": "Complexity",
+        "description": "Requires significant expertise to implement and maintain effectively",
+        "talking_point": "Our solution delivers value faster without requiring a dedicated admin team"
+      },
+      {
+        "area": "Total Cost of Ownership",
+        "description": "Implementation, customization, and ongoing maintenance add significant costs",
+        "talking_point": "When you factor in implementation and admin costs, our TCO is 40% lower"
+      },
+      {
+        "area": "User Adoption",
+        "description": "Complexity can lead to poor user adoption without proper change management",
+        "talking_point": "Our intuitive interface drives 95% adoption within 30 days"
+      }
+    ],
+    "win_rate_against": 45.0,
+    "common_objections": [
+      "We're already standardized on Salesforce",
+      "Our team knows Salesforce",
+      "We need the AppExchange ecosystem"
+    ],
+    "last_updated": "2025-01-15T10:00:00Z",
+    "created_at": "2024-06-01T10:00:00Z"
+  },
+  {
+    "id": "comp-002",
+    "name": "HubSpot",
+    "website": "https://www.hubspot.com",
+    "description": "All-in-one inbound marketing, sales, and service platform known for ease of use and freemium model.",
+    "target_market": "SMB and mid-market companies, especially marketing-led organizations",
+    "pricing_model": "Freemium with tiered paid plans (Starter, Professional, Enterprise)",
+    "key_products": [
+      "Marketing Hub",
+      "Sales Hub",
+      "Service Hub",
+      "CMS Hub",
+      "Operations Hub"
+    ],
+    "strengths": [
+      {
+        "area": "Ease of Use",
+        "description": "Intuitive interface with minimal training required",
+        "impact": "Quick wins in demos; prospects love the UX"
+      },
+      {
+        "area": "Free Tier",
+        "description": "Generous free CRM draws users into the ecosystem",
+        "impact": "Prospects may already be using free version"
+      },
+      {
+        "area": "Inbound Marketing",
+        "description": "Strong content marketing and SEO tools",
+        "impact": "Marketing teams often champion HubSpot"
+      }
+    ],
+    "weaknesses": [
+      {
+        "area": "Enterprise Scale",
+        "description": "Can struggle with complex enterprise requirements",
+        "talking_point": "We're built for enterprise scale from day one"
+      },
+      {
+        "area": "Customization Limits",
+        "description": "Less flexible than enterprise platforms",
+        "talking_point": "Our platform adapts to your processes, not the other way around"
+      },
+      {
+        "area": "Reporting Depth",
+        "description": "Advanced analytics require higher tiers",
+        "talking_point": "Full analytics included at every tier, no upsell required"
+      }
+    ],
+    "win_rate_against": 62.0,
+    "common_objections": [
+      "HubSpot is easier to use",
+      "We already have marketing on HubSpot",
+      "HubSpot's free tier is good enough"
+    ],
+    "last_updated": "2025-01-15T10:00:00Z",
+    "created_at": "2024-06-01T10:00:00Z"
+  },
+  {
+    "id": "comp-003",
+    "name": "Microsoft Dynamics 365",
+    "website": "https://dynamics.microsoft.com",
+    "description": "Enterprise business applications suite deeply integrated with Microsoft 365 and Azure.",
+    "target_market": "Enterprise organizations invested in Microsoft ecosystem",
+    "pricing_model": "Per-user subscription with modular pricing by application",
+    "key_products": [
+      "Dynamics 365 Sales",
+      "Dynamics 365 Customer Service",
+      "Dynamics 365 Marketing",
+      "Dynamics 365 Finance",
+      "Power Platform"
+    ],
+    "strengths": [
+      {
+        "area": "Microsoft Integration",
+        "description": "Native integration with Outlook, Teams, and Microsoft 365",
+        "impact": "Strong appeal for Microsoft-centric organizations"
+      },
+      {
+        "area": "Enterprise Agreements",
+        "description": "Often bundled with existing Microsoft contracts",
+        "impact": "May have preferential pricing through EA"
+      },
+      {
+        "area": "Power Platform",
+        "description": "Low-code tools for customization and automation",
+        "impact": "Business users can build solutions without IT"
+      }
+    ],
+    "weaknesses": [
+      {
+        "area": "User Experience",
+        "description": "Interface can feel dated compared to modern SaaS",
+        "talking_point": "Our modern UX drives higher adoption and productivity"
+      },
+      {
+        "area": "Implementation Complexity",
+        "description": "Often requires significant customization and consulting",
+        "talking_point": "We're production-ready in weeks, not months"
+      },
+      {
+        "area": "Mobile Experience",
+        "description": "Mobile apps lag behind desktop functionality",
+        "talking_point": "Our mobile-first design ensures your team is productive anywhere"
+      }
+    ],
+    "win_rate_against": 55.0,
+    "common_objections": [
+      "We're a Microsoft shop",
+      "It's included in our EA",
+      "IT prefers Microsoft for security and compliance"
+    ],
+    "last_updated": "2025-01-15T10:00:00Z",
+    "created_at": "2024-06-01T10:00:00Z"
+  }
+]
