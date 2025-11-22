@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -66,3 +67,15 @@ __all__ = [
     "notifications_router",
 ]
 >>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
+=======
+"""API routes for Sales OS."""
+
+from fastapi import APIRouter
+
+from .files import router as files_router
+
+api_router = APIRouter()
+api_router.include_router(files_router, prefix="/files", tags=["files"])
+
+__all__ = ["api_router"]
+>>>>>>> origin/claude/file-upload-service-01Fp4Hpux99bpp7yFrPVgU3s
