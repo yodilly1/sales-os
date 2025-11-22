@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 <<<<<<< HEAD
+<<<<<<< HEAD
   output: 'standalone',
   reactStrictMode: true,
 
@@ -63,6 +64,11 @@ const nextConfig = {
 >>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
       },
     ];
+=======
+  reactStrictMode: true,
+  experimental: {
+    serverActions: true,
+>>>>>>> origin/claude/transcript-ui-frontend-01827GXMtwFgZZZSpTQu33aT
   },
 };
 
