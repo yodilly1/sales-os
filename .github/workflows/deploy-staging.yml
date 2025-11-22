@@ -1,0 +1,286 @@
+# =============================================================================
+# Sales OS - Staging Deployment Workflow
+# =============================================================================
+# Automatically deploys to staging environment on merge to develop/main
+# Implements zero-downtime deployment strategy
+# =============================================================================
+
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE: ${{ github.repository }}/backend
+  FRONTEND_IMAGE: ${{ github.repository }}/frontend
+
+jobs:
+  # ===========================================================================
+  # Build and Push Images
+  # ===========================================================================
+  build-and-push:
+    name: Build and Push Images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      backend_image: ${{ steps.meta-backend.outputs.tags }}
+      frontend_image: ${{ steps.meta-frontend.outputs.tags }}
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate version
+        id: version
+        run: |
+          VERSION=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::8}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for backend
+        id: meta-backend
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=staging
+            type=raw,value=${{ steps.version.outputs.version }}
+
+      - name: Extract metadata for frontend
+        id: meta-frontend
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=staging
+            type=raw,value=${{ steps.version.outputs.version }}
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          target: production
+          push: true
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          labels: ${{ steps.meta-backend.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          target: production
+          push: true
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ secrets.STAGING_API_URL }}
+            NEXT_PUBLIC_APP_ENV=staging
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ===========================================================================
+  # Deploy to Staging
+  # ===========================================================================
+  deploy:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment:
+      name: staging
+      url: https://staging.salesos.example.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          known_hosts: ${{ secrets.STAGING_KNOWN_HOSTS }}
+
+      - name: Create deployment script
+        run: |
+          cat << 'EOF' > deploy.sh
+          #!/bin/bash
+          set -e
+
+          DEPLOY_DIR="/opt/sales-os"
+          BACKUP_DIR="/opt/sales-os-backup"
+          VERSION="${VERSION}"
+
+          echo "=== Starting deployment of version ${VERSION} ==="
+
+          # Create backup
+          echo "Creating backup..."
+          if [ -d "$DEPLOY_DIR" ]; then
+            sudo rm -rf "$BACKUP_DIR"
+            sudo cp -r "$DEPLOY_DIR" "$BACKUP_DIR"
+          fi
+
+          # Update images
+          echo "Pulling new images..."
+          docker pull ${BACKEND_IMAGE}
+          docker pull ${FRONTEND_IMAGE}
+
+          # Zero-downtime deployment using rolling update
+          echo "Performing rolling update..."
+          cd $DEPLOY_DIR
+
+          # Scale down old containers gracefully
+          docker-compose up -d --scale backend=2 --no-recreate
+          sleep 10
+
+          # Update backend with new image
+          docker-compose up -d --no-deps backend
+          sleep 15
+
+          # Health check
+          echo "Running health checks..."
+          for i in {1..30}; do
+            if curl -sf http://localhost:8000/health > /dev/null; then
+              echo "Backend health check passed"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "Health check failed, rolling back..."
+              docker-compose down
+              sudo rm -rf "$DEPLOY_DIR"
+              sudo mv "$BACKUP_DIR" "$DEPLOY_DIR"
+              cd "$DEPLOY_DIR"
+              docker-compose up -d
+              exit 1
+            fi
+            sleep 2
+          done
+
+          # Update frontend
+          docker-compose up -d --no-deps frontend
+          sleep 10
+
+          # Final health check
+          for i in {1..20}; do
+            if curl -sf http://localhost:3000 > /dev/null; then
+              echo "Frontend health check passed"
+              break
+            fi
+            if [ $i -eq 20 ]; then
+              echo "Frontend health check failed"
+              exit 1
+            fi
+            sleep 2
+          done
+
+          # Cleanup old images
+          echo "Cleaning up old images..."
+          docker image prune -f
+
+          echo "=== Deployment completed successfully ==="
+          EOF
+          chmod +x deploy.sh
+
+      - name: Deploy to staging server
+        env:
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+          STAGING_USER: ${{ secrets.STAGING_USER }}
+          VERSION: ${{ needs.build-and-push.outputs.version }}
+          BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:${{ needs.build-and-push.outputs.version }}
+          FRONTEND_IMAGE: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:${{ needs.build-and-push.outputs.version }}
+        run: |
+          # Copy deployment script
+          scp deploy.sh $STAGING_USER@$STAGING_HOST:/tmp/deploy.sh
+
+          # Execute deployment
+          ssh $STAGING_USER@$STAGING_HOST "VERSION=$VERSION BACKEND_IMAGE=$BACKEND_IMAGE FRONTEND_IMAGE=$FRONTEND_IMAGE bash /tmp/deploy.sh"
+
+      - name: Notify deployment status
+        if: always()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "Staging Deployment ${{ job.status }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Staging Deployment ${{ job.status }}*\n\n*Version:* ${{ needs.build-and-push.outputs.version }}\n*Commit:* ${{ github.sha }}\n*Actor:* ${{ github.actor }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+  # ===========================================================================
+  # Post-Deployment Verification
+  # ===========================================================================
+  verify:
+    name: Post-Deployment Verification
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+      - name: Wait for deployment to stabilize
+        run: sleep 30
+
+      - name: Run smoke tests
+        env:
+          STAGING_URL: https://staging.salesos.example.com
+          API_URL: https://api.staging.salesos.example.com
+        run: |
+          echo "Running smoke tests..."
+
+          # Test frontend
+          response=$(curl -s -o /dev/null -w "%{http_code}" $STAGING_URL || echo "000")
+          if [ "$response" != "200" ]; then
+            echo "Frontend smoke test failed with status: $response"
+            exit 1
+          fi
+          echo "Frontend: OK"
+
+          # Test API health
+          response=$(curl -s -o /dev/null -w "%{http_code}" $API_URL/health || echo "000")
+          if [ "$response" != "200" ]; then
+            echo "API health check failed with status: $response"
+            exit 1
+          fi
+          echo "API Health: OK"
+
+          echo "All smoke tests passed!"

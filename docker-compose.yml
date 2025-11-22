@@ -1,0 +1,195 @@
+# Sales OS - Docker Compose Configuration
+# Usage: docker-compose up -d
+# For development: docker-compose --profile dev up -d
+
+version: '3.8'
+
+services:
+  # ==========================================================================
+  # Backend API Service
+  # ==========================================================================
+  backend:
+    build:
+      context: ./backend
+      target: development
+    container_name: sales-os-backend
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-sales_os}:${POSTGRES_PASSWORD:-sales_os_dev}@postgres:5432/${POSTGRES_DB:-sales_os}
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DEBUG=${DEBUG:-true}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - ./backend:/app
+      - backend_cache:/app/.cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - sales-os-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ==========================================================================
+  # Frontend Application Service
+  # ==========================================================================
+  frontend:
+    build:
+      context: ./frontend
+      target: development
+    container_name: sales-os-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      - NEXT_PUBLIC_APP_ENV=${ENVIRONMENT:-development}
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+      - frontend_next:/app/.next
+    depends_on:
+      - backend
+    networks:
+      - sales-os-network
+    restart: unless-stopped
+
+  # ==========================================================================
+  # PostgreSQL Database
+  # ==========================================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: sales-os-postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-sales_os}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-sales_os_dev}
+      - POSTGRES_DB=${POSTGRES_DB:-sales_os}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/db/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - sales-os-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sales_os} -d ${POSTGRES_DB:-sales_os}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ==========================================================================
+  # Redis Cache
+  # ==========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: sales-os-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - sales-os-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================================================
+  # Nginx Reverse Proxy (Production Profile)
+  # ==========================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: sales-os-nginx
+    profiles:
+      - production
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./infra/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - sales-os-network
+    restart: unless-stopped
+
+  # ==========================================================================
+  # Database Admin (Development Profile)
+  # ==========================================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: sales-os-pgadmin
+    profiles:
+      - dev
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@salesos.local}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD:-admin}
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - sales-os-network
+
+  # ==========================================================================
+  # Redis Commander (Development Profile)
+  # ==========================================================================
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: sales-os-redis-commander
+    profiles:
+      - dev
+    ports:
+      - "${REDIS_COMMANDER_PORT:-8081}:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - sales-os-network
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  sales-os-network:
+    driver: bridge
+    name: sales-os-network
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  postgres_data:
+    name: sales-os-postgres-data
+  redis_data:
+    name: sales-os-redis-data
+  pgadmin_data:
+    name: sales-os-pgadmin-data
+  backend_cache:
+    name: sales-os-backend-cache
+  frontend_node_modules:
+    name: sales-os-frontend-node-modules
+  frontend_next:
+    name: sales-os-frontend-next
