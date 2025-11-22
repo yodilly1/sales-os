@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { clsx, type ClassValue } from 'clsx';
 <<<<<<< HEAD
 import { twMerge } from 'tailwind-merge';
@@ -158,6 +159,44 @@ export function formatNumber(num: number): string {
   return num.toString()
 }
 
+=======
+import { clsx, type ClassValue } from 'clsx'
+
+export function cn(...inputs: ClassValue[]) {
+  return clsx(inputs)
+}
+
+export function formatNumber(num: number): string {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M'
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K'
+  }
+  return num.toString()
+}
+
+export function formatPercentage(num: number): string {
+  const sign = num >= 0 ? '+' : ''
+  return `${sign}${num.toFixed(1)}%`
+}
+
+export function formatTimeAgo(date: Date): string {
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+
+  if (diffMins < 1) return 'Just now'
+  if (diffMins < 60) return `${diffMins}m ago`
+  if (diffHours < 24) return `${diffHours}h ago`
+  if (diffDays < 7) return `${diffDays}d ago`
+
+  return date.toLocaleDateString()
+}
+
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
 export function getInitials(name: string): string {
   return name
     .split(' ')
@@ -166,6 +205,7 @@ export function getInitials(name: string): string {
     .toUpperCase()
     .slice(0, 2)
 }
+<<<<<<< HEAD
 
 export function truncate(str: string, maxLength: number): string {
   if (str.length <= maxLength) return str
@@ -229,3 +269,5 @@ export function generateCSV(data: Record<string, unknown>[], columns?: string[])
   return [headers.join(','), ...rows].join('\n')
 >>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
 }
+=======
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm

@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import type { Metadata } from 'next';
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -48,10 +49,27 @@ export const metadata: Metadata = {
   description: 'VP of Sales Operating System - Prospect research and enrichment platform',
 }
 >>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
+=======
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import '@/styles/globals.css'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
+
+export const metadata: Metadata = {
+  title: 'Sales OS - VP of Sales Operating System',
+  description: 'AI-powered platform for sales leaders. Automate call analysis, generate content, enrich prospects, and coach your team.',
+  keywords: ['sales', 'AI', 'CRM', 'sales intelligence', 'call analytics', 'sales coaching'],
+}
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
 
 export default function RootLayout({
   children,
 }: {
+<<<<<<< HEAD
 <<<<<<< HEAD
   children: React.ReactNode;
 }) {
@@ -151,4 +169,13 @@ export default function RootLayout({
     </html>
   )
 >>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
+=======
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en" className={inter.variable}>
+      <body className="font-sans">{children}</body>
+    </html>
+  )
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
 }

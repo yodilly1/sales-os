@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> origin/claude/frontend-coaching-ui-01ACvPTYwnXPyzreDZDTsLry
 import type { NextConfig } from "next";
@@ -38,3 +39,12 @@ export default nextConfig
 
 export default nextConfig;
 >>>>>>> origin/claude/frontend-coaching-ui-01ACvPTYwnXPyzreDZDTsLry
+=======
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
+}
+
+export default nextConfig
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm

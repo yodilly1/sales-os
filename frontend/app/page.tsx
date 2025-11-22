@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50">
@@ -266,4 +267,10 @@ export default function Home() {
     </div>
   )
 >>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
+=======
+import { redirect } from 'next/navigation'
+
+export default function Home() {
+  redirect('/dashboard')
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
 }

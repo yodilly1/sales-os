@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import type { Config } from 'tailwindcss';
 =======
 import type { Config } from 'tailwindcss'
 >>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
+=======
+import type { Config } from 'tailwindcss'
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
 
 const config: Config = {
   content: [
@@ -13,6 +17,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         // Sales OS Professional Color Palette
@@ -28,6 +33,21 @@ const config: Config = {
           800: '#075985',
           900: '#0c4a6e',
           950: '#082f49',
+=======
+        // Sales OS Brand Colors
+        primary: {
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+          950: '#172554',
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
         },
         accent: {
           50: '#fdf4ff',
@@ -40,6 +60,7 @@ const config: Config = {
           700: '#a21caf',
           800: '#86198f',
           900: '#701a75',
+<<<<<<< HEAD
           950: '#4a044e',
 =======
         primary: {
@@ -54,10 +75,13 @@ const config: Config = {
           800: '#1e40af',
           900: '#1e3a8a',
 >>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
+=======
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
         },
         success: {
           50: '#f0fdf4',
           100: '#dcfce7',
+<<<<<<< HEAD
 <<<<<<< HEAD
           200: '#bbf7d0',
           300: '#86efac',
@@ -71,10 +95,15 @@ const config: Config = {
           500: '#22c55e',
           600: '#16a34a',
 >>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
+=======
+          500: '#22c55e',
+          600: '#16a34a',
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
         },
         warning: {
           50: '#fffbeb',
           100: '#fef3c7',
+<<<<<<< HEAD
 <<<<<<< HEAD
           200: '#fde68a',
           300: '#fcd34d',
@@ -84,10 +113,15 @@ const config: Config = {
           700: '#b45309',
           800: '#92400e',
           900: '#78350f',
+=======
+          500: '#f59e0b',
+          600: '#d97706',
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
         },
         danger: {
           50: '#fef2f2',
           100: '#fee2e2',
+<<<<<<< HEAD
           200: '#fecaca',
           300: '#fca5a5',
           400: '#f87171',
@@ -141,10 +175,15 @@ const config: Config = {
           500: '#ef4444',
           600: '#dc2626',
 >>>>>>> origin/claude/frontend-content-ui-01SUCiGQU6dN2Z9rPASZfehV
+=======
+          500: '#ef4444',
+          600: '#dc2626',
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
         },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+<<<<<<< HEAD
 <<<<<<< HEAD
         mono: ['JetBrains Mono', 'Menlo', 'monospace'],
       },
@@ -188,10 +227,21 @@ export default config;
           500: '#ef4444',
           600: '#dc2626',
         },
+=======
+      },
+      boxShadow: {
+        'card': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+        'card-hover': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
       },
     },
   },
   plugins: [],
 }
+<<<<<<< HEAD
 export default config
 >>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
+=======
+
+export default config
+>>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
