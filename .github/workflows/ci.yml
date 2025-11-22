@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: CI
 
 on:
@@ -5,24 +6,66 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+=======
+# =============================================================================
+# Sales OS - Continuous Integration Workflow
+# =============================================================================
+# Runs on every pull request and push to main/develop branches
+# Tests, lints, and builds both backend and frontend
+# =============================================================================
+
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+>>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS
 
 env:
   PYTHON_VERSION: '3.11'
   NODE_VERSION: '20'
 
 jobs:
+<<<<<<< HEAD
   # Backend Tests
   backend-test:
     name: Backend Tests
     runs-on: ubuntu-latest
+=======
+  # ===========================================================================
+  # Backend Tests
+  # ===========================================================================
+  backend-test:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+>>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS
 
     services:
       postgres:
         image: postgres:15-alpine
         env:
+<<<<<<< HEAD
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
           POSTGRES_DB: test
+=======
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+>>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS
         ports:
           - 5432:5432
         options: >-
@@ -42,13 +85,19 @@ jobs:
           --health-retries 5
 
     steps:
+<<<<<<< HEAD
       - uses: actions/checkout@v4
+=======
+      - name: Checkout code
+        uses: actions/checkout@v4
+>>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip'
+<<<<<<< HEAD
           cache-dependency-path: backend/requirements.txt
 
       - name: Install dependencies
@@ -73,10 +122,35 @@ jobs:
         working-directory: ./backend
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
+=======
+          cache-dependency-path: backend/requirements*.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+      - name: Run linting
+        run: |
+          pip install ruff
+          ruff check .
+          ruff format --check .
+
+      - name: Run type checking
+        run: |
+          pip install mypy
+          mypy . --ignore-missing-imports || true
+
+      - name: Run tests with coverage
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+>>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS
           REDIS_URL: redis://localhost:6379/0
           SECRET_KEY: test-secret-key
           ENVIRONMENT: test
         run: |
+<<<<<<< HEAD
           pytest -v --cov=app --cov-report=xml || true
 
       - name: Upload coverage
@@ -93,6 +167,30 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+=======
+          pytest -v --cov=app --cov-report=xml --cov-report=term-missing
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./backend/coverage.xml
+          flags: backend
+          fail_ci_if_error: false
+
+  # ===========================================================================
+  # Frontend Tests
+  # ===========================================================================
+  frontend-test:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+>>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -102,6 +200,7 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
+<<<<<<< HEAD
         working-directory: ./frontend
         run: npm ci || npm install
 
@@ -126,15 +225,46 @@ jobs:
   # Docker Build Test
   docker-build:
     name: Docker Build
+=======
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint || true
+
+      - name: Run type checking
+        run: npm run type-check || true
+
+      - name: Run tests
+        run: npm run test -- --coverage --passWithNoTests
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./frontend/coverage/lcov.info
+          flags: frontend
+          fail_ci_if_error: false
+
+  # ===========================================================================
+  # Build Verification
+  # ===========================================================================
+  build:
+    name: Build Verification
+>>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS
     runs-on: ubuntu-latest
     needs: [backend-test, frontend-test]
 
     steps:
+<<<<<<< HEAD
       - uses: actions/checkout@v4
+=======
+      - name: Checkout code
+        uses: actions/checkout@v4
+>>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+<<<<<<< HEAD
       - name: Build Backend Image
         uses: docker/build-push-action@v5
         with:
@@ -160,11 +290,80 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+=======
+      - name: Build backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          target: production
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: sales-os-backend:${{ github.sha }}
+
+      - name: Build frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          target: production
+          push: false
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://api.example.com
+            NEXT_PUBLIC_APP_ENV=production
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: sales-os-frontend:${{ github.sha }}
+
+  # ===========================================================================
+  # Security Scanning
+  # ===========================================================================
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+>>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
           scan-ref: '.'
+<<<<<<< HEAD
           severity: 'CRITICAL,HIGH'
           exit-code: '0'  # Don't fail on vulnerabilities for now
+=======
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # ===========================================================================
+  # All Checks Passed
+  # ===========================================================================
+  ci-success:
+    name: CI Success
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test, build, security]
+    if: always()
+
+    steps:
+      - name: Check all jobs passed
+        run: |
+          if [[ "${{ needs.backend-test.result }}" != "success" ]] || \
+             [[ "${{ needs.frontend-test.result }}" != "success" ]] || \
+             [[ "${{ needs.build.result }}" != "success" ]] || \
+             [[ "${{ needs.security.result }}" != "success" ]]; then
+            echo "One or more jobs failed"
+            exit 1
+          fi
+          echo "All CI checks passed!"
+>>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS

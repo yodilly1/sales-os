@@ -26,3 +26,31 @@ Thumbs.db
 # Logs
 *.log
 logs/
+
+# Docker
+*.pem
+*.key
+
+# SSL certificates (keep .gitkeep)
+infra/ssl/*.pem
+infra/ssl/*.crt
+infra/ssl/*.key
+
+# Backups
+/backups/
+*.sql.gz
+*.sql.bak
+
+# Coverage
+coverage/
+.coverage
+htmlcov/
+
+# Testing
+.pytest_cache/
+.tox/
+
+# Virtual environments
+venv/
+.venv/
+env/
