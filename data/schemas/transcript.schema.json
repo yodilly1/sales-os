@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sales-os.example.com/schemas/transcript.schema.json",
+  "title": "Call and Transcript Schemas",
+  "description": "JSON Schema definitions for call recording and transcript entities",
+  "definitions": {
+    "CallSource": {
+      "type": "string",
+      "enum": ["zoom", "teams", "google_meet", "avoma", "gong", "chorus", "manual_upload", "other"],
+      "description": "Source of the call recording"
+    },
+    "CallType": {
+      "type": "string",
+      "enum": ["discovery", "demo", "negotiation", "closing", "follow_up", "check_in", "kickoff", "other"],
+      "description": "Type of sales call"
+    },
+    "CallStatus": {
+      "type": "string",
+      "enum": ["pending", "processing", "transcribed", "analyzed", "failed"],
+      "description": "Status of call processing"
+    },
+    "CallParticipant": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": ["string", "null"],
+          "format": "email"
+        },
+        "role": {
+          "type": ["string", "null"],
+          "description": "Role in the call (host, participant, etc.)"
+        },
+        "is_internal": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": ["name"]
+    },
+    "Call": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "source": {
+          "$ref": "#/definitions/CallSource"
+        },
+        "call_type": {
+          "oneOf": [
+            { "$ref": "#/definitions/CallType" },
+            { "type": "null" }
+          ]
+        },
+        "status": {
+          "$ref": "#/definitions/CallStatus"
+        },
+        "scheduled_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "started_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "ended_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "duration_seconds": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "recording_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "external_id": {
+          "type": ["string", "null"],
+          "description": "External system ID (Zoom, Avoma, etc.)"
+        },
+        "participants": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/CallParticipant"
+          }
+        },
+        "user_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "prospect_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "company_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "title", "source", "status", "user_id"]
+    },
+    "Transcript": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "raw_text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Raw transcript text"
+        },
+        "structured_text": {
+          "type": ["object", "null"],
+          "description": "Structured transcript with speaker labels",
+          "properties": {
+            "segments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "speaker": { "type": "string" },
+                  "text": { "type": "string" },
+                  "start_time": { "type": "number" },
+                  "end_time": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "maxLength": 10
+        },
+        "word_count": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "confidence_score": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "transcription_service": {
+          "type": ["string", "null"]
+        },
+        "processed_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "call_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "raw_text", "call_id"]
+    },
+    "CallUploadRequest": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "source": {
+          "$ref": "#/definitions/CallSource"
+        },
+        "call_type": {
+          "$ref": "#/definitions/CallType"
+        },
+        "transcript_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "started_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "ended_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "prospect_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "company_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "participants": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/CallParticipant"
+          }
+        }
+      },
+      "required": ["title", "transcript_text"]
+    }
+  }
+}

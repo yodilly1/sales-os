@@ -1,0 +1,327 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sales-os.example.com/schemas/coaching.schema.json",
+  "title": "Coaching Report and Score Schemas",
+  "description": "JSON Schema definitions for SPICED coaching based on Winning by Design methodology",
+  "definitions": {
+    "CoachingLevel": {
+      "type": "string",
+      "enum": ["needs_improvement", "developing", "proficient", "advanced", "expert"],
+      "description": "Overall coaching level assessment"
+    },
+    "SPICEDComponent": {
+      "type": "string",
+      "enum": ["S", "P", "I", "C", "E", "D"],
+      "description": "SPICED component identifier"
+    },
+    "CoachingScore": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "component": {
+          "$ref": "#/definitions/SPICEDComponent"
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Score from 1-5"
+        },
+        "feedback": {
+          "type": ["string", "null"],
+          "description": "Detailed feedback for this component"
+        },
+        "strengths": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Identified strengths"
+        },
+        "areas_for_improvement": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Areas needing improvement"
+        },
+        "evidence_quotes": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Quotes from the call supporting the score"
+        },
+        "missed_opportunities": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Opportunities that were missed"
+        },
+        "recommended_questions": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Questions that could have been asked"
+        },
+        "best_practices": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Best practices to follow"
+        },
+        "coaching_report_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "component", "score", "coaching_report_id"]
+    },
+    "CoachingReport": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "call_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "user_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "overall_score": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "level": {
+          "$ref": "#/definitions/CoachingLevel"
+        },
+        "confidence_score": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "executive_summary": {
+          "type": ["string", "null"],
+          "description": "Brief summary of overall performance"
+        },
+        "key_strengths": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "key_improvements": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "wbd_methodology_alignment": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Alignment with Winning by Design methodology"
+        },
+        "wbd_feedback": {
+          "type": ["string", "null"],
+          "description": "Specific feedback on WbD methodology adherence"
+        },
+        "action_items": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "learning_resources": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Recommended learning resources"
+        },
+        "practice_scenarios": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Suggested practice scenarios"
+        },
+        "improvement_areas": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Areas showing improvement over time"
+        },
+        "regression_areas": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Areas showing regression"
+        },
+        "trend_summary": {
+          "type": ["string", "null"],
+          "description": "Summary of performance trends"
+        },
+        "scores": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/CoachingScore"
+          },
+          "description": "Individual SPICED component scores"
+        },
+        "model_version": {
+          "type": ["string", "null"]
+        },
+        "analyzed_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "call_id", "user_id", "overall_score", "level"]
+    },
+    "CoachingAnalysisRequest": {
+      "type": "object",
+      "properties": {
+        "call_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "include_trend_analysis": {
+          "type": "boolean",
+          "default": true
+        },
+        "compare_with_team": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": ["call_id"]
+    },
+    "SPICEDTrendPoint": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "situation": {
+          "type": ["number", "null"],
+          "minimum": 1,
+          "maximum": 5
+        },
+        "pain": {
+          "type": ["number", "null"],
+          "minimum": 1,
+          "maximum": 5
+        },
+        "impact": {
+          "type": ["number", "null"],
+          "minimum": 1,
+          "maximum": 5
+        },
+        "critical_event": {
+          "type": ["number", "null"],
+          "minimum": 1,
+          "maximum": 5
+        },
+        "expected_decision": {
+          "type": ["number", "null"],
+          "minimum": 1,
+          "maximum": 5
+        },
+        "decision_criteria": {
+          "type": ["number", "null"],
+          "minimum": 1,
+          "maximum": 5
+        },
+        "overall": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 5
+        }
+      },
+      "required": ["date", "overall"]
+    },
+    "CoachingTrendResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "period_days": {
+          "type": "integer",
+          "minimum": 7
+        },
+        "trend_data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SPICEDTrendPoint"
+          }
+        },
+        "average_scores": {
+          "type": "object",
+          "properties": {
+            "situation": { "type": "number" },
+            "pain": { "type": "number" },
+            "impact": { "type": "number" },
+            "critical_event": { "type": "number" },
+            "expected_decision": { "type": "number" },
+            "decision_criteria": { "type": "number" },
+            "overall": { "type": "number" }
+          }
+        },
+        "improvement_velocity": {
+          "type": "number",
+          "description": "Rate of improvement over the period"
+        },
+        "strongest_components": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SPICEDComponent"
+          }
+        },
+        "weakest_components": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SPICEDComponent"
+          }
+        },
+        "team_comparison": {
+          "type": ["object", "null"],
+          "description": "Comparison with team averages"
+        }
+      },
+      "required": ["user_id", "period_days", "trend_data", "average_scores"]
+    }
+  }
+}

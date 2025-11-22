@@ -1,1 +1,1 @@
-"""External service connectors package."""
+"""External service integrations package."""

@@ -1,0 +1,362 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sales-os.example.com/schemas/prospect.schema.json",
+  "title": "Prospect and Company Schemas",
+  "description": "JSON Schema definitions for prospect and company entities",
+  "definitions": {
+    "CompanySize": {
+      "type": "string",
+      "enum": ["startup", "small", "medium", "large", "enterprise"],
+      "description": "Company size category"
+    },
+    "FundingStage": {
+      "type": "string",
+      "enum": [
+        "bootstrapped",
+        "seed",
+        "series_a",
+        "series_b",
+        "series_c",
+        "series_d_plus",
+        "ipo",
+        "private_equity",
+        "unknown"
+      ],
+      "description": "Company funding stage"
+    },
+    "ProspectStatus": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "engaged",
+        "qualified",
+        "proposal",
+        "negotiation",
+        "closed_won",
+        "closed_lost",
+        "churned"
+      ],
+      "description": "Prospect engagement status"
+    },
+    "Company": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "domain": {
+          "type": ["string", "null"],
+          "maxLength": 255
+        },
+        "website": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "industry": {
+          "type": ["string", "null"],
+          "maxLength": 100
+        },
+        "sub_industry": {
+          "type": ["string", "null"]
+        },
+        "size": {
+          "oneOf": [
+            { "$ref": "#/definitions/CompanySize" },
+            { "type": "null" }
+          ]
+        },
+        "employee_count": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "annual_revenue": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "funding_stage": {
+          "oneOf": [
+            { "$ref": "#/definitions/FundingStage" },
+            { "type": "null" }
+          ]
+        },
+        "total_funding": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "founded_year": {
+          "type": ["integer", "null"],
+          "minimum": 1800
+        },
+        "headquarters_city": {
+          "type": ["string", "null"]
+        },
+        "headquarters_state": {
+          "type": ["string", "null"]
+        },
+        "headquarters_country": {
+          "type": ["string", "null"]
+        },
+        "description": {
+          "type": ["string", "null"]
+        },
+        "tagline": {
+          "type": ["string", "null"]
+        },
+        "logo_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "tech_stack": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "tools_used": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "linkedin_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "twitter_handle": {
+          "type": ["string", "null"]
+        },
+        "crunchbase_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "recent_news": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "url": { "type": "string" },
+              "date": { "type": "string", "format": "date" },
+              "source": { "type": "string" }
+            }
+          }
+        },
+        "recent_events": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "date": { "type": "string", "format": "date" },
+              "type": { "type": "string" }
+            }
+          }
+        },
+        "key_initiatives": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "is_verified": {
+          "type": "boolean",
+          "default": false
+        },
+        "last_enriched_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "hubspot_id": {
+          "type": ["string", "null"]
+        },
+        "salesforce_id": {
+          "type": ["string", "null"]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "name"]
+    },
+    "Prospect": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "first_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "last_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "phone": {
+          "type": ["string", "null"]
+        },
+        "mobile": {
+          "type": ["string", "null"]
+        },
+        "title": {
+          "type": ["string", "null"]
+        },
+        "department": {
+          "type": ["string", "null"]
+        },
+        "seniority": {
+          "type": ["string", "null"],
+          "enum": ["entry", "individual_contributor", "manager", "director", "vp", "c_level", null]
+        },
+        "status": {
+          "$ref": "#/definitions/ProspectStatus"
+        },
+        "lead_score": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "linkedin_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "twitter_handle": {
+          "type": ["string", "null"]
+        },
+        "avatar_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "work_history": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "company": { "type": "string" },
+              "title": { "type": "string" },
+              "start_date": { "type": "string" },
+              "end_date": { "type": ["string", "null"] },
+              "is_current": { "type": "boolean" }
+            }
+          }
+        },
+        "education": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "school": { "type": "string" },
+              "degree": { "type": "string" },
+              "field": { "type": "string" },
+              "year": { "type": "integer" }
+            }
+          }
+        },
+        "interests": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "recent_posts": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "content": { "type": "string" },
+              "url": { "type": "string" },
+              "date": { "type": "string" },
+              "platform": { "type": "string" }
+            }
+          }
+        },
+        "notes": {
+          "type": ["string", "null"]
+        },
+        "pain_points": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "goals": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "is_verified": {
+          "type": "boolean",
+          "default": false
+        },
+        "last_enriched_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "last_contacted_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "company_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "hubspot_id": {
+          "type": ["string", "null"]
+        },
+        "salesforce_id": {
+          "type": ["string", "null"]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "first_name", "last_name", "email", "status"]
+    },
+    "EnrichmentRequest": {
+      "type": "object",
+      "properties": {
+        "prospect_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "company_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "force_refresh": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "oneOf": [
+        { "required": ["prospect_id"] },
+        { "required": ["company_id"] }
+      ]
+    }
+  }
+}

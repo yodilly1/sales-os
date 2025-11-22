@@ -1,5 +1,4 @@
-"""Application configuration and settings."""
-
+"""Application configuration using Pydantic Settings."""
 from functools import lru_cache
 from typing import List
 
@@ -27,8 +26,24 @@ class Settings(BaseSettings):
     # API Settings
     api_v1_prefix: str = "/api/v1"
 
+    # Database
+    database_url: str = "postgresql+asyncpg://user:password@localhost:5432/sales_os"
+    database_url_sync: str = "postgresql://user:password@localhost:5432/sales_os"
+
+    # Security
+    secret_key: str = "your-super-secret-key-change-in-production"
+    jwt_secret_key: str = "your-jwt-secret-key-change-in-production"
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
+    refresh_token_expire_days: int = 7
+
     # CORS Settings
     cors_origins: str = "http://localhost:3000,http://localhost:5173"
+
+    # External Services
+    claude_api_key: str = ""
+    hubspot_client_id: str = ""
+    hubspot_client_secret: str = ""
 
     @property
     def cors_origins_list(self) -> List[str]:
@@ -45,3 +60,6 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """Get cached settings instance."""
     return Settings()
+
+
+settings = get_settings()

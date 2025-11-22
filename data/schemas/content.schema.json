@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sales-os.example.com/schemas/content.schema.json",
+  "title": "Content and ContentTemplate Schemas",
+  "description": "JSON Schema definitions for AI-generated sales content",
+  "definitions": {
+    "ContentType": {
+      "type": "string",
+      "enum": [
+        "sales_deck",
+        "proposal",
+        "one_pager",
+        "battlecard",
+        "case_study",
+        "email_sequence",
+        "follow_up_email",
+        "executive_summary",
+        "roi_calculator",
+        "other"
+      ],
+      "description": "Type of generated content"
+    },
+    "ContentStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "generating",
+        "generated",
+        "reviewed",
+        "approved",
+        "published",
+        "archived",
+        "failed"
+      ],
+      "description": "Status of content generation"
+    },
+    "ProductInfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": ["string", "null"]
+        },
+        "features": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "benefits": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "differentiators": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "pricing": {
+          "type": ["string", "null"]
+        }
+      },
+      "required": ["name"]
+    },
+    "AudienceInfo": {
+      "type": "object",
+      "properties": {
+        "industry": {
+          "type": ["string", "null"]
+        },
+        "company_size": {
+          "type": ["string", "null"]
+        },
+        "role": {
+          "type": ["string", "null"]
+        },
+        "pain_points": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "goals": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ContentTemplate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"]
+        },
+        "content_type": {
+          "$ref": "#/definitions/ContentType"
+        },
+        "template_structure": {
+          "type": "object",
+          "description": "Template structure defining sections and layout"
+        },
+        "brand_guidelines": {
+          "type": ["object", "null"],
+          "description": "Brand styling guidelines"
+        },
+        "color_scheme": {
+          "type": ["object", "null"],
+          "properties": {
+            "primary": { "type": "string" },
+            "secondary": { "type": "string" },
+            "accent": { "type": "string" },
+            "background": { "type": "string" },
+            "text": { "type": "string" }
+          }
+        },
+        "font_family": {
+          "type": ["string", "null"]
+        },
+        "is_default": {
+          "type": "boolean",
+          "default": false
+        },
+        "is_public": {
+          "type": "boolean",
+          "default": false
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "usage_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "organization_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "name", "content_type", "template_structure"]
+    },
+    "Content": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "content_type": {
+          "$ref": "#/definitions/ContentType"
+        },
+        "status": {
+          "$ref": "#/definitions/ContentStatus"
+        },
+        "goal": {
+          "type": ["string", "null"],
+          "description": "Purpose/goal of the content"
+        },
+        "product_info": {
+          "oneOf": [
+            { "$ref": "#/definitions/ProductInfo" },
+            { "type": "null" }
+          ]
+        },
+        "audience_info": {
+          "oneOf": [
+            { "$ref": "#/definitions/AudienceInfo" },
+            { "type": "null" }
+          ]
+        },
+        "additional_context": {
+          "type": ["string", "null"]
+        },
+        "content_data": {
+          "type": ["object", "null"],
+          "description": "Generated content structure"
+        },
+        "rendered_html": {
+          "type": ["string", "null"]
+        },
+        "rendered_pdf_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "rendered_pptx_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "parent_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "tags": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "generated_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "model_version": {
+          "type": ["string", "null"]
+        },
+        "created_by_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "template_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "prospect_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "company_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "title", "content_type", "status", "created_by_id"]
+    },
+    "ContentGenerateRequest": {
+      "type": "object",
+      "properties": {
+        "content_type": {
+          "$ref": "#/definitions/ContentType"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "goal": {
+          "type": "string"
+        },
+        "product_info": {
+          "$ref": "#/definitions/ProductInfo"
+        },
+        "audience_info": {
+          "$ref": "#/definitions/AudienceInfo"
+        },
+        "template_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "prospect_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "company_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "additional_context": {
+          "type": ["string", "null"]
+        },
+        "style_preferences": {
+          "type": ["object", "null"]
+        }
+      },
+      "required": ["content_type", "title", "goal", "product_info"]
+    }
+  }
+}
