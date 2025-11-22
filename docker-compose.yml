@@ -1,38 +1,3 @@
-<<<<<<< HEAD
-version: '3.8'
-
-services:
-  # PostgreSQL Database
-  db:
-    image: postgres:15-alpine
-    container_name: sales-os-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-salesos}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-salesos_dev_password}
-      POSTGRES_DB: ${POSTGRES_DB:-salesos}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./infra/db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-salesos}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Redis for caching and job queues
-  redis:
-    image: redis:7-alpine
-    container_name: sales-os-redis
-    restart: unless-stopped
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
-    ports:
-      - "6379:6379"
-=======
 # Sales OS - Docker Compose Configuration
 # Usage: docker-compose up -d
 # For development: docker-compose --profile dev up -d
@@ -46,18 +11,24 @@ services:
   backend:
     build:
       context: ./backend
-      target: development
+      dockerfile: Dockerfile
     container_name: sales-os-backend
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-sales_os}:${POSTGRES_PASSWORD:-sales_os_dev}@postgres:5432/${POSTGRES_DB:-sales_os}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-salesos}:${POSTGRES_PASSWORD:-salesos_dev_password}@postgres:5432/${POSTGRES_DB:-salesos}
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
       - ENVIRONMENT=${ENVIRONMENT:-development}
       - DEBUG=${DEBUG:-true}
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - HUBSPOT_API_KEY=${HUBSPOT_API_KEY}
+      - HUBSPOT_CLIENT_ID=${HUBSPOT_CLIENT_ID}
+      - HUBSPOT_CLIENT_SECRET=${HUBSPOT_CLIENT_SECRET}
+      - AVOMA_API_KEY=${AVOMA_API_KEY}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
     volumes:
       - ./backend:/app
       - backend_cache:/app/.cache
@@ -69,6 +40,7 @@ services:
     networks:
       - sales-os-network
     restart: unless-stopped
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -77,17 +49,44 @@ services:
       start_period: 10s
 
   # ==========================================================================
+  # Background Worker (Celery)
+  # ==========================================================================
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sales-os-worker
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-salesos}:${POSTGRES_PASSWORD:-salesos_dev_password}@postgres:5432/${POSTGRES_DB:-salesos}
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - sales-os-network
+    restart: unless-stopped
+    command: celery -A app.worker worker --loglevel=info
+
+  # ==========================================================================
   # Frontend Application Service
   # ==========================================================================
   frontend:
     build:
       context: ./frontend
-      target: development
+      dockerfile: Dockerfile
     container_name: sales-os-frontend
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     environment:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
       - NEXT_PUBLIC_APP_ENV=${ENVIRONMENT:-development}
     volumes:
       - ./frontend:/app
@@ -98,6 +97,7 @@ services:
     networks:
       - sales-os-network
     restart: unless-stopped
+    command: npm run dev
 
   # ==========================================================================
   # PostgreSQL Database
@@ -108,17 +108,17 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      - POSTGRES_USER=${POSTGRES_USER:-sales_os}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-sales_os_dev}
-      - POSTGRES_DB=${POSTGRES_DB:-sales_os}
+      - POSTGRES_USER=${POSTGRES_USER:-salesos}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-salesos_dev_password}
+      - POSTGRES_DB=${POSTGRES_DB:-salesos}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./infra/db/init:/docker-entrypoint-initdb.d:ro
+      - ./infra/db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - sales-os-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sales_os} -d ${POSTGRES_DB:-sales_os}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-salesos} -d ${POSTGRES_DB:-salesos}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -138,93 +138,12 @@ services:
     networks:
       - sales-os-network
     restart: unless-stopped
->>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-<<<<<<< HEAD
-  # Backend API (FastAPI)
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: sales-os-backend
-    restart: unless-stopped
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-salesos}:${POSTGRES_PASSWORD:-salesos_dev_password}@db:5432/${POSTGRES_DB:-salesos}
-      - REDIS_URL=redis://redis:6379/0
-      - ENVIRONMENT=${ENVIRONMENT:-development}
-      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - HUBSPOT_API_KEY=${HUBSPOT_API_KEY}
-      - HUBSPOT_CLIENT_ID=${HUBSPOT_CLIENT_ID}
-      - HUBSPOT_CLIENT_SECRET=${HUBSPOT_CLIENT_SECRET}
-      - AVOMA_API_KEY=${AVOMA_API_KEY}
-      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
-      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000}
-    volumes:
-      - ./backend:/app
-      - backend_cache:/app/.cache
-    ports:
-      - "8000:8000"
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-
-  # Background Worker (Celery)
-  worker:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: sales-os-worker
-    restart: unless-stopped
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-salesos}:${POSTGRES_PASSWORD:-salesos_dev_password}@db:5432/${POSTGRES_DB:-salesos}
-      - REDIS_URL=redis://redis:6379/0
-      - ENVIRONMENT=${ENVIRONMENT:-development}
-      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-    volumes:
-      - ./backend:/app
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    command: celery -A app.worker worker --loglevel=info
-
-  # Frontend (Next.js)
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: sales-os-frontend
-    restart: unless-stopped
-    environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000}
-      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
-    volumes:
-      - ./frontend:/app
-      - frontend_node_modules:/app/node_modules
-      - frontend_next:/app/.next
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    command: npm run dev
-
-  # Nginx Reverse Proxy (Production)
-  nginx:
-    image: nginx:alpine
-    container_name: sales-os-nginx
-    restart: unless-stopped
-=======
   # ==========================================================================
   # Nginx Reverse Proxy (Production Profile)
   # ==========================================================================
@@ -233,27 +152,10 @@ services:
     container_name: sales-os-nginx
     profiles:
       - production
->>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS
     ports:
       - "80:80"
       - "443:443"
     volumes:
-<<<<<<< HEAD
-      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./infra/nginx/ssl:/etc/nginx/ssl
-    depends_on:
-      - backend
-      - frontend
-    profiles:
-      - production
-
-volumes:
-  postgres_data:
-  redis_data:
-  backend_cache:
-  frontend_node_modules:
-  frontend_next:
-=======
       - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./infra/nginx/conf.d:/etc/nginx/conf.d:ro
       - ./infra/ssl:/etc/nginx/ssl:ro
@@ -326,4 +228,3 @@ volumes:
     name: sales-os-frontend-node-modules
   frontend_next:
     name: sales-os-frontend-next
->>>>>>> origin/claude/setup-deployment-config-01PRsKS7oQaVHRvFBeGLF2QS

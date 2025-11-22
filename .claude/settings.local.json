@@ -8,7 +8,13 @@
       "Bash(git config:*)",
       "Bash(git remote add:*)",
       "Bash(git branch:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(docker --version:*)",
+      "Bash(git fetch:*)",
+      "Bash(git merge:*)",
+      "Bash(pip install:*)",
+      "Bash(npm install:*)",
+      "Bash(docker-compose build:*)"
     ],
     "deny": [],
     "ask": []
