@@ -5,6 +5,7 @@ module.exports = {
   },
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 =======
 };
@@ -12,3 +13,6 @@ module.exports = {
 =======
 };
 >>>>>>> origin/claude/frontend-content-ui-01SUCiGQU6dN2Z9rPASZfehV
+=======
+}
+>>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH

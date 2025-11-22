@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import type { Config } from 'tailwindcss';
+=======
+import type { Config } from 'tailwindcss'
+>>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
 
 const config: Config = {
   content: [
@@ -9,6 +13,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+<<<<<<< HEAD
 <<<<<<< HEAD
         // Sales OS Professional Color Palette
         primary: {
@@ -36,10 +41,24 @@ const config: Config = {
           800: '#86198f',
           900: '#701a75',
           950: '#4a044e',
+=======
+        primary: {
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+>>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
         },
         success: {
           50: '#f0fdf4',
           100: '#dcfce7',
+<<<<<<< HEAD
           200: '#bbf7d0',
           300: '#86efac',
           400: '#4ade80',
@@ -48,10 +67,15 @@ const config: Config = {
           700: '#15803d',
           800: '#166534',
           900: '#14532d',
+=======
+          500: '#22c55e',
+          600: '#16a34a',
+>>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
         },
         warning: {
           50: '#fffbeb',
           100: '#fef3c7',
+<<<<<<< HEAD
           200: '#fde68a',
           300: '#fcd34d',
           400: '#fbbf24',
@@ -106,11 +130,14 @@ const config: Config = {
         },
         warning: {
           50: '#fffbeb',
+=======
+>>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
           500: '#f59e0b',
           600: '#d97706',
         },
         error: {
           50: '#fef2f2',
+<<<<<<< HEAD
           500: '#ef4444',
           600: '#dc2626',
 >>>>>>> origin/claude/frontend-content-ui-01SUCiGQU6dN2Z9rPASZfehV
@@ -156,3 +183,15 @@ const config: Config = {
 };
 
 export default config;
+=======
+          100: '#fee2e2',
+          500: '#ef4444',
+          600: '#dc2626',
+        },
+      },
+    },
+  },
+  plugins: [],
+}
+export default config
+>>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
