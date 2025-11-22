@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """Database configuration and utilities.
 
 This module will be fully implemented by AGENT-011 for database schema setup.
@@ -31,3 +32,10 @@ __all__ = [
     "init_db",
 ]
 >>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
+=======
+# Database module
+from app.db.base import Base
+from app.db.session import get_db, AsyncSessionLocal, engine
+
+__all__ = ["Base", "get_db", "AsyncSessionLocal", "engine"]
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw

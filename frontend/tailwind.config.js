@@ -2,6 +2,7 @@
 module.exports = {
   content: [
 <<<<<<< HEAD
+<<<<<<< HEAD
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
 <<<<<<< HEAD
@@ -13,13 +14,21 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./lib/**/*.{js,ts,jsx,tsx,mdx}",
 >>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
+=======
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
   ],
   theme: {
     extend: {
       colors: {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         // Sales OS Brand Colors
+=======
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',
@@ -31,6 +40,7 @@ module.exports = {
           700: '#0369a1',
           800: '#075985',
           900: '#0c4a6e',
+<<<<<<< HEAD
           950: '#082f49',
         },
         secondary: {
@@ -111,13 +121,20 @@ module.exports = {
 =======
         // Custom brand colors can be added here
 >>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
+=======
+        },
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
       },
     },
   },
   plugins: [],
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
 }
 =======
 };
 >>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
+=======
+}
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw

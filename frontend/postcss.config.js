@@ -8,6 +8,7 @@ module.exports = {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 =======
 };
@@ -24,3 +25,6 @@ module.exports = {
 =======
 };
 >>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
+=======
+}
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw

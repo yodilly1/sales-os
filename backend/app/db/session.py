@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """Database session management."""
 from collections.abc import AsyncGenerator
 
@@ -17,10 +18,20 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from app.core.config import settings
 >>>>>>> origin/claude/auth-security-jwt-01NGdma4oBRc5QyZNZQsX6Ef
+=======
+"""Database session management."""
+
+from collections.abc import AsyncGenerator
+
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
+from app.core.config import settings
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
 
 # Create async engine
 engine = create_async_engine(
     settings.database_url,
+<<<<<<< HEAD
 <<<<<<< HEAD
     poolclass=NullPool,
     echo=settings.debug,
@@ -31,10 +42,15 @@ engine = create_async_engine(
     pool_size=5,
     max_overflow=10,
 >>>>>>> origin/claude/auth-security-jwt-01NGdma4oBRc5QyZNZQsX6Ef
+=======
+    echo=settings.debug,
+    future=True,
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
 )
 
 # Create async session factory
 AsyncSessionLocal = async_sessionmaker(
+<<<<<<< HEAD
 =======
 """Database session and engine configuration."""
 
@@ -60,6 +76,8 @@ engine = create_async_engine(
 # Session factory
 async_session_maker = async_sessionmaker(
 >>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
+=======
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
     engine,
     class_=AsyncSession,
     expire_on_commit=False,
@@ -70,12 +88,17 @@ async_session_maker = async_sessionmaker(
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
 <<<<<<< HEAD
+<<<<<<< HEAD
     """Dependency to get database session."""
     async with AsyncSessionLocal() as session:
 =======
     """Dependency that provides a database session."""
     async with async_session_maker() as session:
 >>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
+=======
+    """Dependency that provides a database session."""
+    async with AsyncSessionLocal() as session:
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
         try:
             yield session
             await session.commit()
@@ -84,6 +107,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             raise
         finally:
             await session.close()
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -105,3 +129,5 @@ async def init_db() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 >>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
+=======
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw

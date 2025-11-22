@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import type { Metadata } from 'next';
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -79,10 +80,23 @@ export const metadata: Metadata = {
   description: "AI-powered sales operations platform",
 };
 >>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
+=======
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'Sales OS',
+  description: 'VP of Sales Operating System',
+};
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
 
 export default function RootLayout({
   children,
 }: {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -194,14 +208,22 @@ export default function RootLayout({
   )
 >>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
 =======
+=======
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
   children: React.ReactNode;
 }) {
   return (
     <html lang="en">
+<<<<<<< HEAD
       <body className="min-h-screen bg-gray-50 antialiased">
         {children}
       </body>
     </html>
   );
 >>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
+=======
+      <body className={inter.className}>{children}</body>
+    </html>
+  );
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
 }

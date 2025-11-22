@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50">
@@ -53,11 +54,33 @@ export default function Home() {
             icon="🔗"
             href="/integrations"
           />
+=======
+import Link from 'next/link';
+
+export default function Home() {
+  return (
+    <main className="min-h-screen flex flex-col items-center justify-center p-8">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Sales OS
+        </h1>
+        <p className="text-xl text-gray-600 mb-8">
+          VP of Sales Operating System
+        </p>
+        <div className="flex gap-4 justify-center">
+          <Link href="/auth/login" className="btn-primary">
+            Sign In
+          </Link>
+          <Link href="/auth/register" className="btn-secondary">
+            Get Started
+          </Link>
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
         </div>
       </div>
     </main>
   );
 }
+<<<<<<< HEAD
 
 function FeatureCard({
   title,
@@ -274,3 +297,5 @@ export default function Home() {
   redirect('/dashboard')
 >>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm
 }
+=======
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw

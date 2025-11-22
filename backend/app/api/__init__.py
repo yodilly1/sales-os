@@ -6,6 +6,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -111,3 +112,6 @@ __all__ = [
     "api_router",
 ]
 >>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
+=======
+# API routes
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw

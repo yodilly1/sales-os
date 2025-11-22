@@ -20,15 +20,21 @@ depends_on: Union[str, Sequence[str], None] = ${repr(depends_on)}
 
 def upgrade() -> None:
 <<<<<<< HEAD
+<<<<<<< HEAD
     """Upgrade database schema."""
 =======
 >>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
+=======
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
     ${upgrades if upgrades else "pass"}
 
 
 def downgrade() -> None:
 <<<<<<< HEAD
+<<<<<<< HEAD
     """Downgrade database schema."""
 =======
 >>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
+=======
+>>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
     ${downgrades if downgrades else "pass"}
