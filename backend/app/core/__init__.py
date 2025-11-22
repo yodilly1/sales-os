@@ -1,4 +1,9 @@
-"""Core configuration and utilities."""
-from app.core.config import settings, get_settings
+"""
+Core Configuration Module
 
-__all__ = ["settings", "get_settings"]
+Contains application settings, constants, and configuration management.
+"""
+
+from app.core.config import Settings, settings, get_settings
+
+__all__ = ["Settings", "settings", "get_settings"]

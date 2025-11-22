@@ -1,6 +1,12 @@
-"""Application configuration using Pydantic Settings."""
+"""
+Application Configuration
+
+Manages application settings using Pydantic for validation
+and environment variable loading.
+"""
+
 from functools import lru_cache
-from typing import List
+from typing import List, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -16,6 +22,7 @@ class Settings(BaseSettings):
 
     # Application Settings
     app_name: str = "Sales OS API"
+    app_version: str = "1.0.0"
     app_env: str = "development"
     debug: bool = True
 
@@ -40,10 +47,18 @@ class Settings(BaseSettings):
     # CORS Settings
     cors_origins: str = "http://localhost:3000,http://localhost:5173"
 
-    # External Services
+    # Claude AI
+    anthropic_api_key: Optional[str] = None
     claude_api_key: str = ""
+    claude_model: str = "claude-3-5-sonnet-20241022"
+    claude_max_tokens: int = 4096
+    claude_temperature: float = 0.7
+
+    # External Services
     hubspot_client_id: str = ""
     hubspot_client_secret: str = ""
+    hubspot_api_key: Optional[str] = None
+    avoma_api_key: Optional[str] = None
 
     @property
     def cors_origins_list(self) -> List[str]:
@@ -58,7 +73,12 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    """Get cached settings instance."""
+    """
+    Get cached settings instance.
+
+    Returns:
+        Settings instance loaded from environment
+    """
     return Settings()
 
 
