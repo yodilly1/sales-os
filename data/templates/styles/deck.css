@@ -1,0 +1,651 @@
+/**
+ * Sales OS Deck-Specific Styles
+ * Presentation styling for slide rendering
+ */
+
+@import url('base.css');
+
+/* Slide Dimensions */
+:root {
+  --slide-width: 1920px;
+  --slide-height: 1080px;
+  --slide-padding: 80px;
+}
+
+/* Base Slide */
+.slide {
+  width: var(--slide-width);
+  height: var(--slide-height);
+  background: white;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: var(--slide-padding);
+  box-sizing: border-box;
+}
+
+/* Slide Typography */
+.slide h1,
+.slide-title {
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--brand-primary);
+  margin-bottom: 40px;
+  line-height: 1.1;
+}
+
+.slide h2,
+.slide-subtitle {
+  font-size: 36px;
+  color: var(--brand-secondary);
+  margin-bottom: 32px;
+  font-weight: 500;
+}
+
+.slide p,
+.slide-body {
+  font-size: 28px;
+  line-height: 1.5;
+  color: var(--brand-text);
+}
+
+.slide ul,
+.slide ol {
+  font-size: 28px;
+  line-height: 1.6;
+  margin-left: 60px;
+}
+
+.slide li {
+  margin-bottom: 20px;
+}
+
+/* Slide Elements */
+.slide-logo {
+  position: absolute;
+  top: 40px;
+  right: 60px;
+  max-height: 60px;
+  max-width: 180px;
+}
+
+.slide-number {
+  position: absolute;
+  bottom: 40px;
+  right: 60px;
+  font-size: 24px;
+  color: var(--brand-muted);
+}
+
+.slide-footer {
+  position: absolute;
+  bottom: 40px;
+  left: var(--slide-padding);
+  right: 200px;
+  font-size: 18px;
+  color: var(--brand-muted);
+}
+
+/* =====================================================
+   SLIDE LAYOUTS
+   ===================================================== */
+
+/* Title Slide */
+.slide.layout-title {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+}
+
+.slide.layout-title .slide-title {
+  font-size: 80px;
+  color: white;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.slide.layout-title .slide-subtitle {
+  font-size: 40px;
+  color: rgba(255,255,255,0.9);
+}
+
+.slide.layout-title .slide-meta {
+  font-size: 24px;
+  color: rgba(255,255,255,0.7);
+  margin-top: 60px;
+}
+
+/* Section Title Slide */
+.slide.layout-section {
+  justify-content: center;
+  align-items: flex-start;
+  background-color: var(--brand-light);
+}
+
+.slide.layout-section .slide-title {
+  font-size: 72px;
+}
+
+.slide.layout-section::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: var(--brand-accent);
+}
+
+/* Content Slide */
+.slide.layout-content {
+  padding-top: 100px;
+}
+
+.slide.layout-content .slide-title {
+  font-size: 56px;
+  margin-bottom: 50px;
+}
+
+/* Two Column Layout */
+.slide.layout-two-column .slide-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  flex: 1;
+  align-items: start;
+}
+
+.slide.layout-two-column .column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Image + Text Layouts */
+.slide.layout-image-left .slide-content,
+.slide.layout-image-right .slide-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  flex: 1;
+  align-items: center;
+}
+
+.slide.layout-image-right .slide-image {
+  order: 2;
+}
+
+.slide.layout-image-right .slide-text {
+  order: 1;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 16px;
+}
+
+.slide-image.cover {
+  object-fit: cover;
+}
+
+.slide-image.shadow {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+/* Full Image Slide */
+.slide.layout-full-image {
+  padding: 0;
+}
+
+.slide.layout-full-image .slide-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.slide.layout-full-image .slide-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(0,0,0,0.1) 0%,
+    rgba(0,0,0,0.7) 100%);
+}
+
+.slide.layout-full-image .slide-content {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding: var(--slide-padding);
+  color: white;
+}
+
+.slide.layout-full-image .slide-title {
+  color: white;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+}
+
+/* Quote Slide */
+.slide.layout-quote {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: var(--brand-light);
+  padding: 120px;
+}
+
+.slide.layout-quote .quote-mark {
+  font-size: 200px;
+  color: var(--brand-accent);
+  line-height: 0.5;
+  margin-bottom: 40px;
+  opacity: 0.3;
+}
+
+.slide.layout-quote .quote-text {
+  font-size: 48px;
+  font-style: italic;
+  line-height: 1.4;
+  max-width: 80%;
+  color: var(--brand-text);
+}
+
+.slide.layout-quote .quote-author {
+  font-size: 28px;
+  color: var(--brand-secondary);
+  margin-top: 50px;
+}
+
+.slide.layout-quote .quote-role {
+  font-size: 22px;
+  color: var(--brand-muted);
+}
+
+/* Metrics Slide */
+.slide.layout-metrics .metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 50px;
+  flex: 1;
+  align-content: center;
+  padding: 40px 0;
+}
+
+.metric-card {
+  background: var(--brand-light);
+  border-radius: 24px;
+  padding: 50px;
+  text-align: center;
+}
+
+.metric-card.accent {
+  background: var(--brand-primary);
+}
+
+.metric-card.accent .metric-value,
+.metric-card.accent .metric-label {
+  color: white;
+}
+
+.metric-card .metric-value {
+  font-size: 80px;
+  font-weight: 700;
+  color: var(--brand-primary);
+  line-height: 1;
+}
+
+.metric-card .metric-label {
+  font-size: 24px;
+  color: var(--brand-text);
+  margin-top: 16px;
+}
+
+.metric-card .metric-change {
+  font-size: 24px;
+  margin-top: 12px;
+}
+
+.metric-card .metric-change.up {
+  color: var(--brand-success);
+}
+
+.metric-card .metric-change.up::before {
+  content: "↑ ";
+}
+
+.metric-card .metric-change.down {
+  color: var(--brand-error);
+}
+
+.metric-card .metric-change.down::before {
+  content: "↓ ";
+}
+
+/* Timeline Slide */
+.slide.layout-timeline .timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  flex: 1;
+  padding: 40px 0;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.timeline-marker {
+  width: 24px;
+  height: 24px;
+  background: var(--brand-accent);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 11px;
+  top: 32px;
+  bottom: -40px;
+  width: 2px;
+  background: var(--brand-border);
+}
+
+.timeline-date {
+  min-width: 200px;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--brand-primary);
+}
+
+.timeline-content {
+  flex: 1;
+}
+
+.timeline-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.timeline-description {
+  font-size: 22px;
+  color: var(--brand-muted);
+}
+
+/* Team Slide */
+.slide.layout-team .team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 60px;
+  flex: 1;
+  align-content: center;
+  padding: 40px 0;
+}
+
+.team-member {
+  text-align: center;
+}
+
+.team-member .avatar {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 24px;
+  border: 4px solid var(--brand-light);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.team-member .name {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--brand-text);
+  margin-bottom: 8px;
+}
+
+.team-member .role {
+  font-size: 22px;
+  color: var(--brand-secondary);
+}
+
+.team-member .bio {
+  font-size: 18px;
+  color: var(--brand-muted);
+  margin-top: 12px;
+}
+
+/* Pricing Slide */
+.slide.layout-pricing .pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 40px;
+  flex: 1;
+  align-content: center;
+  padding: 40px 0;
+}
+
+.pricing-tier {
+  background: white;
+  border: 2px solid var(--brand-border);
+  border-radius: 24px;
+  padding: 50px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.pricing-tier.featured {
+  border-color: var(--brand-primary);
+  transform: scale(1.05);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+}
+
+.pricing-tier .tier-badge {
+  display: inline-block;
+  background: var(--brand-primary);
+  color: white;
+  padding: 8px 24px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.pricing-tier .tier-name {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.pricing-tier .tier-price {
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--brand-primary);
+}
+
+.pricing-tier .tier-period {
+  font-size: 20px;
+  color: var(--brand-muted);
+  margin-bottom: 30px;
+}
+
+.pricing-tier .tier-features {
+  text-align: left;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pricing-tier .tier-features li {
+  font-size: 20px;
+  padding: 12px 0;
+  padding-left: 36px;
+  position: relative;
+}
+
+.pricing-tier .tier-features li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--brand-accent);
+  font-weight: bold;
+}
+
+.pricing-tier .tier-cta {
+  margin-top: 30px;
+  padding: 16px 40px;
+  font-size: 20px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  background: var(--brand-primary);
+  color: white;
+  font-weight: 600;
+}
+
+/* Comparison Slide */
+.slide.layout-comparison .comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  flex: 1;
+  font-size: 22px;
+}
+
+.comparison-table th {
+  background: var(--brand-light);
+  padding: 24px;
+  font-weight: 600;
+  text-align: center;
+  border-bottom: 2px solid var(--brand-border);
+}
+
+.comparison-table th.highlight {
+  background: var(--brand-primary);
+  color: white;
+}
+
+.comparison-table td {
+  padding: 20px 24px;
+  text-align: center;
+  border-bottom: 1px solid var(--brand-border);
+}
+
+.comparison-table td.highlight {
+  background: rgba(30, 64, 175, 0.05);
+}
+
+.comparison-table td:first-child {
+  text-align: left;
+  font-weight: 500;
+}
+
+.comparison-table .check {
+  color: var(--brand-accent);
+  font-size: 28px;
+}
+
+.comparison-table .cross {
+  color: var(--brand-muted);
+  font-size: 28px;
+}
+
+/* CTA Slide */
+.slide.layout-cta {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: var(--brand-primary);
+}
+
+.slide.layout-cta .slide-title {
+  font-size: 72px;
+  color: white;
+  margin-bottom: 40px;
+}
+
+.slide.layout-cta .slide-subtitle {
+  font-size: 32px;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 60px;
+}
+
+.slide.layout-cta .cta-button {
+  display: inline-block;
+  padding: 24px 80px;
+  background: white;
+  color: var(--brand-primary);
+  font-size: 28px;
+  font-weight: 600;
+  border-radius: 16px;
+  text-decoration: none;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  transition: transform 0.3s;
+}
+
+.slide.layout-cta .cta-button:hover {
+  transform: translateY(-4px);
+}
+
+/* Thank You Slide */
+.slide.layout-thanks {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+}
+
+.slide.layout-thanks .slide-title {
+  font-size: 96px;
+  color: white;
+}
+
+.slide.layout-thanks .contact-info {
+  color: rgba(255,255,255,0.9);
+  font-size: 28px;
+  margin-top: 60px;
+}
+
+.slide.layout-thanks .contact-info a {
+  color: white;
+}
+
+/* Icon Grid Slide */
+.slide.layout-icons .icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 60px;
+  flex: 1;
+  align-content: center;
+}
+
+.icon-item {
+  text-align: center;
+}
+
+.icon-item .icon {
+  width: 100px;
+  height: 100px;
+  background: var(--brand-light);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 48px;
+}
+
+.icon-item .title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.icon-item .description {
+  font-size: 20px;
+  color: var(--brand-muted);
+}

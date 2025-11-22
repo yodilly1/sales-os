@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+<<<<<<< HEAD
   output: 'standalone',
   reactStrictMode: true,
 
@@ -52,6 +53,14 @@ const nextConfig = {
         source: '/home',
         destination: '/dashboard',
         permanent: true,
+=======
+  reactStrictMode: true,
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:8000/api/:path*',
+>>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
       },
     ];
   },

@@ -3,11 +3,15 @@ module.exports = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
+<<<<<<< HEAD
     './lib/**/*.{js,ts,jsx,tsx,mdx}',
+=======
+>>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
   ],
   theme: {
     extend: {
       colors: {
+<<<<<<< HEAD
         // Sales OS Brand Colors
         primary: {
           50: '#f0f9ff',
@@ -49,10 +53,17 @@ module.exports = {
           50: '#fef2f2',
           500: '#ef4444',
           700: '#b91c1c',
+=======
+        brand: {
+          primary: '#1E40AF',
+          secondary: '#3B82F6',
+          accent: '#10B981',
+>>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
         },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+<<<<<<< HEAD
         mono: ['JetBrains Mono', 'monospace'],
       },
       boxShadow: {
@@ -89,4 +100,10 @@ module.exports = {
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
   ],
+=======
+      },
+    },
+  },
+  plugins: [],
+>>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
 }
