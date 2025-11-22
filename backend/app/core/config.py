@@ -6,7 +6,7 @@ and environment variable loading.
 """
 
 from functools import lru_cache
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     # Application Settings
     app_name: str = "Sales OS API"
     app_version: str = "1.0.0"
-    app_env: str = "development"
+    app_env: Literal["development", "staging", "production"] = "development"
     debug: bool = True
 
     # Server Settings
@@ -48,16 +48,16 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:3000,http://localhost:5173"
 
     # Claude AI
-    anthropic_api_key: Optional[str] = None
+    anthropic_api_key: str = ""
     claude_api_key: str = ""
-    claude_model: str = "claude-3-5-sonnet-20241022"
+    claude_model: str = "claude-sonnet-4-20250514"
     claude_max_tokens: int = 4096
     claude_temperature: float = 0.7
 
     # External Services
     hubspot_client_id: str = ""
     hubspot_client_secret: str = ""
-    hubspot_api_key: Optional[str] = None
+    hubspot_api_key: str = ""
     avoma_api_key: Optional[str] = None
 
     @property

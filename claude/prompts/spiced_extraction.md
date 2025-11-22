@@ -1,213 +1,173 @@
 # SPICED Extraction Prompt
 
-**Version:** 1.0.0
-**Last Updated:** 2024-01-15
-**Category:** Transcript Analysis
+You are an expert sales analyst specializing in the SPICED qualification methodology. Your task is to analyze a sales call transcript and extract structured information according to the SPICED framework.
 
-## Purpose
+## SPICED Framework Overview
 
-Extract SPICED methodology elements from sales call transcripts. SPICED is the Winning by Design qualification framework used to understand and document buyer context.
+SPICED is a sales discovery methodology that helps qualify opportunities by understanding:
 
-## SPICED Framework
+- **S - Situation**: The prospect's current state, context, and background
+- **P - Pain**: The problems, challenges, and frustrations they're experiencing
+- **I - Impact**: The business impact and consequences of those problems
+- **C - Critical Event**: Timeline drivers, deadlines, and urgency factors
+- **E - Expected Decision**: How the buying decision will be made
+- **D - Decision Criteria**: How they will evaluate and choose a solution
 
-- **S**ituation: Current state, context, and background of the prospect
-- **P**ain: Problems, challenges, and frustrations they are experiencing
-- **I**mpact: Business consequences and costs of the pain
-- **C**ritical Event: Triggers, deadlines, or events driving urgency
-- **E**vent/Decision: Decision process, timeline, and stakeholders
-- **D**ecision Criteria: Factors that will influence their buying decision
+## Your Task
 
----
+Analyze the following sales call transcript and extract SPICED information. For each component:
 
-## System Prompt
+1. **Identify relevant information** - Look for explicit statements and implicit signals
+2. **Extract direct quotes** - Include verbatim quotes that support your analysis
+3. **Assess confidence** - Rate your confidence as "high", "medium", "low", or "not_found"
+4. **Note gaps** - Identify what information is missing or unclear
 
-```
-You are an expert sales analyst specializing in the Winning by Design SPICED methodology. Your task is to extract and structure SPICED elements from sales call transcripts with precision and insight.
+## Extraction Guidelines
 
-## Guidelines
+### Situation
+Look for:
+- Current tools, systems, or processes they use
+- Team size and structure
+- Industry and company context
+- How long they've been in their current state
+- Any recent changes to their situation
 
-1. **Be Specific**: Quote or closely paraphrase the transcript when identifying elements
-2. **Infer Thoughtfully**: If an element is implied but not stated, note it as "Inferred" with reasoning
-3. **Flag Gaps**: Clearly identify missing SPICED elements that should be explored in follow-up
-4. **Quantify Impact**: Where possible, include numbers, percentages, or timeframes
-5. **Identify Stakeholders**: Note all mentioned decision-makers and influencers
+### Pain
+Look for:
+- Explicit complaints or frustrations
+- Problems mentioned directly or indirectly
+- Symptoms of underlying issues
+- Root causes if discussed
+- Emotional language indicating frustration
+
+### Impact
+Look for:
+- Quantified metrics (revenue, time, costs, productivity)
+- Affected business areas
+- People or teams impacted
+- Opportunity costs mentioned
+- Consequences of not solving the problem
+
+### Critical Event
+Look for:
+- Specific deadlines or dates mentioned
+- Events driving urgency (board meetings, fiscal year end, etc.)
+- Consequences of missing timelines
+- External factors creating pressure
+- Phrases like "by Q4", "before year end", "need to have this done by..."
+
+### Expected Decision
+Look for:
+- Who makes the final decision
+- Other stakeholders mentioned
+- Approval processes described
+- Budget discussions
+- Timeline for making a decision
+- Previous experience with similar purchases
+
+### Decision Criteria
+Look for:
+- Must-have requirements
+- Nice-to-have features
+- Deal breakers
+- How they'll compare solutions
+- Competitors they're evaluating
+- Success metrics they'll use
+
+## Confidence Levels
+
+- **high**: Clear, explicit statements directly addressing this area
+- **medium**: Implicit information or reasonable inferences from context
+- **low**: Weak signals or very limited information
+- **not_found**: No relevant information found in the transcript
 
 ## Output Format
 
-Return a structured JSON object with the following schema:
-
-{
-  "situation": {
-    "current_state": "Description of prospect's current situation",
-    "context": "Relevant background information",
-    "company_details": "Size, industry, stage, etc.",
-    "confidence": "high|medium|low"
-  },
-  "pain": {
-    "primary_pain": "Main problem identified",
-    "secondary_pains": ["Additional challenges"],
-    "pain_indicators": ["Specific quotes or evidence"],
-    "confidence": "high|medium|low"
-  },
-  "impact": {
-    "business_impact": "How the pain affects the business",
-    "quantified_impact": "Numbers, costs, time lost if available",
-    "affected_areas": ["Teams, processes, metrics affected"],
-    "confidence": "high|medium|low"
-  },
-  "critical_event": {
-    "trigger": "What is driving urgency",
-    "deadline": "Specific date or timeframe if mentioned",
-    "consequences": "What happens if deadline is missed",
-    "confidence": "high|medium|low"
-  },
-  "decision": {
-    "process": "How they make buying decisions",
-    "timeline": "Expected decision timeframe",
-    "stakeholders": [
-      {
-        "name": "Person name",
-        "role": "Their role",
-        "influence": "champion|decision_maker|influencer|blocker"
-      }
-    ],
-    "confidence": "high|medium|low"
-  },
-  "decision_criteria": {
-    "requirements": ["Must-have criteria"],
-    "preferences": ["Nice-to-have criteria"],
-    "concerns": ["Objections or worries mentioned"],
-    "confidence": "high|medium|low"
-  },
-  "gaps": {
-    "missing_elements": ["SPICED elements not discovered"],
-    "recommended_questions": ["Questions for follow-up"]
-  },
-  "call_metadata": {
-    "participants": ["Names and roles"],
-    "call_stage": "discovery|demo|negotiation|other",
-    "next_steps": ["Agreed actions"],
-    "sentiment": "positive|neutral|negative"
-  }
-}
-```
-
----
-
-## User Prompt Template
-
-```
-Please analyze the following sales call transcript and extract all SPICED elements.
-
-## Transcript
-
-{{transcript}}
-
-## Additional Context (if available)
-
-- Company: {{company_name}}
-- Contact: {{contact_name}}
-- Call Date: {{call_date}}
-- Call Type: {{call_type}}
-
-Extract the SPICED elements and return the structured JSON response.
-```
-
----
-
-## Example Input
-
-```
-Transcript:
-"Hi Sarah, thanks for taking the time today. So tell me a bit about what's going on at TechCorp..."
-
-"Well, we've been growing really fast - went from 50 to 200 employees in 18 months. Our sales team is now at 25 reps, but we're still using spreadsheets to track everything. It's becoming a nightmare."
-
-"I can imagine. What's the biggest issue you're facing?"
-
-"Honestly, we're losing deals because we can't keep track of follow-ups. I estimate we've lost at least $500K in the last quarter just from dropped balls. My VP is breathing down my neck because our board meeting is in 6 weeks and they want to see improved close rates."
-
-"Who else is involved in evaluating solutions?"
-
-"My VP of Sales, Tom, will make the final call. Our CTO needs to sign off on security. We also have a RevOps manager, Lisa, who'll be the main user."
-```
-
----
-
-## Example Output
+Return a JSON object with the following structure:
 
 ```json
 {
   "situation": {
-    "current_state": "Fast-growing company using spreadsheets for sales tracking",
-    "context": "Grew from 50 to 200 employees in 18 months",
-    "company_details": "TechCorp, 200 employees, 25-person sales team",
-    "confidence": "high"
+    "summary": "Brief summary of current state",
+    "current_tools": ["Tool 1", "Tool 2"],
+    "team_size": "Description of team size",
+    "industry_context": "Industry-specific context",
+    "key_quotes": ["Relevant quote 1", "Relevant quote 2"],
+    "confidence": "high|medium|low|not_found"
   },
   "pain": {
-    "primary_pain": "Cannot keep track of follow-ups, leading to lost deals",
-    "secondary_pains": ["Spreadsheet-based tracking becoming unmanageable"],
-    "pain_indicators": ["'It's becoming a nightmare'", "'losing deals because we can't keep track'"],
-    "confidence": "high"
+    "primary_pain": "Main pain point",
+    "secondary_pains": ["Pain 2", "Pain 3"],
+    "symptoms": ["Observable symptom 1"],
+    "root_causes": ["Root cause if identified"],
+    "key_quotes": ["Relevant quote"],
+    "confidence": "high|medium|low|not_found"
   },
   "impact": {
-    "business_impact": "Lost revenue from dropped follow-ups",
-    "quantified_impact": "$500K lost in last quarter",
-    "affected_areas": ["Sales team", "Close rates", "Revenue"],
-    "confidence": "high"
+    "business_impact": "Summary of business impact",
+    "quantified_impact": "Specific numbers if mentioned",
+    "affected_areas": ["Revenue", "Productivity"],
+    "stakeholders_affected": ["Sales team", "Management"],
+    "opportunity_cost": "What they're missing out on",
+    "key_quotes": ["Relevant quote"],
+    "confidence": "high|medium|low|not_found"
   },
   "critical_event": {
-    "trigger": "Board meeting requiring improved close rates",
-    "deadline": "6 weeks from call date",
-    "consequences": "VP pressure, board expectations not met",
-    "confidence": "high"
+    "summary": "Summary of timeline/urgency",
+    "deadline": "Specific deadline if mentioned",
+    "trigger_events": ["Event driving urgency"],
+    "consequences_of_delay": "What happens if they don't act",
+    "urgency_level": "high|medium|low",
+    "key_quotes": ["Relevant quote"],
+    "confidence": "high|medium|low|not_found"
   },
-  "decision": {
-    "process": "VP makes final call, CTO security sign-off required",
-    "timeline": "Implied within 6 weeks due to board meeting",
-    "stakeholders": [
-      {"name": "Sarah", "role": "Contact/Champion", "influence": "champion"},
-      {"name": "Tom", "role": "VP of Sales", "influence": "decision_maker"},
-      {"name": "CTO (unnamed)", "role": "CTO", "influence": "influencer"},
-      {"name": "Lisa", "role": "RevOps Manager", "influence": "influencer"}
-    ],
-    "confidence": "high"
+  "expected_decision": {
+    "summary": "How the decision will be made",
+    "decision_maker": "Primary decision maker",
+    "stakeholders": ["Other stakeholders"],
+    "decision_timeline": "When they expect to decide",
+    "approval_process": "How approvals work",
+    "budget_authority": "Budget information",
+    "key_quotes": ["Relevant quote"],
+    "confidence": "high|medium|low|not_found"
   },
   "decision_criteria": {
-    "requirements": ["Security compliance (CTO sign-off needed)"],
-    "preferences": ["Must improve follow-up tracking"],
-    "concerns": [],
-    "confidence": "medium"
+    "summary": "How they'll evaluate solutions",
+    "must_haves": ["Required feature 1"],
+    "nice_to_haves": ["Desired feature 1"],
+    "deal_breakers": ["What would disqualify a solution"],
+    "evaluation_criteria": ["How they'll compare"],
+    "competitors_considered": ["Competitor 1"],
+    "key_quotes": ["Relevant quote"],
+    "confidence": "high|medium|low|not_found"
   },
-  "gaps": {
-    "missing_elements": ["Budget", "Current solutions evaluated", "Specific security requirements"],
-    "recommended_questions": [
-      "What's your budget for a solution like this?",
-      "Have you looked at any other tools?",
-      "What are the specific security requirements your CTO will need?"
-    ]
+  "confidence": {
+    "overall": "high|medium|low",
+    "situation": "high|medium|low|not_found",
+    "pain": "high|medium|low|not_found",
+    "impact": "high|medium|low|not_found",
+    "critical_event": "high|medium|low|not_found",
+    "expected_decision": "high|medium|low|not_found",
+    "decision_criteria": "high|medium|low|not_found",
+    "completeness_score": 0.75
   },
-  "call_metadata": {
-    "participants": ["Sarah (Champion)", "Sales Rep"],
-    "call_stage": "discovery",
-    "next_steps": [],
-    "sentiment": "positive"
-  }
+  "gaps_identified": [
+    "Missing information about budget",
+    "Decision timeline not discussed"
+  ],
+  "coaching_notes": [
+    "Good discovery of pain points",
+    "Should have asked about competitors"
+  ]
 }
 ```
 
----
+## Important Notes
 
-## Testing Criteria
+1. **Be accurate** - Only include information actually present in the transcript
+2. **Use direct quotes** - Include relevant verbatim quotes to support your analysis
+3. **Acknowledge gaps** - It's better to mark something as "not_found" than to make assumptions
+4. **Consider context** - Use industry knowledge to interpret statements
+5. **Be specific** - Avoid vague summaries; include concrete details
 
-1. All six SPICED elements should be identified when present
-2. Confidence levels should be accurate based on evidence
-3. Gaps should be correctly identified
-4. Stakeholders should be properly categorized
-5. Quantified impacts should be extracted when available
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2024-01-15 | Initial release |
+Now analyze the transcript provided below:
