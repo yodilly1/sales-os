@@ -1,0 +1,118 @@
+{
+  "template_id": "pitch_deck_standard",
+  "template_name": "Standard Pitch Deck",
+  "description": "A professional 10-slide pitch deck template for initial prospect presentations",
+  "version": "1.0",
+  "content_type": "deck_pitch",
+  "default_duration_minutes": 30,
+  "structure": {
+    "total_slides": 10,
+    "slides": [
+      {
+        "slide_number": 1,
+        "title_template": "{{product_name}}",
+        "subtitle_template": "{{tagline}}",
+        "content_type": "title",
+        "purpose": "Title slide with logo and tagline",
+        "visual_suggestion": "Company logo centered, clean design"
+      },
+      {
+        "slide_number": 2,
+        "title_template": "The Challenge",
+        "content_type": "bullets",
+        "purpose": "Present customer pain points",
+        "content_placeholders": ["pain_point_1", "pain_point_2", "pain_point_3"],
+        "speaker_notes": "Connect with audience by validating their challenges",
+        "visual_suggestion": "Icons representing each pain point"
+      },
+      {
+        "slide_number": 3,
+        "title_template": "Why Now?",
+        "content_type": "text",
+        "purpose": "Market context and urgency",
+        "content_placeholders": ["market_trend", "critical_event", "cost_of_inaction"],
+        "speaker_notes": "Create urgency by highlighting market changes",
+        "visual_suggestion": "Timeline or trend graph"
+      },
+      {
+        "slide_number": 4,
+        "title_template": "Introducing {{product_name}}",
+        "content_type": "text",
+        "purpose": "Solution overview",
+        "content_placeholders": ["solution_description", "key_differentiator"],
+        "speaker_notes": "Position solution as the answer to their challenges",
+        "visual_suggestion": "Product screenshot or demo image"
+      },
+      {
+        "slide_number": 5,
+        "title_template": "How It Works",
+        "content_type": "bullets",
+        "purpose": "Feature overview",
+        "content_placeholders": ["feature_1", "feature_2", "feature_3"],
+        "speaker_notes": "Focus on capabilities that address stated pain points",
+        "visual_suggestion": "Process flow diagram or feature icons"
+      },
+      {
+        "slide_number": 6,
+        "title_template": "The Value You'll Gain",
+        "content_type": "bullets",
+        "purpose": "Benefits and outcomes",
+        "content_placeholders": ["benefit_1", "benefit_2", "benefit_3", "roi_statement"],
+        "speaker_notes": "Quantify benefits where possible",
+        "visual_suggestion": "Value metrics with icons"
+      },
+      {
+        "slide_number": 7,
+        "title_template": "Customer Success",
+        "content_type": "quote",
+        "purpose": "Social proof and case studies",
+        "content_placeholders": ["customer_quote", "customer_name", "customer_title", "customer_company", "results_achieved"],
+        "speaker_notes": "Use customer stories relevant to this prospect's industry",
+        "visual_suggestion": "Customer logo and headshot"
+      },
+      {
+        "slide_number": 8,
+        "title_template": "Why {{company_name}}?",
+        "content_type": "bullets",
+        "purpose": "Differentiation and competitive positioning",
+        "content_placeholders": ["differentiator_1", "differentiator_2", "differentiator_3"],
+        "speaker_notes": "Highlight unique strengths without directly attacking competitors",
+        "visual_suggestion": "Comparison or differentiation diagram"
+      },
+      {
+        "slide_number": 9,
+        "title_template": "Investment",
+        "content_type": "text",
+        "purpose": "Pricing and ROI",
+        "content_placeholders": ["pricing_overview", "roi_calculation", "implementation_timeline"],
+        "speaker_notes": "Frame pricing in terms of value and ROI",
+        "visual_suggestion": "ROI calculator or pricing table"
+      },
+      {
+        "slide_number": 10,
+        "title_template": "Next Steps",
+        "content_type": "bullets",
+        "purpose": "Call to action",
+        "content_placeholders": ["next_step_1", "next_step_2", "contact_info"],
+        "speaker_notes": "Be specific about next steps and timeline",
+        "visual_suggestion": "Timeline or checklist graphic"
+      }
+    ]
+  },
+  "customization_options": {
+    "can_add_slides": true,
+    "can_remove_slides": true,
+    "can_reorder_slides": true,
+    "required_slides": [1, 2, 4, 10]
+  },
+  "wbd_alignment": {
+    "spiced_mapping": {
+      "situation": [2],
+      "pain": [2],
+      "impact": [3, 6],
+      "critical_event": [3],
+      "expected_decision": [9, 10],
+      "decision_criteria": [5, 8]
+    }
+  }
+}

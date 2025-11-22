@@ -1,0 +1,90 @@
+{
+  "template_id": "renewal_deck_standard",
+  "template_name": "Standard Renewal Deck",
+  "description": "An 8-slide renewal presentation focusing on value delivered and future growth",
+  "version": "1.0",
+  "content_type": "deck_renewal",
+  "default_duration_minutes": 25,
+  "structure": {
+    "total_slides": 8,
+    "slides": [
+      {
+        "slide_number": 1,
+        "title_template": "{{customer_name}} Partnership Review",
+        "subtitle_template": "Renewal Discussion - {{year}}",
+        "content_type": "title",
+        "purpose": "Title slide emphasizing partnership",
+        "visual_suggestion": "Both company logos"
+      },
+      {
+        "slide_number": 2,
+        "title_template": "Our Journey Together",
+        "content_type": "text",
+        "purpose": "Partnership timeline and milestones",
+        "content_placeholders": ["partnership_start_date", "key_milestones", "relationship_highlights"],
+        "speaker_notes": "Celebrate the partnership and acknowledge their team",
+        "visual_suggestion": "Timeline graphic showing key milestones"
+      },
+      {
+        "slide_number": 3,
+        "title_template": "Key Achievements",
+        "content_type": "bullets",
+        "purpose": "Highlight wins and successes",
+        "content_placeholders": ["achievement_1", "achievement_2", "achievement_3", "achievement_4"],
+        "speaker_notes": "Use specific metrics and outcomes they've achieved",
+        "visual_suggestion": "Achievement icons with metrics"
+      },
+      {
+        "slide_number": 4,
+        "title_template": "Usage & Adoption",
+        "content_type": "chart",
+        "purpose": "Show engagement metrics",
+        "content_placeholders": ["active_users", "feature_adoption", "usage_trends", "engagement_score"],
+        "speaker_notes": "Demonstrate strong adoption and engagement",
+        "visual_suggestion": "Usage dashboard or adoption chart"
+      },
+      {
+        "slide_number": 5,
+        "title_template": "Value Delivered",
+        "content_type": "bullets",
+        "purpose": "Quantify ROI and business impact",
+        "content_placeholders": ["roi_metric_1", "roi_metric_2", "roi_metric_3", "total_value_delivered"],
+        "speaker_notes": "Connect value to their original business case",
+        "visual_suggestion": "ROI calculator results"
+      },
+      {
+        "slide_number": 6,
+        "title_template": "What's Next",
+        "content_type": "bullets",
+        "purpose": "Product roadmap and new features",
+        "content_placeholders": ["upcoming_feature_1", "upcoming_feature_2", "roadmap_highlights"],
+        "speaker_notes": "Show continued investment and innovation",
+        "visual_suggestion": "Product roadmap timeline"
+      },
+      {
+        "slide_number": 7,
+        "title_template": "Growth Opportunities",
+        "content_type": "bullets",
+        "purpose": "Expansion and upsell opportunities",
+        "content_placeholders": ["expansion_opportunity_1", "expansion_opportunity_2", "additional_value"],
+        "speaker_notes": "Position expansion as solving additional challenges",
+        "visual_suggestion": "Expansion opportunity diagram"
+      },
+      {
+        "slide_number": 8,
+        "title_template": "Renewal Terms",
+        "content_type": "text",
+        "purpose": "Renewal proposal and next steps",
+        "content_placeholders": ["renewal_term", "pricing", "incentives", "next_steps"],
+        "speaker_notes": "Be clear on terms and create urgency with incentives",
+        "visual_suggestion": "Clean pricing table"
+      }
+    ]
+  },
+  "customization_options": {
+    "can_add_slides": true,
+    "can_remove_slides": true,
+    "can_reorder_slides": true,
+    "required_slides": [1, 3, 5, 8]
+  }
+}

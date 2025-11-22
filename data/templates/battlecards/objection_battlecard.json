@@ -1,0 +1,152 @@
+{
+  "template_id": "battlecard_objection",
+  "template_name": "Objection Handling Battlecard",
+  "description": "A comprehensive guide for handling common sales objections",
+  "version": "1.0",
+  "content_type": "battlecard_objection",
+  "structure": {
+    "header": {
+      "title_template": "{{category}} Objection Handling Guide",
+      "last_updated": "{{last_updated_date}}"
+    },
+    "categories": [
+      {
+        "category_id": "pricing",
+        "title": "Pricing Objections",
+        "description": "Objections related to cost, budget, and ROI"
+      },
+      {
+        "category_id": "timing",
+        "title": "Timing Objections",
+        "description": "Objections related to timeline and priorities"
+      },
+      {
+        "category_id": "competition",
+        "title": "Competitive Objections",
+        "description": "Objections comparing us to alternatives"
+      },
+      {
+        "category_id": "features",
+        "title": "Feature/Capability Objections",
+        "description": "Objections about product functionality"
+      },
+      {
+        "category_id": "trust",
+        "title": "Trust/Risk Objections",
+        "description": "Objections about vendor credibility and risk"
+      },
+      {
+        "category_id": "authority",
+        "title": "Authority Objections",
+        "description": "Objections about decision-making power"
+      }
+    ],
+    "objection_format": {
+      "fields": [
+        {
+          "field": "objection",
+          "type": "text",
+          "description": "The exact objection as stated"
+        },
+        {
+          "field": "category",
+          "type": "select",
+          "options": ["pricing", "timing", "competition", "features", "trust", "authority"]
+        },
+        {
+          "field": "frequency",
+          "type": "select",
+          "options": ["very_common", "common", "occasional", "rare"]
+        },
+        {
+          "field": "quick_response",
+          "type": "text",
+          "max_characters": 150,
+          "description": "One-liner response for quick handling"
+        },
+        {
+          "field": "detailed_response",
+          "type": "text",
+          "description": "Full response with context and examples"
+        },
+        {
+          "field": "follow_up_question",
+          "type": "text",
+          "description": "Question to regain control of the conversation"
+        },
+        {
+          "field": "proof_points",
+          "type": "list",
+          "description": "Evidence to support the response"
+        },
+        {
+          "field": "prevention_tips",
+          "type": "text",
+          "description": "How to prevent this objection from arising"
+        }
+      ]
+    },
+    "common_objections": [
+      {
+        "objection": "It's too expensive",
+        "category": "pricing",
+        "frequency": "very_common",
+        "quick_response_template": "I understand budget is important. Let's look at the ROI you'll see from {{value_driver}}.",
+        "detailed_response_template": "Price is definitely a consideration. What I've found is that customers who initially felt the same way discovered that {{roi_example}}. Can we walk through the value you'd receive?",
+        "follow_up_template": "Help me understand - when you say expensive, is it compared to your budget, or compared to alternatives?"
+      },
+      {
+        "objection": "We're not ready to make a decision",
+        "category": "timing",
+        "frequency": "very_common",
+        "quick_response_template": "I understand. What would need to change for this to become a priority?",
+        "detailed_response_template": "Timing is important. I'm curious - what's driving your timeline? Understanding that will help me provide the right support when you are ready.",
+        "follow_up_template": "Is there a specific event or milestone that would trigger this becoming a priority?"
+      },
+      {
+        "objection": "We're looking at your competitor",
+        "category": "competition",
+        "frequency": "common",
+        "quick_response_template": "That's smart to evaluate options. What criteria are most important in your decision?",
+        "detailed_response_template": "I'd expect you to look at alternatives - it's the right thing to do. What I'd like to understand is what matters most to you in this decision, so I can help you compare apples to apples.",
+        "follow_up_template": "What specifically attracted you to them? That helps me understand your priorities."
+      },
+      {
+        "objection": "I need to talk to my team/boss",
+        "category": "authority",
+        "frequency": "very_common",
+        "quick_response_template": "Of course. What information would be most helpful to share with them?",
+        "detailed_response_template": "Absolutely - this is a decision that affects multiple people. To help you make the best case, what questions do you think they'll have? I can prepare materials that address those directly.",
+        "follow_up_template": "Would it be helpful if I joined that conversation to answer technical questions directly?"
+      }
+    ]
+  },
+  "response_framework": {
+    "name": "LAER Framework",
+    "steps": [
+      {
+        "step": "Listen",
+        "description": "Let them fully express the objection without interrupting"
+      },
+      {
+        "step": "Acknowledge",
+        "description": "Validate their concern to show you understand"
+      },
+      {
+        "step": "Explore",
+        "description": "Ask questions to understand the root cause"
+      },
+      {
+        "step": "Respond",
+        "description": "Address the specific concern with evidence"
+      }
+    ]
+  },
+  "best_practices": [
+    "Never argue or get defensive",
+    "Acknowledge the objection as legitimate",
+    "Ask clarifying questions before responding",
+    "Use proof points and social proof",
+    "End with a question to move forward"
+  ]
+}

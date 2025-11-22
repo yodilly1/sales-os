@@ -1,0 +1,68 @@
+{
+  "template_id": "one_pager_product",
+  "template_name": "Product One-Pager",
+  "description": "A concise single-page product overview",
+  "version": "1.0",
+  "content_type": "one_pager_product",
+  "structure": {
+    "header": {
+      "title_placeholder": "{{product_name}}",
+      "tagline_placeholder": "{{product_tagline}}",
+      "logo_position": "top-right"
+    },
+    "sections": [
+      {
+        "section_id": "headline",
+        "title": "Headline",
+        "max_characters": 100,
+        "purpose": "Compelling value proposition in one sentence",
+        "placeholder": "{{headline}}"
+      },
+      {
+        "section_id": "overview",
+        "title": "Overview",
+        "max_characters": 300,
+        "purpose": "Brief product description",
+        "placeholder": "{{product_overview}}"
+      },
+      {
+        "section_id": "key_benefits",
+        "title": "Key Benefits",
+        "item_count": 3,
+        "purpose": "Top benefits for the audience",
+        "placeholders": ["benefit_1", "benefit_2", "benefit_3"]
+      },
+      {
+        "section_id": "features",
+        "title": "Key Features",
+        "item_count": 4,
+        "purpose": "Main product capabilities",
+        "placeholders": ["feature_1", "feature_2", "feature_3", "feature_4"]
+      },
+      {
+        "section_id": "proof_points",
+        "title": "By the Numbers",
+        "item_count": 3,
+        "purpose": "Social proof and metrics",
+        "placeholders": ["stat_1", "stat_2", "stat_3"]
+      },
+      {
+        "section_id": "cta",
+        "title": "Call to Action",
+        "purpose": "Clear next step",
+        "placeholders": ["cta_text", "contact_info"]
+      }
+    ],
+    "footer": {
+      "contact_info": true,
+      "website": true,
+      "social_links": false
+    }
+  },
+  "design_guidelines": {
+    "max_word_count": 250,
+    "recommended_visuals": ["Product screenshot", "Icon set for features", "Logo"],
+    "color_scheme": "brand_primary",
+    "typography": "clean_modern"
+  }
+}
