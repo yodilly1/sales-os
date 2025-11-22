@@ -11,6 +11,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -166,3 +167,8 @@ from app.api.webhooks import router as webhooks_router
 
 __all__ = ["slack_router", "webhooks_router"]
 >>>>>>> origin/claude/slack-integration-01FAipAuMUsRJRL7psy92hdb
+=======
+"""
+API routes for Sales OS.
+"""
+>>>>>>> origin/claude/salesforce-integration-01Jk6WSRuSJXErwMJ2igKMJQ

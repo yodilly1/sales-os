@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """External service integrations."""
 =======
 """
@@ -65,3 +66,8 @@ __all__ = [
 =======
 """Sales OS integrations with external services."""
 >>>>>>> origin/claude/slack-integration-01FAipAuMUsRJRL7psy92hdb
+=======
+"""
+External service integrations for Sales OS.
+"""
+>>>>>>> origin/claude/salesforce-integration-01Jk6WSRuSJXErwMJ2igKMJQ
