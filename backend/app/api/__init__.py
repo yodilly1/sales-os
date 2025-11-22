@@ -10,6 +10,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -157,3 +158,11 @@ __all__ = [
     "linkedin_router",
 ]
 >>>>>>> origin/claude/linkedin-integration-01VmE4MUdZtsYVbAeCay7X3m
+=======
+"""Sales OS API routes."""
+
+from app.api.slack import router as slack_router
+from app.api.webhooks import router as webhooks_router
+
+__all__ = ["slack_router", "webhooks_router"]
+>>>>>>> origin/claude/slack-integration-01FAipAuMUsRJRL7psy92hdb

@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """External service integrations."""
 =======
 """
@@ -61,3 +62,6 @@ __all__ = [
     "LinkedInAPIError",
 ]
 >>>>>>> origin/claude/linkedin-integration-01VmE4MUdZtsYVbAeCay7X3m
+=======
+"""Sales OS integrations with external services."""
+>>>>>>> origin/claude/slack-integration-01FAipAuMUsRJRL7psy92hdb
