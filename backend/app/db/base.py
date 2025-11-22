@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """SQLAlchemy Base model with common fields."""
 from datetime import datetime
 from typing import Any
@@ -7,11 +8,17 @@ from sqlalchemy import DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+=======
+"""SQLAlchemy Base model."""
+
+from sqlalchemy.orm import DeclarativeBase
+>>>>>>> origin/claude/auth-security-jwt-01NGdma4oBRc5QyZNZQsX6Ef
 
 
 class Base(DeclarativeBase):
     """Base class for all database models."""
 
+<<<<<<< HEAD
     id: Mapped[str] = mapped_column(
         UUID(as_uuid=False),
         primary_key=True,
@@ -57,3 +64,6 @@ class SoftDeleteMixin:
     def is_deleted(self) -> bool:
         """Check if record is soft-deleted."""
         return self.deleted_at is not None
+=======
+    pass
+>>>>>>> origin/claude/auth-security-jwt-01NGdma4oBRc5QyZNZQsX6Ef
