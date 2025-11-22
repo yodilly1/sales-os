@@ -1,0 +1,6 @@
+first_name,last_name,email,company,title,phone,linkedin
+John,Doe,john.doe@acme.com,Acme Corporation,VP of Sales,+1-555-0101,https://linkedin.com/in/johndoe
+Jane,Smith,jane.smith@techcorp.com,Tech Corp,Director of Operations,+1-555-0102,https://linkedin.com/in/janesmith
+Bob,Johnson,bob.johnson@startup.io,Startup Inc,Head of Sales,+1-555-0103,https://linkedin.com/in/bobjohnson
+Alice,Williams,alice.williams@enterprise.com,Enterprise Ltd,CRO,+1-555-0104,https://linkedin.com/in/alicewilliams
+Charlie,Brown,charlie.brown@global.com,Global Systems,Sales Manager,+1-555-0105,https://linkedin.com/in/charliebrown

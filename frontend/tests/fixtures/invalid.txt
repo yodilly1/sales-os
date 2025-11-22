@@ -1,0 +1,3 @@
+This is not a valid CSV file.
+It contains random text that should fail import validation.
+No proper headers or data structure.
