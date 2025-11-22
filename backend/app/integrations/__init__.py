@@ -4,6 +4,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """External service integrations."""
 =======
 """
@@ -71,3 +72,10 @@ __all__ = [
 External service integrations for Sales OS.
 """
 >>>>>>> origin/claude/salesforce-integration-01Jk6WSRuSJXErwMJ2igKMJQ
+=======
+"""External service integrations."""
+
+from app.integrations.zoom import ZoomClient
+
+__all__ = ["ZoomClient"]
+>>>>>>> origin/claude/zoom-integration-01Dy2JADoQefKcjQi2GPsjPP

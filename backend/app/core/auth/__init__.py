@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 """Authentication and authorization modules."""
 
 from app.core.auth.tokens import (
@@ -45,3 +46,6 @@ async def get_current_user_optional():
     """
     return None
 >>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
+=======
+"""Authentication and authorization utilities."""
+>>>>>>> origin/claude/zoom-integration-01Dy2JADoQefKcjQi2GPsjPP

@@ -12,6 +12,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -172,3 +173,10 @@ __all__ = ["slack_router", "webhooks_router"]
 API routes for Sales OS.
 """
 >>>>>>> origin/claude/salesforce-integration-01Jk6WSRuSJXErwMJ2igKMJQ
+=======
+"""API routes package."""
+
+from app.api import health, zoom, webhooks
+
+__all__ = ["health", "zoom", "webhooks"]
+>>>>>>> origin/claude/zoom-integration-01Dy2JADoQefKcjQi2GPsjPP

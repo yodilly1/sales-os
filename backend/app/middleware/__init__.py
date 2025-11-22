@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """Middleware components for the Sales OS backend."""
 
 from .rate_limit import RateLimitMiddleware, rate_limiter
@@ -48,3 +49,6 @@ __all__ = [
 =======
 # Middleware module
 >>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
+=======
+"""Custom middleware for the application."""
+>>>>>>> origin/claude/zoom-integration-01Dy2JADoQefKcjQi2GPsjPP

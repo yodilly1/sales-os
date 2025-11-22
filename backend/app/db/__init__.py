@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """Database configuration and utilities.
 
 This module will be fully implemented by AGENT-011 for database schema setup.
@@ -39,3 +40,6 @@ from app.db.session import get_db, AsyncSessionLocal, engine
 
 __all__ = ["Base", "get_db", "AsyncSessionLocal", "engine"]
 >>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
+=======
+"""Database configuration and utilities."""
+>>>>>>> origin/claude/zoom-integration-01Dy2JADoQefKcjQi2GPsjPP

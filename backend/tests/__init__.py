@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 """Sales OS Backend Tests."""
 =======
 """
@@ -10,3 +11,6 @@ This package contains all tests for the Sales OS backend:
 - E2E tests for complete workflows
 """
 >>>>>>> origin/claude/setup-e2e-testing-0148Qxkf1N7Ef266EzVNYrUa
+=======
+"""Test suite for Sales OS backend."""
+>>>>>>> origin/claude/zoom-integration-01Dy2JADoQefKcjQi2GPsjPP
