@@ -1,9 +1,13 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/claude/frontend-coaching-ui-01ACvPTYwnXPyzreDZDTsLry
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+<<<<<<< HEAD
 =======
 import type { NextConfig } from 'next';
 
@@ -29,3 +33,8 @@ const nextConfig: NextConfig = {
 
 export default nextConfig
 >>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
+=======
+};
+
+export default nextConfig;
+>>>>>>> origin/claude/frontend-coaching-ui-01ACvPTYwnXPyzreDZDTsLry
