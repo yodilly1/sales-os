@@ -15,6 +15,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -198,3 +199,14 @@ from .battlecards import router as battlecards_router
 
 __all__ = ["battlecards_router"]
 >>>>>>> origin/claude/battlecard-engine-01BqFWt3icJnvnL8Axa5JjUe
+=======
+"""
+Sales OS API Endpoints
+
+FastAPI routers for all API endpoints.
+"""
+
+from backend.app.api.dealroom import router as dealroom_router, public_router as dealroom_public_router
+
+__all__ = ["dealroom_router", "dealroom_public_router"]
+>>>>>>> origin/claude/build-deal-room-service-015bodWQAKS2cU2aLeKp7Upx
