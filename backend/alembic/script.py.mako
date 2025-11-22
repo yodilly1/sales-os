@@ -19,10 +19,16 @@ depends_on: Union[str, Sequence[str], None] = ${repr(depends_on)}
 
 
 def upgrade() -> None:
+<<<<<<< HEAD
     """Upgrade database schema."""
+=======
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
     ${upgrades if upgrades else "pass"}
 
 
 def downgrade() -> None:
+<<<<<<< HEAD
     """Downgrade database schema."""
+=======
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
     ${downgrades if downgrades else "pass"}

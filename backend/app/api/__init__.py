@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 """API route handlers."""
 =======
 """
@@ -69,10 +70,13 @@ __all__ = [
 ]
 >>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
 =======
+=======
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
 """API routes for Sales OS."""
 
 from fastapi import APIRouter
 
+<<<<<<< HEAD
 from .files import router as files_router
 
 api_router = APIRouter()
@@ -91,3 +95,19 @@ from .search import router as search_router
 
 __all__ = ["search_router"]
 >>>>>>> origin/claude/search-filtering-service-013Ca1SFsW8utCJ4NV94ST1R
+=======
+from app.api import activity
+
+api_router = APIRouter()
+
+# Include activity routes
+api_router.include_router(
+    activity.router,
+    prefix="/activities",
+    tags=["activities"],
+)
+
+__all__ = [
+    "api_router",
+]
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK

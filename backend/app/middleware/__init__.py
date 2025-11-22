@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 """Middleware components for the Sales OS backend."""
 
 from .rate_limit import RateLimitMiddleware, rate_limiter
@@ -34,4 +35,12 @@ __all__ = [
     "get_rate_limiter",
     "AuditMiddleware",
 >>>>>>> origin/claude/auth-security-jwt-01NGdma4oBRc5QyZNZQsX6Ef
+=======
+"""Middleware components for Sales OS."""
+
+from app.middleware.activity_logger import ActivityLoggerMiddleware
+
+__all__ = [
+    "ActivityLoggerMiddleware",
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
 ]

@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 """Alembic environment configuration for Sales OS."""
+=======
+"""Alembic migration environment configuration."""
+
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
 import asyncio
 from logging.config import fileConfig
 
@@ -8,6 +13,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
+<<<<<<< HEAD
 # Import all models to ensure they're registered with Base
 from app.db.base import Base
 from app.models import (
@@ -43,13 +49,33 @@ config = context.config
 # Set the database URL from settings
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
+=======
+# Import the Base and all models so Alembic can see them
+from app.db.base import Base
+from app.models import activity  # noqa: F401
+from app.core.config import get_settings
+
+# this is the Alembic Config object
+config = context.config
+
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
 # Interpret the config file for Python logging
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+<<<<<<< HEAD
 # Model's MetaData object for autogenerate support
 target_metadata = Base.metadata
 
+=======
+# Set the target metadata for 'autogenerate' support
+target_metadata = Base.metadata
+
+# Get database URL from settings
+settings = get_settings()
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -68,8 +94,11 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+<<<<<<< HEAD
         compare_type=True,
         compare_server_default=True,
+=======
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
     )
 
     with context.begin_transaction():
@@ -77,6 +106,7 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
+<<<<<<< HEAD
     """Run migrations with a connection."""
     context.configure(
         connection=connection,
@@ -84,13 +114,21 @@ def do_run_migrations(connection: Connection) -> None:
         compare_type=True,
         compare_server_default=True,
     )
+=======
+    """Run migrations with the given connection."""
+    context.configure(connection=connection, target_metadata=target_metadata)
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
 
     with context.begin_transaction():
         context.run_migrations()
 
 
 async def run_async_migrations() -> None:
+<<<<<<< HEAD
     """Run migrations in 'online' mode with async engine."""
+=======
+    """Run migrations in 'online' mode using async engine."""
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
     connectable = async_engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

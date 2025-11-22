@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 """SQLAlchemy Base model with common fields."""
 from datetime import datetime
 from typing import Any
@@ -37,6 +38,25 @@ class Base(DeclarativeBase):
 
 class TimestampMixin:
     """Mixin for created_at and updated_at timestamps."""
+=======
+"""SQLAlchemy base model and common mixins."""
+
+from datetime import datetime
+from typing import Any
+
+from sqlalchemy import DateTime, func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+
+class Base(DeclarativeBase):
+    """Base class for all SQLAlchemy models."""
+
+    pass
+
+
+class TimestampMixin:
+    """Mixin that adds created_at and updated_at timestamp columns."""
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -52,7 +72,11 @@ class TimestampMixin:
 
 
 class SoftDeleteMixin:
+<<<<<<< HEAD
     """Mixin for soft delete functionality."""
+=======
+    """Mixin that adds soft delete capability."""
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
 
     deleted_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
@@ -62,8 +86,13 @@ class SoftDeleteMixin:
 
     @property
     def is_deleted(self) -> bool:
+<<<<<<< HEAD
         """Check if record is soft-deleted."""
         return self.deleted_at is not None
 =======
     pass
 >>>>>>> origin/claude/auth-security-jwt-01NGdma4oBRc5QyZNZQsX6Ef
+=======
+        """Check if the record is soft deleted."""
+        return self.deleted_at is not None
+>>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
