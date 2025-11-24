@@ -175,12 +175,20 @@ export default function TranscriptsPage() {
             Upload and analyze sales call transcripts with SPICED methodology
           </p>
         </div>
-        <Button
-          onClick={() => setShowUploadModal(true)}
-          leftIcon={<Plus className="w-4 h-4" />}
-        >
-          Upload Transcript
-        </Button>
+        <div className="flex gap-2">
+          <Link href="/transcript/analyze">
+            <Button variant="secondary">
+              <FileText className="w-4 h-4 mr-2" />
+              Analyze Transcript
+            </Button>
+          </Link>
+          <Button
+            onClick={() => setShowUploadModal(true)}
+            leftIcon={<Plus className="w-4 h-4" />}
+          >
+            Upload Transcript
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}

@@ -4,29 +4,14 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import Field, field_validator
 
-from app.models.transcript import CallSource, CallStatus, CallType
+from app.models.transcript import (
+    CallSource,
+    CallStatus,
+    CallType,
+    TranscriptFormat,
+    TaskPriority,
+)
 from app.schemas.base import BaseSchema, IDSchema, TimestampSchema
-
-
-from enum import Enum
-
-# ==================== Enums ====================
-
-class TranscriptFormat(str, Enum):
-    """Supported transcript source formats."""
-    ZOOM = "zoom"
-    TEAMS = "teams"
-    AVOMA = "avoma"
-    GONG = "gong"
-    CHORUS = "chorus"
-    GENERIC = "generic"
-
-
-class TaskPriority(str, Enum):
-    """Priority levels for follow-up tasks."""
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
 
 
 # ==================== Transcript Components ====================
