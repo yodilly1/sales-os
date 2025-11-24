@@ -4,7 +4,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any, Optional
 
-from app.models.prospect import EnrichmentSource
+from app.schemas.enrichment import EnrichmentSource
 from app.models.company import NewsArticle
 
 from .base import EnrichmentProvider

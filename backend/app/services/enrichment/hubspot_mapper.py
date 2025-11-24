@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 from typing import Any, Optional
 
-from app.models.prospect import ProspectEnriched
+from app.schemas.enrichment import ProspectEnriched
 from app.models.company import CompanyEnriched
 
 logger = logging.getLogger(__name__)

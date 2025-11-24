@@ -3,7 +3,7 @@
 import logging
 from typing import Any, Optional
 
-from app.models.prospect import EnrichmentSource
+from app.schemas.enrichment import EnrichmentSource
 from app.models.company import CompanySize, FundingStage
 
 from .base import EnrichmentProvider

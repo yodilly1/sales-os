@@ -8,7 +8,7 @@ from typing import Any, Optional
 from uuid import uuid4
 
 from app.core.config import settings
-from app.models.prospect import (
+from app.schemas.enrichment import (
     ProspectCreate,
     ProspectEnriched,
     EnrichmentRequest,
@@ -20,12 +20,36 @@ from app.models.prospect import (
 )
 from app.models.company import CompanyEnriched, CompanyCreate
 
-from .providers.base import EnrichmentProvider
-from .providers.clearbit import ClearbitProvider
-from .providers.apollo import ApolloProvider
-from .providers.hunter import HunterProvider
-from .providers.linkedin import LinkedInProvider
-from .providers.news import NewsProvider
+# Import providers with graceful error handling
+try:
+    from .providers.base import EnrichmentProvider
+except ImportError:
+    EnrichmentProvider = None
+
+try:
+    from .providers.clearbit import ClearbitProvider
+except ImportError:
+    ClearbitProvider = None
+
+try:
+    from .providers.apollo import ApolloProvider
+except ImportError:
+    ApolloProvider = None
+
+try:
+    from .providers.hunter import HunterProvider
+except ImportError:
+    HunterProvider = None
+
+try:
+    from .providers.linkedin import LinkedInProvider
+except ImportError:
+    LinkedInProvider = None
+
+try:
+    from .providers.news import NewsProvider
+except ImportError:
+    NewsProvider = None
 
 logger = logging.getLogger(__name__)
 
@@ -41,39 +65,54 @@ class EnrichmentService:
     def _init_providers(self) -> None:
         """Initialize all configured providers."""
         # Clearbit
-        if settings.clearbit_api_key:
-            self.providers["clearbit"] = ClearbitProvider(
-                api_key=settings.clearbit_api_key,
-                rate_limit=settings.rate_limit_per_minute,
-            )
+        if settings.clearbit_api_key and ClearbitProvider:
+            try:
+                self.providers["clearbit"] = ClearbitProvider(
+                    api_key=settings.clearbit_api_key,
+                    rate_limit=settings.rate_limit_per_minute,
+                )
+            except Exception as e:
+                logger.warning(f"Failed to initialize Clearbit provider: {e}")
 
         # Apollo
-        if settings.apollo_api_key:
-            self.providers["apollo"] = ApolloProvider(
-                api_key=settings.apollo_api_key,
-                rate_limit=settings.rate_limit_per_minute,
-            )
+        if settings.apollo_api_key and ApolloProvider:
+            try:
+                self.providers["apollo"] = ApolloProvider(
+                    api_key=settings.apollo_api_key,
+                    rate_limit=settings.rate_limit_per_minute,
+                )
+            except Exception as e:
+                logger.warning(f"Failed to initialize Apollo provider: {e}")
 
         # Hunter
-        if settings.hunter_api_key:
-            self.providers["hunter"] = HunterProvider(
-                api_key=settings.hunter_api_key,
-                rate_limit=settings.rate_limit_per_minute,
-            )
+        if settings.hunter_api_key and HunterProvider:
+            try:
+                self.providers["hunter"] = HunterProvider(
+                    api_key=settings.hunter_api_key,
+                    rate_limit=settings.rate_limit_per_minute,
+                )
+            except Exception as e:
+                logger.warning(f"Failed to initialize Hunter provider: {e}")
 
         # LinkedIn
-        if settings.linkedin_api_key:
-            self.providers["linkedin"] = LinkedInProvider(
-                api_key=settings.linkedin_api_key,
-                rate_limit=settings.rate_limit_per_minute,
-            )
+        if settings.linkedin_api_key and LinkedInProvider:
+            try:
+                self.providers["linkedin"] = LinkedInProvider(
+                    api_key=settings.linkedin_api_key,
+                    rate_limit=settings.rate_limit_per_minute,
+                )
+            except Exception as e:
+                logger.warning(f"Failed to initialize LinkedIn provider: {e}")
 
         # News
-        if settings.news_api_key:
-            self.providers["news"] = NewsProvider(
-                api_key=settings.news_api_key,
-                rate_limit=settings.rate_limit_per_minute,
-            )
+        if settings.news_api_key and NewsProvider:
+            try:
+                self.providers["news"] = NewsProvider(
+                    api_key=settings.news_api_key,
+                    rate_limit=settings.rate_limit_per_minute,
+                )
+            except Exception as e:
+                logger.warning(f"Failed to initialize News provider: {e}")
 
         logger.info(f"Initialized {len(self.providers)} enrichment providers: {list(self.providers.keys())}")
 

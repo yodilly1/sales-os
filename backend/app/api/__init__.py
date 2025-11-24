@@ -73,4 +73,11 @@ try:
 except ImportError:
     pass
 
+try:
+    from app.api.enrichment import router as enrichment_router
+    api_router.include_router(enrichment_router, prefix="/enrichment", tags=["Enrichment"])
+except ImportError as e:
+    import logging
+    logging.getLogger(__name__).warning(f"Failed to load enrichment router: {e}")
+
 __all__ = ["api_router"]

@@ -9,7 +9,7 @@ from typing import Any, AsyncGenerator, BinaryIO, Optional
 from uuid import uuid4
 
 from app.core.config import settings
-from app.models.prospect import (
+from app.schemas.enrichment import (
     ProspectCreate,
     ProspectEnriched,
     ProspectBulkImport,
