@@ -73,4 +73,10 @@ try:
 except ImportError:
     pass
 
+try:
+    from app.api.content import router as content_router
+    api_router.include_router(content_router, tags=["Content"])
+except ImportError:
+    pass
+
 __all__ = ["api_router"]

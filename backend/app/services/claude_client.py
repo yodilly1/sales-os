@@ -32,12 +32,13 @@ class ClaudeClient:
             api_key: Optional API key. If not provided, uses config.
         """
         settings = get_settings()
-        self.api_key = api_key or settings.claude_api_key
+        # Support both anthropic_api_key and claude_api_key for flexibility
+        self.api_key = api_key or settings.anthropic_api_key or settings.claude_api_key
         self.default_model = settings.claude_model
         self.max_tokens = settings.claude_max_tokens
 
         if not self.api_key:
-            logger.warning("Claude API key not configured")
+            logger.warning("Claude API key not configured - set ANTHROPIC_API_KEY or CLAUDE_API_KEY")
 
         self._client: Optional[anthropic.Anthropic] = None
 
