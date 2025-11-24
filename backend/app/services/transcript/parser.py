@@ -14,7 +14,7 @@ from datetime import datetime
 from typing import Optional
 
 from app.models.transcript import (
-    Transcript,
+    TranscriptData,
     TranscriptFormat,
     TranscriptSpeaker,
     TranscriptTurn,
@@ -101,8 +101,8 @@ class TranscriptParser:
         format_hint: TranscriptFormat = TranscriptFormat.GENERIC,
         title: Optional[str] = None,
         call_date: Optional[datetime] = None,
-    ) -> Transcript:
-        """Parse raw transcript text into a structured Transcript.
+    ) -> TranscriptData:
+        """Parse raw transcript text into a structured TranscriptData.
 
         Args:
             raw_text: The raw transcript text
@@ -125,7 +125,7 @@ class TranscriptParser:
         # Calculate duration if timestamps available
         duration = self._calculate_duration(turns)
 
-        return Transcript(
+        return TranscriptData(
             id=str(uuid.uuid4()),
             title=title,
             format=detected_format,

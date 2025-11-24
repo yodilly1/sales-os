@@ -10,8 +10,12 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base, SoftDeleteMixin, TimestampMixin
 
 if TYPE_CHECKING:
+    from app.models.api_key import APIKey
+    from app.models.audit_log import AuditLog
     from app.models.coaching import CoachingReport
     from app.models.content import Content
+    from app.models.notification import Notification, NotificationPreference
+    from app.models.oauth_token import OAuthToken
     from app.models.transcript import Call
 
 
@@ -119,6 +123,21 @@ class User(Base, TimestampMixin, SoftDeleteMixin):
     content: Mapped[List["Content"]] = relationship("Content", back_populates="created_by")
     coaching_reports: Mapped[List["CoachingReport"]] = relationship(
         "CoachingReport", back_populates="user"
+    )
+    api_keys: Mapped[List["APIKey"]] = relationship(
+        "APIKey", back_populates="user", cascade="all, delete-orphan"
+    )
+    audit_logs: Mapped[List["AuditLog"]] = relationship(
+        "AuditLog", back_populates="user", cascade="all, delete-orphan"
+    )
+    oauth_tokens: Mapped[List["OAuthToken"]] = relationship(
+        "OAuthToken", back_populates="user", cascade="all, delete-orphan"
+    )
+    notifications: Mapped[List["Notification"]] = relationship(
+        "Notification", back_populates="user", cascade="all, delete-orphan"
+    )
+    notification_preferences: Mapped[List["NotificationPreference"]] = relationship(
+        "NotificationPreference", back_populates="user", cascade="all, delete-orphan"
     )
 
     @property

@@ -81,7 +81,7 @@ class TranscriptTurn(BaseModel):
     end_time: Optional[float] = Field(default=None, description="End time in seconds")
 
 
-class Transcript(BaseModel):
+class TranscriptData(BaseModel):
     """Parsed transcript (Pydantic model for service layer)."""
     id: str = Field(..., description="Unique transcript identifier")
     title: Optional[str] = Field(default=None, description="Call title")
@@ -139,7 +139,7 @@ class TranscriptParseRequest(BaseModel):
 
 class TranscriptParseResponse(BaseModel):
     """Response from transcript parsing."""
-    transcript: Transcript
+    transcript: TranscriptData
     spiced_analysis: Any = Field(..., description="SPICED Analysis")
     call_note: Optional[CallNote] = Field(default=None, description="Generated call notes")
     follow_up_tasks: List[FollowUpTask] = Field(default_factory=list, description="Recommended tasks")

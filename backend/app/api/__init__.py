@@ -90,7 +90,7 @@ except ImportError as e:
 
 try:
     from app.api.content import router as content_router
-    api_router.include_router(content_router, prefix="/content", tags=["Content"])
+    api_router.include_router(content_router, tags=["Content"])  # Router already has /content prefix
 except ImportError as e:
     import logging
     logging.getLogger(__name__).warning(f"Failed to load content router: {e}")
