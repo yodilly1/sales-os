@@ -1,1 +1,6 @@
-"""Transcript parsing services (to be implemented by AGENT-005)."""
+"""Transcript parsing and SPICED extraction services."""
+
+from app.services.transcript.parser import TranscriptParser
+from app.services.transcript.spiced_extractor import SPICEDExtractor
+
+__all__ = ["TranscriptParser", "SPICEDExtractor"]

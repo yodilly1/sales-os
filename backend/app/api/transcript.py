@@ -13,7 +13,8 @@ from app.models.transcript import (
 )
 from app.models.spiced import SPICEDAnalysis
 from app.services.claude_client import ClaudeClientError
-from app.services.transcript import TranscriptParser, SPICEDExtractor
+from app.services.transcript.parser import TranscriptParser
+from app.services.transcript.spiced_extractor import SPICEDExtractor
 
 logger = logging.getLogger(__name__)
 

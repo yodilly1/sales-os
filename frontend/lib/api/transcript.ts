@@ -17,9 +17,68 @@ import {
 const TRANSCRIPT_BASE = '/transcript';
 
 /**
+ * Request type for parsing a transcript
+ */
+export interface TranscriptParseRequest {
+  transcript_text: string;
+  format?: 'zoom' | 'teams' | 'avoma' | 'gong' | 'chorus' | 'generic';
+  call_title?: string;
+  call_date?: string;
+  company_name?: string;
+  sales_rep_name?: string;
+  generate_tasks?: boolean;
+  generate_call_note?: boolean;
+}
+
+/**
+ * Response type from parsing a transcript
+ */
+export interface TranscriptParseResponse {
+  transcript: {
+    id: string;
+    title?: string;
+    format: string;
+    raw_text: string;
+    turns: Array<{
+      speaker: string;
+      text: string;
+      timestamp?: string;
+      start_time?: number;
+    }>;
+    speakers: Array<{
+      id?: string;
+      name: string;
+      role?: string;
+    }>;
+    duration_minutes?: number;
+    call_date?: string;
+    created_at: string;
+  };
+  spiced_analysis: SPICEDAnalysis;
+  call_note?: {
+    summary: string;
+    attendees: string[];
+    key_discussion_points: string[];
+    customer_sentiment?: string;
+    formatted_note: string;
+  };
+  follow_up_tasks: SuggestedTask[];
+  processing_time_ms?: number;
+  warnings: string[];
+}
+
+/**
  * Transcript API client
  */
 export const transcriptApi = {
+  /**
+   * Parse and analyze a transcript using SPICED methodology
+   * This is the main endpoint for uploading and analyzing transcripts
+   */
+  async parse(request: TranscriptParseRequest): Promise<TranscriptParseResponse> {
+    return apiClient.post<TranscriptParseResponse>(`${TRANSCRIPT_BASE}/parse`, request);
+  },
+
   /**
    * Get list of transcripts with pagination and filtering
    */
@@ -152,3 +211,4 @@ export const transcriptApi = {
 };
 
 export { ApiClientError };
+export type { TranscriptParseRequest, TranscriptParseResponse };

@@ -24,9 +24,98 @@ from app.models.transcript import (
     TaskPriority,
     Transcript,
 )
-from app.services.claude_client import ClaudeClient, get_claude_client
+from app.services.claude_client import ClaudeClient, ClaudeClientError, get_claude_client
 
 logger = logging.getLogger(__name__)
+
+
+# SPICED extraction prompt template
+SPICED_EXTRACTION_PROMPT = """Analyze the following sales call transcript and extract SPICED methodology information.
+
+SPICED stands for:
+- **S**ituation: Current state, existing tools/processes, team structure, industry context
+- **P**ain: Problems, frustrations, challenges they're experiencing
+- **I**mpact: Business consequences of the pain - cost, time, revenue, morale
+- **C**ritical Event: Timeline, deadline, trigger events creating urgency
+- **E**xpected Decision: Decision maker, stakeholders, approval process, budget
+- **D**ecision Criteria: Must-haves, nice-to-haves, deal breakers, competitors
+
+For each component, provide:
+1. A clear summary
+2. Supporting details (lists where applicable)
+3. Key quotes from the transcript
+4. Confidence level: "high" (explicitly stated), "medium" (inferred), "low" (uncertain), or "not_found"
+
+Also identify:
+- Information gaps that should be explored in follow-up calls
+- Coaching notes for the sales rep
+
+Return your analysis as a JSON object with this exact structure:
+{
+    "situation": {
+        "summary": "string",
+        "current_tools": ["string"],
+        "team_size": "string or null",
+        "industry_context": "string or null",
+        "key_quotes": ["string"],
+        "confidence": "high|medium|low|not_found"
+    },
+    "pain": {
+        "primary_pain": "string",
+        "secondary_pains": ["string"],
+        "symptoms": ["string"],
+        "root_causes": ["string"],
+        "key_quotes": ["string"],
+        "confidence": "high|medium|low|not_found"
+    },
+    "impact": {
+        "business_impact": "string",
+        "quantified_impact": "string or null",
+        "affected_areas": ["string"],
+        "stakeholders_affected": ["string"],
+        "opportunity_cost": "string or null",
+        "key_quotes": ["string"],
+        "confidence": "high|medium|low|not_found"
+    },
+    "critical_event": {
+        "summary": "string",
+        "deadline": "string or null",
+        "trigger_events": ["string"],
+        "consequences_of_delay": "string or null",
+        "urgency_level": "high|medium|low or null",
+        "key_quotes": ["string"],
+        "confidence": "high|medium|low|not_found"
+    },
+    "expected_decision": {
+        "summary": "string",
+        "decision_maker": "string or null",
+        "stakeholders": ["string"],
+        "decision_timeline": "string or null",
+        "approval_process": "string or null",
+        "budget_authority": "string or null",
+        "key_quotes": ["string"],
+        "confidence": "high|medium|low|not_found"
+    },
+    "decision_criteria": {
+        "summary": "string",
+        "must_haves": ["string"],
+        "nice_to_haves": ["string"],
+        "deal_breakers": ["string"],
+        "evaluation_criteria": ["string"],
+        "competitors_considered": ["string"],
+        "key_quotes": ["string"],
+        "confidence": "high|medium|low|not_found"
+    },
+    "confidence": {
+        "overall": "high|medium|low|not_found",
+        "completeness_score": 0.0-1.0
+    },
+    "gaps_identified": ["string"],
+    "coaching_notes": ["string"]
+}
+
+TRANSCRIPT:
+"""
 
 
 class SPICEDExtractor:
@@ -44,7 +133,9 @@ Your analysis should be:
 - Accurate: Only include information actually present in the transcript
 - Specific: Include concrete details and direct quotes
 - Balanced: Acknowledge gaps and uncertainty appropriately
-- Actionable: Provide insights that help sales teams take next steps"""
+- Actionable: Provide insights that help sales teams take next steps
+
+Always respond with valid JSON only. Do not include any explanatory text before or after the JSON."""
 
     def __init__(self, claude_client: Optional[ClaudeClient] = None):
         """Initialize the SPICED extractor.
@@ -53,14 +144,6 @@ Your analysis should be:
             claude_client: Claude client instance. Uses default if not provided.
         """
         self.client = claude_client or get_claude_client()
-        self._prompt_template: Optional[str] = None
-
-    @property
-    def prompt_template(self) -> str:
-        """Load and cache the SPICED extraction prompt template."""
-        if self._prompt_template is None:
-            self._prompt_template = self.client.load_prompt("spiced_extraction")
-        return self._prompt_template
 
     async def extract(
         self,
@@ -75,6 +158,9 @@ Your analysis should be:
 
         Returns:
             SPICEDAnalysis with extracted information
+
+        Raises:
+            ClaudeClientError: If Claude API call fails
         """
         # Build context for the analysis
         context_parts = []
@@ -108,18 +194,32 @@ Your analysis should be:
             # Use raw text
             transcript_content = transcript.raw_text
 
-        full_content = f"{context}\n\n---\n\nTRANSCRIPT:\n\n{transcript_content}"
+        # Build the full prompt
+        full_prompt = SPICED_EXTRACTION_PROMPT
+        if context:
+            full_prompt += f"\n{context}\n\n---\n\n{transcript_content}"
+        else:
+            full_prompt += f"\n{transcript_content}"
 
-        # Get analysis from Claude
-        response_data = await self.client.extract_json(
-            prompt=self.prompt_template,
-            content=full_content,
-            system_prompt=self.SYSTEM_PROMPT,
-            max_tokens=4096,
-        )
+        try:
+            # Get analysis from Claude
+            response_data, _ = await self.client.generate_json(
+                prompt=full_prompt,
+                system_prompt=self.SYSTEM_PROMPT,
+                max_tokens=4096,
+                temperature=0.3,
+            )
 
-        # Build SPICEDAnalysis from response
-        return self._build_analysis(response_data, transcript.id)
+            # Build SPICEDAnalysis from response
+            return self._build_analysis(response_data, transcript.id)
+
+        except ValueError as e:
+            # JSON parsing failed
+            logger.error(f"Failed to parse SPICED analysis JSON: {e}")
+            raise ClaudeClientError(f"Failed to parse AI response: {e}")
+        except Exception as e:
+            logger.error(f"Error during SPICED extraction: {e}")
+            raise ClaudeClientError(f"SPICED extraction failed: {e}")
 
     def _build_analysis(
         self,

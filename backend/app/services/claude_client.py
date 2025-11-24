@@ -12,6 +12,29 @@ from app.core.config import get_settings
 logger = logging.getLogger(__name__)
 
 
+class ClaudeClientError(Exception):
+    """Exception raised for Claude API client errors."""
+
+    def __init__(self, message: str, status_code: Optional[int] = None, details: Optional[dict] = None):
+        """Initialize ClaudeClientError.
+
+        Args:
+            message: Error message
+            status_code: HTTP status code if applicable
+            details: Additional error details
+        """
+        super().__init__(message)
+        self.message = message
+        self.status_code = status_code
+        self.details = details or {}
+
+    def __str__(self) -> str:
+        """String representation of the error."""
+        if self.status_code:
+            return f"ClaudeClientError({self.status_code}): {self.message}"
+        return f"ClaudeClientError: {self.message}"
+
+
 class ClaudeResponse(BaseModel):
     """Response from Claude API."""
 

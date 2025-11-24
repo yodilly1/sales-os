@@ -12,6 +12,14 @@ api_router = APIRouter()
 api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 api_router.include_router(health_router, prefix="/health", tags=["Health"])
 
+# Include transcript router
+try:
+    from app.api.transcript import router as transcript_router
+    api_router.include_router(transcript_router, prefix="/transcript", tags=["Transcript"])
+except ImportError as e:
+    import logging
+    logging.getLogger(__name__).warning(f"Failed to load transcript router: {e}")
+
 # Try to include other routers if they exist
 try:
     from app.api.webhooks import router as webhooks_router
