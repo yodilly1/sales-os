@@ -1,6 +1,6 @@
 'use client'
 
-import { Mail, Phone, MapPin, Linkedin, Building2, Briefcase, RefreshCw, ExternalLink } from 'lucide-react'
+import { Mail, Phone, MapPin, Linkedin, Building2, Briefcase, RefreshCw, ExternalLink, Globe, Sparkles, TrendingUp, Newspaper, DollarSign, Lightbulb } from 'lucide-react'
 import type { Prospect, Company, EnrichmentStatus, CRMSyncStatus } from '@/types'
 import { cn, formatDateTime, getInitials } from '@/lib/utils'
 
@@ -160,6 +160,140 @@ export function ProspectCard({
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Web Research - Recent News */}
+        {prospect.enrichmentData?.webResearch?.news && prospect.enrichmentData.webResearch.news.length > 0 && (
+          <div className="bg-blue-50 rounded-lg p-3 mb-4">
+            <h4 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <Newspaper className="w-3.5 h-3.5" />
+              Recent News
+            </h4>
+            <div className="space-y-2">
+              {prospect.enrichmentData.webResearch.news.slice(0, 3).map((article, idx) => (
+                <div key={idx} className="text-sm">
+                  {article.url ? (
+                    <a
+                      href={article.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-700 hover:underline flex items-start gap-1"
+                    >
+                      <span>{article.title}</span>
+                      <ExternalLink className="w-3 h-3 flex-shrink-0 mt-0.5" />
+                    </a>
+                  ) : (
+                    <p className="text-blue-700">{article.title}</p>
+                  )}
+                  <p className="text-xs text-blue-600">
+                    {article.source && `${article.source}`}
+                    {article.publishedAt && ` • ${article.publishedAt}`}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Web Research - Funding Info */}
+        {prospect.enrichmentData?.webResearch?.funding && (
+          <div className="bg-green-50 rounded-lg p-3 mb-4">
+            <h4 className="text-xs font-medium text-green-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <DollarSign className="w-3.5 h-3.5" />
+              Funding Information
+            </h4>
+            <div className="text-sm text-green-800">
+              {prospect.enrichmentData.webResearch.funding.amount && (
+                <p className="font-medium">{prospect.enrichmentData.webResearch.funding.amount}</p>
+              )}
+              {prospect.enrichmentData.webResearch.funding.stage && (
+                <p className="text-green-700">{prospect.enrichmentData.webResearch.funding.stage}</p>
+              )}
+              {prospect.enrichmentData.webResearch.funding.sourceTitle && (
+                <p className="text-xs text-green-600 mt-1">
+                  Source: {prospect.enrichmentData.webResearch.funding.sourceTitle}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* AI Insights */}
+        {prospect.enrichmentData?.aiInsights && (
+          <div className="bg-purple-50 rounded-lg p-3 mb-4">
+            <h4 className="text-xs font-medium text-purple-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              AI Insights
+            </h4>
+            <div className="space-y-2 text-sm">
+              {/* Business Info */}
+              <div className="flex flex-wrap gap-2">
+                {prospect.enrichmentData.aiInsights.revenueModel && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-xs">
+                    <TrendingUp className="w-3 h-3" />
+                    {prospect.enrichmentData.aiInsights.revenueModel}
+                  </span>
+                )}
+                {prospect.enrichmentData.aiInsights.businessModel && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-xs">
+                    <Building2 className="w-3 h-3" />
+                    {prospect.enrichmentData.aiInsights.businessModel}
+                  </span>
+                )}
+                {prospect.enrichmentData.aiInsights.growthStage && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-xs">
+                    <Globe className="w-3 h-3" />
+                    {prospect.enrichmentData.aiInsights.growthStage}
+                  </span>
+                )}
+              </div>
+
+              {/* Key Findings */}
+              {prospect.enrichmentData.aiInsights.keyFindings && prospect.enrichmentData.aiInsights.keyFindings.length > 0 && (
+                <div className="mt-2">
+                  <p className="text-xs font-medium text-purple-700 mb-1 flex items-center gap-1">
+                    <Lightbulb className="w-3 h-3" />
+                    Key Findings
+                  </p>
+                  <ul className="space-y-1">
+                    {prospect.enrichmentData.aiInsights.keyFindings.slice(0, 3).map((finding, idx) => (
+                      <li key={idx} className="text-xs text-purple-800 flex items-start gap-1.5">
+                        <span className="flex-shrink-0 w-1 h-1 mt-1.5 bg-purple-500 rounded-full" />
+                        {finding}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Opportunities */}
+              {prospect.enrichmentData.aiInsights.opportunities && prospect.enrichmentData.aiInsights.opportunities.length > 0 && (
+                <div className="mt-2">
+                  <p className="text-xs font-medium text-purple-700 mb-1">Opportunities</p>
+                  <ul className="space-y-1">
+                    {prospect.enrichmentData.aiInsights.opportunities.slice(0, 2).map((opportunity, idx) => (
+                      <li key={idx} className="text-xs text-purple-800 flex items-start gap-1.5">
+                        <span className="flex-shrink-0 w-1 h-1 mt-1.5 bg-green-500 rounded-full" />
+                        {opportunity}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* AI Confidence */}
+              {prospect.enrichmentData.aiInsights.confidenceScore > 0 && (
+                <div className="mt-2 pt-2 border-t border-purple-200">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-purple-600">AI Confidence</span>
+                    <span className="font-medium text-purple-800">
+                      {Math.round(prospect.enrichmentData.aiInsights.confidenceScore * 100)}%
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

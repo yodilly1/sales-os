@@ -49,6 +49,8 @@ class EnrichProspectRequest(BaseModel):
     include_linkedin: bool = True
     include_news: bool = True
     include_contact_verification: bool = True
+    include_web_research: bool = True
+    include_ai_analysis: bool = True
     sync_to_hubspot: bool = False
 
 
@@ -58,6 +60,8 @@ class EnrichCompanyRequest(BaseModel):
     name: str
     domain: Optional[str] = None
     include_news: bool = True
+    include_web_research: bool = True
+    include_ai_analysis: bool = True
     sync_to_hubspot: bool = False
 
 
@@ -136,6 +140,8 @@ async def enrich_prospect(request: EnrichProspectRequest):
         include_linkedin=request.include_linkedin,
         include_news=request.include_news,
         include_contact_verification=request.include_contact_verification,
+        include_web_research=request.include_web_research,
+        include_ai_analysis=request.include_ai_analysis,
     )
 
     # Map to HubSpot if requested
@@ -166,6 +172,8 @@ async def enrich_company(request: EnrichCompanyRequest):
     result = await enrichment_service.enrich_company(
         company=company,
         include_news=request.include_news,
+        include_web_research=request.include_web_research,
+        include_ai_analysis=request.include_ai_analysis,
     )
 
     if not result:
@@ -443,3 +451,47 @@ async def get_provider_status():
         "total_providers": len(providers),
         "providers": providers,
     }
+
+
+# Unified Lookup Endpoint (for web research)
+class LookupRequest(BaseModel):
+    """Request model for unified enrichment lookup."""
+
+    email: Optional[EmailStr] = None
+    company_name: Optional[str] = None
+    company_domain: Optional[str] = None
+    include_web_research: bool = True
+    include_ai_analysis: bool = True
+
+
+@router.post("/lookup", response_model=EnrichmentResult)
+async def enrichment_lookup(request: LookupRequest):
+    """
+    Unified enrichment lookup with web research support.
+
+    This endpoint performs comprehensive enrichment including:
+    - Web research via Google search (Serper API)
+    - AI-powered analysis of company data
+    - News and funding information extraction
+
+    Works even without Clearbit/Apollo API keys as long as
+    SERPER_API_KEY is configured.
+    """
+    # Create prospect from request
+    prospect = ProspectCreate(
+        email=request.email,
+        company_name=request.company_name,
+        company_domain=request.company_domain,
+    )
+
+    result = await enrichment_service.enrich_prospect(
+        prospect=prospect,
+        include_company=True,
+        include_linkedin=False,  # Not needed for basic lookup
+        include_news=True,
+        include_contact_verification=request.email is not None,
+        include_web_research=request.include_web_research,
+        include_ai_analysis=request.include_ai_analysis,
+    )
+
+    return result

@@ -179,3 +179,189 @@ class Prospect(Base, TimestampMixin, SoftDeleteMixin):
 
     def __repr__(self) -> str:
         return f"<Prospect {self.full_name}>"
+
+
+# ==================== Pydantic Models for Enrichment ====================
+
+from pydantic import BaseModel, EmailStr, Field
+
+
+class EnrichmentSource(str, Enum):
+    """Data source for enrichment."""
+
+    CLEARBIT = "clearbit"
+    APOLLO = "apollo"
+    HUNTER = "hunter"
+    LINKEDIN = "linkedin"
+    NEWS_API = "news_api"
+    WEB_RESEARCH = "web_research"
+    MANUAL = "manual"
+    CSV_IMPORT = "csv_import"
+    HUBSPOT = "hubspot"
+    SALESFORCE = "salesforce"
+
+
+class ContactInfo(BaseModel):
+    """Contact information for a prospect."""
+
+    email: Optional[str] = None
+    email_verified: bool = False
+    email_verification_date: Optional[datetime] = None
+    phone: Optional[str] = None
+    mobile: Optional[str] = None
+    work_phone: Optional[str] = None
+
+
+class SocialProfiles(BaseModel):
+    """Social media profiles for a prospect."""
+
+    linkedin_url: Optional[str] = None
+    linkedin_username: Optional[str] = None
+    twitter_url: Optional[str] = None
+    twitter_handle: Optional[str] = None
+    github_url: Optional[str] = None
+    facebook_url: Optional[str] = None
+
+
+class LinkedInInsights(BaseModel):
+    """LinkedIn profile insights for a prospect."""
+
+    headline: Optional[str] = None
+    summary: Optional[str] = None
+    location: Optional[str] = None
+    industry: Optional[str] = None
+    connections: Optional[int] = None
+    skills: list[str] = Field(default_factory=list)
+    experience: list[dict] = Field(default_factory=list)
+    education: list[dict] = Field(default_factory=list)
+    recent_posts: list[dict] = Field(default_factory=list)
+
+
+class WebResearchData(BaseModel):
+    """Web research data from Google search."""
+
+    news: list[dict] = Field(default_factory=list)
+    funding: Optional[dict] = None
+    description: Optional[str] = None
+    insights: list[str] = Field(default_factory=list)
+    search_results: list[dict] = Field(default_factory=list)
+    last_updated: Optional[str] = None
+
+
+class AIInsights(BaseModel):
+    """AI-generated insights from company analysis."""
+
+    revenue_model: Optional[str] = None
+    business_model: Optional[str] = None
+    target_market: Optional[str] = None
+    key_findings: list[str] = Field(default_factory=list)
+    pain_points: list[str] = Field(default_factory=list)
+    opportunities: list[str] = Field(default_factory=list)
+    competitive_position: Optional[str] = None
+    growth_stage: Optional[str] = None
+    confidence_score: float = Field(default=0.0, ge=0.0, le=1.0)
+
+
+class ProspectCreate(BaseModel):
+    """Pydantic model for creating/enriching a prospect."""
+
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    full_name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    title: Optional[str] = None
+    company_name: Optional[str] = None
+    company_domain: Optional[str] = None
+
+
+class ProspectEnriched(BaseModel):
+    """Fully enriched prospect data."""
+
+    id: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    title: Optional[str] = None
+    company_name: Optional[str] = None
+    company_domain: Optional[str] = None
+    company_id: Optional[str] = None
+
+    # Professional details
+    seniority_level: Optional[str] = None
+    department: Optional[str] = None
+    role_function: Optional[str] = None
+
+    # Contact and social
+    contact_info: ContactInfo = Field(default_factory=ContactInfo)
+    social_profiles: SocialProfiles = Field(default_factory=SocialProfiles)
+
+    # Insights
+    linkedin_insights: Optional[LinkedInInsights] = None
+    web_research: Optional[WebResearchData] = None
+    ai_insights: Optional[AIInsights] = None
+
+    # News and activity
+    recent_news_mentions: list[dict] = Field(default_factory=list)
+
+    # Data quality
+    enrichment_sources: list[EnrichmentSource] = Field(default_factory=list)
+    enriched_at: Optional[datetime] = None
+    data_completeness: float = Field(default=0.0, ge=0.0, le=1.0)
+    enrichment_confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    last_verified: Optional[datetime] = None
+
+    # Timestamps
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    # HubSpot integration
+    hubspot_contact_id: Optional[str] = None
+    hubspot_mapped: bool = False
+    hubspot_field_mapping: dict = Field(default_factory=dict)
+
+
+class EnrichmentRequest(BaseModel):
+    """Request for prospect/company enrichment."""
+
+    email: Optional[EmailStr] = None
+    company_name: Optional[str] = None
+    company_domain: Optional[str] = None
+    include_web_research: bool = True
+    include_ai_analysis: bool = True
+    force_refresh: bool = False
+
+
+class EnrichmentResult(BaseModel):
+    """Result of enrichment operation."""
+
+    success: bool
+    prospect: Optional[ProspectEnriched] = None
+    company: Optional[dict] = None
+    web_research: Optional[WebResearchData] = None
+    ai_insights: Optional[AIInsights] = None
+    errors: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    sources_used: list[EnrichmentSource] = Field(default_factory=list)
+    enrichment_duration_ms: int = 0
+
+
+class ProspectBulkImport(BaseModel):
+    """Bulk import record."""
+
+    id: str
+    source: str
+    prospects: list[ProspectCreate] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class ProspectBulkImportResult(BaseModel):
+    """Result of bulk import operation."""
+
+    total_records: int
+    successful: int
+    failed: int
+    duplicates: int
+    enriched: int
+    prospects: list[ProspectEnriched] = Field(default_factory=list)
+    errors: list[dict] = Field(default_factory=list)

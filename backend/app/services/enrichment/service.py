@@ -26,6 +26,8 @@ from .providers.apollo import ApolloProvider
 from .providers.hunter import HunterProvider
 from .providers.linkedin import LinkedInProvider
 from .providers.news import NewsProvider
+from .providers.web_research import WebResearchProvider
+from .ai_analyzer import AIAnalyzer, get_ai_analyzer
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +38,7 @@ class EnrichmentService:
     def __init__(self):
         """Initialize enrichment service with configured providers."""
         self.providers: dict[str, EnrichmentProvider] = {}
+        self.ai_analyzer: AIAnalyzer = get_ai_analyzer()
         self._init_providers()
 
     def _init_providers(self) -> None:
@@ -75,6 +78,13 @@ class EnrichmentService:
                 rate_limit=settings.rate_limit_per_minute,
             )
 
+        # Web Research (Serper API for Google Search)
+        if settings.serper_api_key:
+            self.providers["web_research"] = WebResearchProvider(
+                api_key=settings.serper_api_key,
+                rate_limit=settings.rate_limit_per_minute,
+            )
+
         logger.info(f"Initialized {len(self.providers)} enrichment providers: {list(self.providers.keys())}")
 
     async def close(self) -> None:
@@ -89,6 +99,8 @@ class EnrichmentService:
         include_linkedin: bool = True,
         include_news: bool = True,
         include_contact_verification: bool = True,
+        include_web_research: bool = True,
+        include_ai_analysis: bool = True,
     ) -> EnrichmentResult:
         """
         Enrich a prospect with data from all available sources.
@@ -99,6 +111,8 @@ class EnrichmentService:
             include_linkedin: Whether to include LinkedIn insights
             include_news: Whether to include recent news
             include_contact_verification: Whether to verify email
+            include_web_research: Whether to include Google search research
+            include_ai_analysis: Whether to include AI-powered analysis
 
         Returns:
             EnrichmentResult with enriched prospect and company data
@@ -129,6 +143,8 @@ class EnrichmentService:
             if name == "linkedin" and not include_linkedin:
                 continue
             if name == "news" and not include_news:
+                continue
+            if name == "web_research" and not include_web_research:
                 continue
 
             tasks.append(
@@ -168,10 +184,51 @@ class EnrichmentService:
                 CompanyCreate(
                     name=prospect.company_name or "",
                     domain=prospect.company_domain,
-                )
+                ),
+                include_web_research=include_web_research,
+                include_ai_analysis=include_ai_analysis,
             )
             if company_data:
                 enriched.company_id = company_data.id
+
+        # Perform AI analysis if requested and company data available
+        ai_insights = None
+        if include_ai_analysis and (prospect.company_name or prospect.company_domain):
+            try:
+                # Get web research data if available
+                web_research_provider = self.providers.get("web_research")
+                web_research_data = {}
+
+                if web_research_provider and include_web_research:
+                    # Perform comprehensive web research
+                    research_result = await web_research_provider.research_company_comprehensive(
+                        company_name=prospect.company_name or prospect.company_domain,
+                        domain=prospect.company_domain,
+                    )
+                    if research_result:
+                        web_research_data = research_result
+                        # Store web research data on enriched prospect
+                        from app.models.prospect import WebResearchData
+                        enriched.web_research = WebResearchData(
+                            news=research_result.get("news", []),
+                            funding=research_result.get("funding_info"),
+                            description=research_result.get("company_description"),
+                            insights=[],
+                            search_results=research_result.get("recent_events", []),
+                            last_updated=research_result.get("search_timestamp"),
+                        )
+
+                # Analyze with AI
+                ai_insights = await self.ai_analyzer.analyze_with_fresh_data(
+                    company_name=prospect.company_name or prospect.company_domain,
+                    web_research_data=web_research_data,
+                )
+                enriched.ai_insights = ai_insights
+                if ai_insights.key_findings:
+                    sources_used.append(EnrichmentSource.WEB_RESEARCH)
+            except Exception as e:
+                logger.error(f"AI analysis error: {e}")
+                warnings.append(f"AI analysis failed: {str(e)}")
 
         # Calculate data quality scores
         enriched.enrichment_sources = sources_used
@@ -186,6 +243,8 @@ class EnrichmentService:
             success=len(errors) == 0,
             prospect=enriched,
             company=company_data.model_dump() if company_data else None,
+            web_research=enriched.web_research,
+            ai_insights=ai_insights,
             errors=errors,
             warnings=warnings,
             sources_used=sources_used,
@@ -196,6 +255,8 @@ class EnrichmentService:
         self,
         company: CompanyCreate,
         include_news: bool = True,
+        include_web_research: bool = True,
+        include_ai_analysis: bool = True,
     ) -> Optional[CompanyEnriched]:
         """
         Enrich company data from all available sources.
@@ -203,6 +264,8 @@ class EnrichmentService:
         Args:
             company: Basic company information
             include_news: Whether to include recent news
+            include_web_research: Whether to include Google search research
+            include_ai_analysis: Whether to include AI-powered analysis
 
         Returns:
             Enriched company data or None if no data found
@@ -224,6 +287,8 @@ class EnrichmentService:
                 continue
             if name == "hunter":
                 # Hunter doesn't provide much company data
+                continue
+            if name == "web_research" and not include_web_research:
                 continue
 
             tasks.append(

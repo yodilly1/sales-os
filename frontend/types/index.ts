@@ -24,6 +24,44 @@ export interface EnrichmentData {
   linkedinProfile: LinkedInProfile | null
   recentActivity: ActivityItem[]
   confidence: number // 0-100
+  webResearch: WebResearchData | null
+  aiInsights: AIInsights | null
+}
+
+export interface WebResearchData {
+  news: WebNewsArticle[]
+  funding: WebFundingInfo | null
+  description: string | null
+  insights: string[]
+  lastUpdated: string | null
+}
+
+export interface WebNewsArticle {
+  title: string
+  url: string | null
+  source: string | null
+  publishedAt: string | null
+  summary: string | null
+}
+
+export interface WebFundingInfo {
+  amount: string | null
+  stage: string | null
+  sourceUrl: string | null
+  sourceTitle: string | null
+  sourceDate: string | null
+}
+
+export interface AIInsights {
+  revenueModel: string | null
+  businessModel: string | null
+  targetMarket: string | null
+  keyFindings: string[]
+  painPoints: string[]
+  opportunities: string[]
+  competitivePosition: string | null
+  growthStage: string | null
+  confidenceScore: number
 }
 
 export interface LinkedInProfile {

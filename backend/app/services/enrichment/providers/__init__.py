@@ -6,6 +6,7 @@ from .apollo import ApolloProvider
 from .hunter import HunterProvider
 from .linkedin import LinkedInProvider
 from .news import NewsProvider
+from .web_research import WebResearchProvider
 
 __all__ = [
     "EnrichmentProvider",
@@ -14,4 +15,5 @@ __all__ = [
     "HunterProvider",
     "LinkedInProvider",
     "NewsProvider",
+    "WebResearchProvider",
 ]
