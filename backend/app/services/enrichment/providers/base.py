@@ -8,7 +8,7 @@ from typing import Any, Optional
 
 import httpx
 
-from app.models.prospect import ProspectEnriched, EnrichmentSource
+from app.schemas.enrichment import ProspectEnriched, EnrichmentSource
 from app.models.company import CompanyEnriched
 
 logger = logging.getLogger(__name__)
