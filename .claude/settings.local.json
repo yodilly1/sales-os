@@ -24,7 +24,8 @@
       "Bash(docker-compose exec:*)",
       "Bash(docker-compose down:*)",
       "Bash(docker-compose stop:*)",
-      "Bash(python -c:*)"
+      "Bash(python -c:*)",
+      "Bash(git pull:*)"
     ],
     "deny": [],
     "ask": []
