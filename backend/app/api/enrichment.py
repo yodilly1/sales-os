@@ -49,6 +49,8 @@ class EnrichProspectRequest(BaseModel):
     include_linkedin: bool = True
     include_news: bool = True
     include_contact_verification: bool = True
+    include_web_research: bool = False
+    include_ai_insights: bool = False
     sync_to_hubspot: bool = False
 
 
@@ -136,6 +138,8 @@ async def enrich_prospect(request: EnrichProspectRequest):
         include_linkedin=request.include_linkedin,
         include_news=request.include_news,
         include_contact_verification=request.include_contact_verification,
+        include_web_research=request.include_web_research,
+        include_ai_insights=request.include_ai_insights,
     )
 
     # Map to HubSpot if requested
@@ -422,6 +426,95 @@ async def get_company_news(
         "article_count": len(articles),
         "articles": articles,
     }
+
+
+# Company Lookup with Web Research
+class LookupRequest(BaseModel):
+    """Request model for quick company lookup."""
+
+    company_name: str
+    company_domain: Optional[str] = None
+    include_web_research: bool = False
+    include_ai_insights: bool = False
+
+
+class LookupResponse(BaseModel):
+    """Response model for company lookup."""
+
+    company_name: str
+    company_domain: Optional[str] = None
+    company_data: Optional[dict] = None
+    web_research: Optional[dict] = None
+    ai_insights: Optional[dict] = None
+    sources_used: list[str] = []
+    lookup_duration_ms: int = 0
+
+
+@router.post("/lookup", response_model=LookupResponse)
+async def lookup_company(request: LookupRequest):
+    """
+    Quick company lookup with optional web research and AI insights.
+
+    This endpoint provides a simplified way to get company information
+    with web research data when `include_web_research=true`.
+    """
+    import time
+    start_time = time.time()
+
+    sources_used = []
+    web_research = None
+    ai_insights = None
+    company_data = None
+
+    # Get company enrichment
+    from app.models.company import CompanyCreate
+    company = CompanyCreate(
+        name=request.company_name,
+        domain=request.company_domain,
+    )
+    company_result = await enrichment_service.enrich_company(company, include_news=True)
+
+    if company_result:
+        company_data = company_result.model_dump()
+        sources_used.extend(company_result.data_sources)
+
+    # Get web research if requested
+    if request.include_web_research:
+        web_provider = enrichment_service.providers.get("web_research")
+        if web_provider:
+            research = await web_provider.research_company(
+                company_name=request.company_name,
+                domain=request.company_domain,
+            )
+            if research:
+                web_research = research
+                sources_used.append("web_research")
+
+    # Get AI insights if requested
+    if request.include_ai_insights:
+        try:
+            insights = await enrichment_service.ai_insights.analyze_company(
+                company_name=request.company_name,
+                web_research=web_research,
+                enrichment_data=company_data,
+            )
+            if insights:
+                ai_insights = insights
+                sources_used.append("ai_insights")
+        except Exception as e:
+            logger.error(f"Error generating AI insights: {e}")
+
+    duration_ms = int((time.time() - start_time) * 1000)
+
+    return LookupResponse(
+        company_name=request.company_name,
+        company_domain=request.company_domain,
+        company_data=company_data,
+        web_research=web_research,
+        ai_insights=ai_insights,
+        sources_used=list(set(sources_used)),
+        lookup_duration_ms=duration_ms,
+    )
 
 
 # Provider Status

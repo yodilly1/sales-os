@@ -26,6 +26,8 @@ from .providers.apollo import ApolloProvider
 from .providers.hunter import HunterProvider
 from .providers.linkedin import LinkedInProvider
 from .providers.news import NewsProvider
+from .providers.web_research import WebResearchProvider
+from .ai_insights import get_insights_generator
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +77,16 @@ class EnrichmentService:
                 rate_limit=settings.rate_limit_per_minute,
             )
 
+        # Web Research (Serper)
+        if settings.serper_api_key:
+            self.providers["web_research"] = WebResearchProvider(
+                api_key=settings.serper_api_key,
+                rate_limit=settings.rate_limit_per_minute,
+            )
+
+        # AI Insights Generator
+        self.ai_insights = get_insights_generator()
+
         logger.info(f"Initialized {len(self.providers)} enrichment providers: {list(self.providers.keys())}")
 
     async def close(self) -> None:
@@ -89,6 +101,8 @@ class EnrichmentService:
         include_linkedin: bool = True,
         include_news: bool = True,
         include_contact_verification: bool = True,
+        include_web_research: bool = False,
+        include_ai_insights: bool = False,
     ) -> EnrichmentResult:
         """
         Enrich a prospect with data from all available sources.
@@ -99,6 +113,8 @@ class EnrichmentService:
             include_linkedin: Whether to include LinkedIn insights
             include_news: Whether to include recent news
             include_contact_verification: Whether to verify email
+            include_web_research: Whether to include web research via Serper
+            include_ai_insights: Whether to include AI-generated insights
 
         Returns:
             EnrichmentResult with enriched prospect and company data
@@ -129,6 +145,8 @@ class EnrichmentService:
             if name == "linkedin" and not include_linkedin:
                 continue
             if name == "news" and not include_news:
+                continue
+            if name == "web_research" and not include_web_research:
                 continue
 
             tasks.append(

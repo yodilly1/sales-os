@@ -79,6 +79,14 @@ class Settings(BaseSettings):
     hubspot_api_key: str = ""
     avoma_api_key: Optional[str] = None
 
+    # Enrichment Providers
+    clearbit_api_key: Optional[str] = None
+    apollo_api_key: Optional[str] = None
+    hunter_api_key: Optional[str] = None
+    linkedin_api_key: Optional[str] = None
+    news_api_key: Optional[str] = None
+    serper_api_key: Optional[str] = None  # For web research via Google Search
+
     @property
     def cors_origins_list(self) -> List[str]:
         """Parse CORS origins from comma-separated string."""

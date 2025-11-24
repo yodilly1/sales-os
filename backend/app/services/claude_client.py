@@ -191,6 +191,45 @@ Do not wrap the JSON in markdown code blocks."""
         raise last_error or RuntimeError("Max retries exceeded")
 
 
+    async def generate_text(
+        self,
+        prompt: str,
+        system_prompt: Optional[str] = None,
+        model: Optional[str] = None,
+        max_tokens: Optional[int] = None,
+        temperature: float = 0.7,
+    ) -> Optional[str]:
+        """Generate text content using Claude.
+
+        Args:
+            prompt: The user prompt to send.
+            system_prompt: Optional system prompt for context.
+            model: Optional model override.
+            max_tokens: Optional max tokens override.
+            temperature: Temperature for generation (0-1).
+
+        Returns:
+            Generated text content or None on failure.
+        """
+        try:
+            response = await self.generate(
+                prompt=prompt,
+                system_prompt=system_prompt,
+                model=model,
+                max_tokens=max_tokens,
+                temperature=temperature,
+            )
+            return response.content
+        except Exception as e:
+            logger.error(f"Error generating text: {e}")
+            return None
+
+
 def get_claude_client() -> ClaudeClient:
     """Get Claude client instance."""
+    return ClaudeClient()
+
+
+def create_claude_client() -> ClaudeClient:
+    """Create a new Claude client instance."""
     return ClaudeClient()

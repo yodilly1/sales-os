@@ -73,4 +73,28 @@ try:
 except ImportError:
     pass
 
+try:
+    from app.api.enrichment import router as enrichment_router
+    api_router.include_router(enrichment_router, prefix="/enrichment", tags=["Enrichment"])
+except ImportError:
+    pass
+
+try:
+    from app.api.outreach import router as outreach_router
+    api_router.include_router(outreach_router, prefix="/outreach", tags=["Outreach"])
+except ImportError:
+    pass
+
+try:
+    from app.api.transcript import router as transcript_router
+    api_router.include_router(transcript_router, prefix="/transcript", tags=["Transcript"])
+except ImportError:
+    pass
+
+try:
+    from app.api.content import router as content_router
+    api_router.include_router(content_router, prefix="/content", tags=["Content"])
+except ImportError:
+    pass
+
 __all__ = ["api_router"]
