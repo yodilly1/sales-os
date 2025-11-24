@@ -88,4 +88,11 @@ except ImportError as e:
     import logging
     logging.getLogger(__name__).warning(f"Failed to load enrichment router: {e}")
 
+try:
+    from app.api.content import router as content_router
+    api_router.include_router(content_router, prefix="/content", tags=["Content"])
+except ImportError as e:
+    import logging
+    logging.getLogger(__name__).warning(f"Failed to load content router: {e}")
+
 __all__ = ["api_router"]
