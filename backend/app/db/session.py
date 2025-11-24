@@ -8,8 +8,10 @@ from app.core.config import settings
 
 # Create async engine
 # Note: settings.database_url should be a string, e.g. "postgresql+asyncpg://..."
+# Create async engine
+# Use the guaranteed async URL from settings
 engine = create_async_engine(
-    str(settings.database_url),
+    str(settings.async_database_url),
     poolclass=NullPool,
     echo=settings.debug,
 )

@@ -1,34 +1,43 @@
 """
 Database configuration and session management.
 
-Provides SQLAlchemy engine and session factory.
+Provides SQLAlchemy async engine and session factory.
 """
 
-from typing import Generator
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from typing import AsyncGenerator
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from .config import settings
 
-# Create engine with connection pooling
-engine = create_engine(
-    settings.DATABASE_URL,
+# Create async engine with connection pooling
+# Use the guaranteed async URL from settings
+database_url = settings.async_database_url
+
+engine = create_async_engine(
+    database_url,
     pool_size=settings.DATABASE_POOL_SIZE,
     max_overflow=settings.DATABASE_MAX_OVERFLOW,
     pool_pre_ping=True,  # Enable connection health checks
+    echo=settings.debug,  # Log SQL queries in debug mode
 )
 
-# Session factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Async session factory
+AsyncSessionLocal = async_sessionmaker(
+    engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+    autocommit=False,
+    autoflush=False,
+)
 
 
-def get_db() -> Generator[Session, None, None]:
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
-    Dependency for getting database sessions.
+    Dependency for getting async database sessions.
 
     Yields a database session and ensures it's closed after use.
     """
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+        finally:
+            await session.close()

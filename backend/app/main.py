@@ -25,8 +25,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API Routes will be included here as they are developed
-# app.include_router(transcript.router, prefix="/api/v1/transcript", tags=["transcript"])
+from app.api import api_router
+
+# Include API routes
+app.include_router(api_router, prefix="/api/v1")
 
 
 @app.get("/health")

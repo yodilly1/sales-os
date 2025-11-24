@@ -36,7 +36,7 @@ async def health_check() -> HealthResponse:
         status="healthy",
         timestamp=datetime.now(timezone.utc),
         version=settings.app_version,
-        environment=settings.environment,
+        environment=settings.app_env,
     )
 
 
@@ -56,7 +56,7 @@ async def detailed_health_check(
         status="healthy" if db_status == "healthy" else "degraded",
         timestamp=datetime.now(timezone.utc),
         version=settings.app_version,
-        environment=settings.environment,
+        environment=settings.app_env,
         database=db_status,
         services={
             "auth": "healthy",
