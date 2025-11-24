@@ -36,6 +36,20 @@ class Settings(BaseSettings):
     # Database
     database_url: str = "postgresql+asyncpg://user:password@localhost:5432/sales_os"
     database_url_sync: str = "postgresql://user:password@localhost:5432/sales_os"
+    DATABASE_POOL_SIZE: int = 5
+    DATABASE_MAX_OVERFLOW: int = 10
+
+    @property
+    def async_database_url(self) -> str:
+        """
+        Return a URL guaranteed to use the async driver.
+        If the configured URL is synchronous (postgresql://), replace it
+        with the asyncpg scheme. This protects against env files that still
+        contain the old sync format.
+        """
+        if self.database_url.startswith("postgresql://"):
+            return self.database_url.replace("postgresql://", "postgresql+asyncpg://")
+        return self.database_url
 
     # Security
     secret_key: str = "your-super-secret-key-change-in-production"

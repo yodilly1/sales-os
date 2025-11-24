@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 from app.core.constants import AudienceType, BrandVoice, ContentStatus, ContentType
 from sqlalchemy import Boolean, Column, DateTime as SQLDateTime, ForeignKey, Integer, String, Text, JSON, Enum as SQLEnum
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from .base import BaseDBModel, TimestampMixin
 
 
@@ -106,13 +106,6 @@ class SPICEDContext(BaseModel):
     decision_criteria: Optional[str] = Field(None, description="Evaluation criteria")
 
 
-    decision_criteria: Optional[str] = Field(None, description="Evaluation criteria")
-
-
-# =============================================================================
-# Database Models
-# =============================================================================
-
 # =============================================================================
 # Database Models
 # =============================================================================
@@ -176,7 +169,8 @@ class Content(BaseDBModel, TimestampMixin):
     
     # Relationships
     template = relationship("ContentTemplate", back_populates="contents")
-    children = relationship("Content", backref=relationship("Content", remote_side="Content.id"))
+    created_by = relationship("User", back_populates="content")
+    children = relationship("Content", backref=backref("parent", remote_side="Content.id"))
     prospect = relationship("Prospect", back_populates="content")
     company = relationship("Company", back_populates="content")
 

@@ -3,135 +3,100 @@
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 from enum import Enum
-from sqlalchemy import Column, String, Text, Integer, ForeignKey, JSON, Enum as SQLEnum
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String, Text, Integer, Float, ForeignKey, JSON, DateTime, Boolean
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import UUID
 
-from .base import BaseDBModel, BaseModel, TimestampedSchema
+from app.db.base import Base, TimestampMixin, SoftDeleteMixin
 
-
-class TranscriptSource(str, Enum):
-    """Source of the transcript."""
-
-    AVOMA = "avoma"
-    ZOOM = "zoom"
-    TEAMS = "teams"
-    GONG = "gong"
-    MANUAL = "manual"
-
-
-class CallSource(str, Enum):
-    """Source of the call."""
-    MANUAL_UPLOAD = "manual_upload"
-    ZOOM = "zoom"
-    TEAMS = "teams"
-    GOOGLE_MEET = "google_meet"
-    DIALER = "dialer"
-
-
-class CallType(str, Enum):
-    """Type of call."""
-    DISCOVERY = "discovery"
-    DEMO = "demo"
-    NEGOTIATION = "negotiation"
-    CHECK_IN = "check_in"
-    SUPPORT = "support"
-    OTHER = "other"
-
-
-class CallStatus(str, Enum):
-    """Status of the call."""
-    SCHEDULED = "scheduled"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-    CANCELED = "canceled"
-    FAILED = "failed"
-
-
-class Call(BaseDBModel):
+class Call(Base, TimestampMixin, SoftDeleteMixin):
     """Call model."""
 
     __tablename__ = "calls"
 
-    title = Column(String(500), nullable=False)
-    source = Column(SQLEnum(CallSource), default=CallSource.MANUAL_UPLOAD)
-    call_type = Column(SQLEnum(CallType), nullable=True)
-    status = Column(SQLEnum(CallStatus), default=CallStatus.COMPLETED)
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    source: Mapped[str] = mapped_column(String(50), default="manual_upload", nullable=False)
+    call_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    status: Mapped[str] = mapped_column(String(50), default="pending", nullable=False)
     
-    scheduled_at = Column(String(50))
-    started_at = Column(String(50))
-    ended_at = Column(String(50))
-    duration_seconds = Column(Integer)
+    scheduled_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    ended_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    duration_seconds: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     
-    recording_url = Column(String(500))
-    external_id = Column(String(255))
+    recording_url: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
+    external_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, index=True)
+    participants: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     
-    participants = Column(JSON, default=list)
+    # Foreign Keys
+    user_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("users.id"), nullable=False)
+    prospect_id: Mapped[Optional[str]] = mapped_column(UUID(as_uuid=False), ForeignKey("prospects.id"), nullable=True)
+    company_id: Mapped[Optional[str]] = mapped_column(UUID(as_uuid=False), ForeignKey("companies.id"), nullable=True)
     
     # Relationships
-    user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
-    prospect_id = Column(String(36), ForeignKey("prospects.id"))
-    company_id = Column(String(36), ForeignKey("companies.id"))
-    
-    transcript = relationship("Transcript", backref="call", uselist=False)
+    user = relationship("User", back_populates="calls")
+    transcript = relationship("Transcript", back_populates="call", uselist=False)
     coaching_reports = relationship("CoachingReport", back_populates="call")
     prospect = relationship("Prospect", back_populates="calls")
     company = relationship("Company", back_populates="calls")
+    spiced_analysis = relationship("SPICEDAnalysis", back_populates="call", uselist=False)
 
 
-class Transcript(BaseDBModel):
+class Transcript(Base, TimestampMixin):
     """Call transcript model."""
 
     __tablename__ = "transcripts"
 
-    title = Column(String(500), nullable=False)
-    source = Column(SQLEnum(TranscriptSource), default=TranscriptSource.MANUAL)
-    source_id = Column(String(255))  # External ID from source system
-    raw_text = Column(Text, nullable=False)
-    duration_seconds = Column(Integer)
-    call_date = Column(String(50))  # ISO date string
-    participants = Column(JSON, default=list)  # List of participant names/emails
-    meta_data = Column(JSON, default=dict)
+    raw_text: Mapped[str] = mapped_column(Text, nullable=False)
+    structured_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    language: Mapped[str] = mapped_column(String(10), default="en", nullable=False)
+    word_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    confidence_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    transcription_service: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    processed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # Foreign Keys
+    call_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("calls.id"), nullable=False, unique=True)
 
     # Relationships
-    user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
-    organization_id = Column(String(36), ForeignKey("organizations.id"), nullable=False)
-    prospect_id = Column(String(36), ForeignKey("prospects.id"))
+    call = relationship("Call", back_populates="transcript")
 
 
-class SPICEDAnalysis(BaseDBModel):
+class SPICEDAnalysis(Base, TimestampMixin):
     """SPICED analysis extracted from transcript."""
 
     __tablename__ = "spiced_analyses"
 
-    transcript_id = Column(
-        String(36), ForeignKey("transcripts.id"), nullable=False, unique=True
-    )
+    situation: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    pain: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    impact: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    critical_event: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    expected_decision: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    decision_criteria: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    
+    situation_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    pain_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    impact_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    critical_event_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    expected_decision_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    decision_criteria_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    
+    overall_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    confidence_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    
+    call_summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    call_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    follow_up_tasks: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    key_quotes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    action_items: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    gaps_identified: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    recommended_questions: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    
+    model_version: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    analyzed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    # SPICED Fields
-    situation = Column(Text)  # Current state/context
-    situation_confidence = Column(Integer, default=0)  # 0-100
+    # Foreign Keys
+    call_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("calls.id"), nullable=False, unique=True)
 
-    pain = Column(Text)  # Problems/challenges identified
-    pain_confidence = Column(Integer, default=0)
-
-    impact = Column(Text)  # Business consequences
-    impact_confidence = Column(Integer, default=0)
-
-    critical_event = Column(Text)  # Timeline/urgency drivers
-    critical_event_confidence = Column(Integer, default=0)
-
-    expected_decision = Column(Text)  # Decision process
-    expected_decision_confidence = Column(Integer, default=0)
-
-    decision_criteria = Column(Text)  # Evaluation criteria
-    decision_criteria_confidence = Column(Integer, default=0)
-
-    # Summary and suggestions
-    summary = Column(Text)
-    key_quotes = Column(JSON, default=list)  # List of notable quotes
-    follow_up_tasks = Column(JSON, default=list)  # Suggested next steps
-    objections = Column(JSON, default=list)  # Objections raised
-
-    # Analysis metadata
-    model_version = Column(String(50))
-    analysis_date = Column(String(50))
+    # Relationships
+    call = relationship("Call", back_populates="spiced_analysis")

@@ -1,7 +1,6 @@
 """Database models for Sales OS."""
 from app.models.user import Organization, Team, User
-from app.models.transcript import Call, Transcript
-from app.models.spiced import SPICEDAnalysis
+from app.models.transcript import Call, Transcript, SPICEDAnalysis
 from app.models.content import Content, ContentTemplate
 from app.models.prospect import Company, Prospect
 from app.models.coaching import CoachingReport, CoachingScore

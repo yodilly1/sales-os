@@ -113,7 +113,7 @@ class User(Base, TimestampMixin, SoftDeleteMixin):
     # Relationships
     organization: Mapped["Organization"] = relationship("Organization", back_populates="users")
     team: Mapped[Optional["Team"]] = relationship(
-        "Team", back_populates="members", foreign_keys=[team_id]
+        Team, back_populates="members", foreign_keys=[team_id]
     )
     calls: Mapped[List["Call"]] = relationship("Call", back_populates="user")
     content: Mapped[List["Content"]] = relationship("Content", back_populates="created_by")

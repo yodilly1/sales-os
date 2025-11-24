@@ -30,7 +30,7 @@ from app.models import (
 # Load settings
 try:
     from app.core.config import settings
-    DATABASE_URL = settings.database_url
+    DATABASE_URL = settings.async_database_url
 except Exception:
     import os
     DATABASE_URL = os.getenv(
