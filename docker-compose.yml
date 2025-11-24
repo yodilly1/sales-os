@@ -12,6 +12,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: development
     container_name: sales-os-backend
     ports:
       - "${BACKEND_PORT:-8000}:8000"
@@ -55,6 +56,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: development
     container_name: sales-os-worker
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-salesos}:${POSTGRES_PASSWORD:-salesos_dev_password}@postgres:5432/${POSTGRES_DB:-salesos}
@@ -81,6 +83,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: development
     container_name: sales-os-frontend
     ports:
       - "${FRONTEND_PORT:-3000}:3000"

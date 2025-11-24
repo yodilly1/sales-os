@@ -1,50 +1,13 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/claude/frontend-coaching-ui-01ACvPTYwnXPyzreDZDTsLry
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
-<<<<<<< HEAD
-=======
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   experimental: {
     typedRoutes: true,
-  },
->>>>>>> origin/claude/frontend-content-ui-01SUCiGQU6dN2Z9rPASZfehV
-};
-
-export default nextConfig;
-=======
-import type { NextConfig } from 'next'
-
-const nextConfig: NextConfig = {
-  experimental: {
     serverActions: {
       bodySizeLimit: '10mb',
     },
   },
-}
-
-export default nextConfig
->>>>>>> origin/claude/prospect-ui-frontend-01F9BktJJ2Zg4J6voVhwdpQH
-=======
 };
 
 export default nextConfig;
->>>>>>> origin/claude/frontend-coaching-ui-01ACvPTYwnXPyzreDZDTsLry
-=======
-import type { NextConfig } from 'next'
-
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
-}
-
-export default nextConfig
->>>>>>> origin/claude/build-dashboard-navigation-01MVV3BST4NwmsmDM3US68rm

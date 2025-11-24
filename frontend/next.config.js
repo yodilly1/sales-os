@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
   output: 'standalone',
   reactStrictMode: true,
 
@@ -23,6 +20,16 @@ const nextConfig = {
   // Environment variables exposed to browser
   env: {
     NEXT_PUBLIC_APP_NAME: 'Sales OS',
+  },
+
+  // API rewrites for development
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/:path*',
+      },
+    ];
   },
 
   // Headers for security
@@ -55,31 +62,9 @@ const nextConfig = {
         source: '/home',
         destination: '/dashboard',
         permanent: true,
-=======
-  reactStrictMode: true,
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:8000/api/:path*',
->>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
       },
     ];
-=======
-  reactStrictMode: true,
-  experimental: {
-    serverActions: true,
->>>>>>> origin/claude/transcript-ui-frontend-01827GXMtwFgZZZSpTQu33aT
   },
 };
 
 module.exports = nextConfig;
-=======
-  reactStrictMode: true,
-  experimental: {
-    serverActions: true,
-  },
-}
-
-module.exports = nextConfig
->>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw
