@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-<<<<<<< HEAD
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -25,13 +24,6 @@ export const metadata: Metadata = {
     "sales coaching",
     "SPICED methodology",
   ],
-=======
-import "./globals.css";
-
-export const metadata: Metadata = {
-  title: "Sales OS | VP-of-Sales Operating System",
-  description: "Automate transcript analysis, generate sales content, and get SPICED coaching based on Winning by Design methodology.",
->>>>>>> origin/claude/frontend-coaching-ui-01ACvPTYwnXPyzreDZDTsLry
 };
 
 export default function RootLayout({
@@ -41,13 +33,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-<<<<<<< HEAD
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-=======
-      <body className="font-sans antialiased">
->>>>>>> origin/claude/frontend-coaching-ui-01ACvPTYwnXPyzreDZDTsLry
         {children}
       </body>
     </html>

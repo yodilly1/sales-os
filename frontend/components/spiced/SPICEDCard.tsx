@@ -98,16 +98,17 @@ export function SPICEDCard({ element, className }: SPICEDCardProps) {
 
         {/* Title and Score */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-semibold text-neutral-900">{config.title}</h3>
-            <Badge variant={score.variant}>{score.label}</Badge>
-          </div>
-          <p className="text-sm text-neutral-600 truncate">{config.description}</p>
+          <h3 className="font-semibold text-neutral-900">{config.title}</h3>
+          <p className="text-xs text-neutral-500">{config.description}</p>
         </div>
 
-        {/* Score Visual */}
-        <div className="flex-shrink-0 flex items-center gap-3">
-          <ScoreIndicator score={element.score} />
+        {/* Score Badge */}
+        <Badge variant={score.variant} size="sm">
+          {element.score}/5
+        </Badge>
+
+        {/* Expand/Collapse Icon */}
+        <div className="flex-shrink-0">
           {isExpanded ? (
             <ChevronUp className="w-5 h-5 text-neutral-400" />
           ) : (
@@ -117,57 +118,59 @@ export function SPICEDCard({ element, className }: SPICEDCardProps) {
       </button>
 
       {/* Content */}
-      {isExpanded && (
-        <CardBody className="space-y-4">
-          {/* Main Content */}
-          <div>
-            <h4 className="text-sm font-medium text-neutral-500 mb-2">Analysis</h4>
-            <p className="text-neutral-700">{element.content}</p>
-          </div>
-
-          {/* Quotes */}
-          {element.quotes.length > 0 && (
+      {
+        isExpanded && (
+          <CardBody className="space-y-4">
+            {/* Main Content */}
             <div>
-              <h4 className="text-sm font-medium text-neutral-500 mb-2 flex items-center gap-1">
-                <Quote className="w-4 h-4" />
-                Key Quotes
-              </h4>
-              <div className="space-y-2">
-                {element.quotes.map((quote, index) => (
-                  <blockquote
-                    key={index}
-                    className="pl-4 border-l-2 border-neutral-200 text-sm text-neutral-600 italic"
-                  >
-                    "{quote}"
-                  </blockquote>
-                ))}
+              <h4 className="text-sm font-medium text-neutral-500 mb-2">Analysis</h4>
+              <p className="text-neutral-700">{element.content}</p>
+            </div>
+
+            {/* Quotes */}
+            {element.quotes.length > 0 && (
+              <div>
+                <h4 className="text-sm font-medium text-neutral-500 mb-2 flex items-center gap-1">
+                  <Quote className="w-4 h-4" />
+                  Key Quotes
+                </h4>
+                <div className="space-y-2">
+                  {element.quotes.map((quote, index) => (
+                    <blockquote
+                      key={index}
+                      className="pl-4 border-l-2 border-neutral-200 text-sm text-neutral-600 italic"
+                    >
+                      "{quote}"
+                    </blockquote>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Recommendations */}
-          {element.recommendations && element.recommendations.length > 0 && (
-            <div>
-              <h4 className="text-sm font-medium text-neutral-500 mb-2 flex items-center gap-1">
-                <Lightbulb className="w-4 h-4" />
-                Recommendations
-              </h4>
-              <ul className="space-y-1">
-                {element.recommendations.map((rec, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-2 text-sm text-neutral-600"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary-500 mt-2 flex-shrink-0" />
-                    {rec}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </CardBody>
-      )}
-    </Card>
+            {/* Recommendations */}
+            {element.recommendations && element.recommendations.length > 0 && (
+              <div>
+                <h4 className="text-sm font-medium text-neutral-500 mb-2 flex items-center gap-1">
+                  <Lightbulb className="w-4 h-4" />
+                  Recommendations
+                </h4>
+                <ul className="space-y-1">
+                  {element.recommendations.map((rec, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-2 text-sm text-neutral-600"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary-500 mt-2 flex-shrink-0" />
+                      {rec}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </CardBody>
+        )
+      }
+    </Card >
   );
 }
 
@@ -186,8 +189,8 @@ function ScoreIndicator({ score }: { score: 1 | 2 | 3 | 4 | 5 }) {
               ? score >= 4
                 ? 'bg-success-500'
                 : score >= 3
-                ? 'bg-warning-500'
-                : 'bg-danger-500'
+                  ? 'bg-warning-500'
+                  : 'bg-danger-500'
               : 'bg-neutral-200'
           )}
         />

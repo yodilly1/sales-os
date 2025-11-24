@@ -2,11 +2,12 @@
 
 import clsx from 'clsx';
 import { forwardRef, ButtonHTMLAttributes, ReactNode } from 'react';
+import { motion, HTMLMotionProps } from 'framer-motion';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;
@@ -17,21 +18,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-sm',
+    'bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-700 hover:to-primary-600 focus:ring-primary-500 shadow-lg shadow-primary-500/30 border border-transparent',
   secondary:
-    'bg-neutral-100 text-neutral-900 hover:bg-neutral-200 focus:ring-neutral-500',
+    'bg-white text-neutral-700 hover:bg-neutral-50 focus:ring-neutral-500 border border-neutral-200 shadow-sm',
   outline:
-    'border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 focus:ring-primary-500',
+    'border-2 border-primary-100 bg-transparent text-primary-700 hover:bg-primary-50 focus:ring-primary-500',
   ghost:
-    'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 focus:ring-neutral-500',
+    'text-neutral-600 hover:bg-neutral-100/50 hover:text-neutral-900 focus:ring-neutral-500',
   danger:
-    'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
+    'bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600 focus:ring-red-500 shadow-lg shadow-red-500/30',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-sm',
-  lg: 'px-6 py-3 text-base',
+  sm: 'px-3 py-1.5 text-xs',
+  md: 'px-5 py-2.5 text-sm',
+  lg: 'px-8 py-3.5 text-base',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -50,11 +51,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     return (
-      <button
+      <motion.button
         ref={ref}
         disabled={disabled || loading}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         className={clsx(
-          'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          'inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none',
           variantStyles[variant],
           sizeStyles[size],
           className
@@ -87,7 +90,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {children}
         {!loading && rightIcon}
-      </button>
+      </motion.button>
     );
   }
 );

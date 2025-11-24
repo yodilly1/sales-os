@@ -1,92 +1,80 @@
-import { clsx } from 'clsx';
-import { ReactNode } from 'react';
 
-interface CardProps {
-  children: ReactNode;
-  className?: string;
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+import { cn } from '@/lib/utils';
+import { HTMLAttributes, forwardRef } from 'react';
+
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'glass' | 'elevated' | 'flat';
 }
 
-interface CardHeaderProps {
-  children: ReactNode;
-  className?: string;
-}
-
-interface CardTitleProps {
-  children: ReactNode;
-  className?: string;
-}
-
-interface CardContentProps {
-  children: ReactNode;
-  className?: string;
-}
-
-interface CardFooterProps {
-  children: ReactNode;
-  className?: string;
-}
-
-const paddingStyles = {
-  none: '',
-  sm: 'p-4',
-  md: 'p-6',
-  lg: 'p-8',
-};
-
-export function Card({ children, className, padding = 'none' }: CardProps) {
-  return (
+const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant = 'default', ...props }, ref) => (
     <div
-      className={clsx(
-        'rounded-xl border border-gray-200 bg-white shadow-sm',
-        paddingStyles[padding],
+      ref={ref}
+      className={cn(
+        'rounded-2xl transition-all duration-300',
+        {
+          'bg-white border border-neutral-200/60 shadow-soft': variant === 'default',
+          'bg-white/70 backdrop-blur-xl border border-white/40 shadow-soft': variant === 'glass',
+          'bg-white border border-transparent shadow-elevated': variant === 'elevated',
+          'bg-neutral-50 border border-neutral-200': variant === 'flat',
+        },
         className
       )}
-    >
-      {children}
-    </div>
-  );
-}
+      {...props}
+    />
+  )
+);
+Card.displayName = 'Card';
 
-export function CardHeader({ children, className }: CardHeaderProps) {
-  return (
+const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
     <div
-      className={clsx(
-        'flex flex-col space-y-1.5 border-b border-gray-100 px-6 py-4',
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-}
+      ref={ref}
+      className={cn('flex flex-col space-y-1.5 p-6', className)}
+      {...props}
+    />
+  )
+);
+CardHeader.displayName = 'CardHeader';
 
-export function CardTitle({ children, className }: CardTitleProps) {
-  return (
+const CardTitle = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) => (
     <h3
-      className={clsx(
-        'text-lg font-semibold leading-none tracking-tight text-gray-900',
-        className
-      )}
-    >
-      {children}
-    </h3>
-  );
-}
+      ref={ref}
+      className={cn('font-semibold leading-none tracking-tight text-neutral-900', className)}
+      {...props}
+    />
+  )
+);
+CardTitle.displayName = 'CardTitle';
 
-export function CardContent({ children, className }: CardContentProps) {
-  return <div className={clsx('px-6 py-4', className)}>{children}</div>;
-}
+const CardDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => (
+    <p
+      ref={ref}
+      className={cn('text-sm text-neutral-500', className)}
+      {...props}
+    />
+  )
+);
+CardDescription.displayName = 'CardDescription';
 
-export function CardFooter({ children, className }: CardFooterProps) {
-  return (
+const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
+  )
+);
+CardContent.displayName = 'CardContent';
+
+const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
     <div
-      className={clsx(
-        'flex items-center border-t border-gray-100 px-6 py-4',
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-}
+      ref={ref}
+      className={cn('flex items-center p-6 pt-0', className)}
+      {...props}
+    />
+  )
+);
+CardFooter.displayName = 'CardFooter';
+
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };

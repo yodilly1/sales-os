@@ -242,11 +242,10 @@ export function SavedSearches({
               <div className="flex items-start gap-3">
                 {/* Bookmark icon */}
                 <svg
-                  className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
-                    search.is_default
+                  className={`w-4 h-4 flex-shrink-0 mt-0.5 ${search.is_default
                       ? 'text-yellow-500 fill-current'
                       : 'text-gray-400'
-                  }`}
+                    }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -274,7 +273,7 @@ export function SavedSearches({
                   )}
                   <div className="flex items-center gap-2 mt-1 text-xs text-gray-400">
                     <span className="truncate max-w-[150px]">
-                      "{search.query}"
+                      &quot;{search.query}&quot;
                     </span>
                     <span>-</span>
                     <span>Used {search.use_count}x</span>
@@ -377,7 +376,7 @@ export function SavedSearches({
               {saveModal.mode === 'create' && currentQuery && (
                 <div className="bg-gray-50 rounded-md p-3">
                   <div className="text-xs text-gray-500 mb-1">Query:</div>
-                  <div className="text-sm text-gray-900">"{currentQuery}"</div>
+                  <div className="text-sm text-gray-900">&quot;{currentQuery}&quot;</div>
                   {currentFilters &&
                     Object.keys(currentFilters).length > 0 && (
                       <div className="text-xs text-gray-500 mt-2">

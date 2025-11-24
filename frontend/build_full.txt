@@ -1,0 +1,289 @@
+﻿
+> sales-os-frontend@1.0.0 build
+> next build
+
+   Γû▓ Next.js 14.1.0
+
+   Creating an optimized production build ...
+node.exe :  ΓÜá Compiled with warnings
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( ΓÜá Compiled with warnings:String 
+   ) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./components/team/InvitationList.tsx
+Attempted import error: 'InvitationStatus' is not exported from '@/types' 
+(imported as 'InvitationStatus').
+
+Import trace for requested module:
+./components/team/InvitationList.tsx
+./app/team/invitations/page.tsx
+
+./components/team/InvitationList.tsx
+Attempted import error: 'InvitationStatus' is not exported from '@/types' 
+(imported as 'InvitationStatus').
+
+Import trace for requested module:
+./components/team/InvitationList.tsx
+./app/team/invitations/page.tsx
+
+./components/team/InvitationList.tsx
+Attempted import error: 'InvitationStatus' is not exported from '@/types' 
+(imported as 'InvitationStatus').
+
+Import trace for requested module:
+./components/team/InvitationList.tsx
+./app/team/invitations/page.tsx
+
+./components/team/InvitationList.tsx
+Attempted import error: 'InvitationStatus' is not exported from '@/types' 
+(imported as 'InvitationStatus').
+
+Import trace for requested module:
+./components/team/InvitationList.tsx
+./app/team/invitations/page.tsx
+
+./components/team/InvitationList.tsx
+Attempted import error: 'InvitationStatus' is not exported from '@/types' 
+(imported as 'InvitationStatus').
+
+Import trace for requested module:
+./components/team/InvitationList.tsx
+./app/team/invitations/page.tsx
+
+ ΓÜá Compiled with warnings
+
+./components/team/InvitationList.tsx
+Attempted import error: 'InvitationStatus' is not exported from '@/types' 
+(imported as 'InvitationStatus').
+
+Import trace for requested module:
+./components/team/InvitationList.tsx
+./app/team/invitations/page.tsx
+
+./components/team/InvitationList.tsx
+Attempted import error: 'InvitationStatus' is not exported from '@/types' 
+(imported as 'InvitationStatus').
+
+Import trace for requested module:
+./components/team/InvitationList.tsx
+./app/team/invitations/page.tsx
+
+./components/team/InvitationList.tsx
+Attempted import error: 'InvitationStatus' is not exported from '@/types' 
+(imported as 'InvitationStatus').
+
+Import trace for requested module:
+./components/team/InvitationList.tsx
+./app/team/invitations/page.tsx
+
+./components/team/InvitationList.tsx
+Attempted import error: 'InvitationStatus' is not exported from '@/types' 
+(imported as 'InvitationStatus').
+
+Import trace for requested module:
+./components/team/InvitationList.tsx
+./app/team/invitations/page.tsx
+
+./components/team/InvitationList.tsx
+Attempted import error: 'InvitationStatus' is not exported from '@/types' 
+(imported as 'InvitationStatus').
+
+Import trace for requested module:
+./components/team/InvitationList.tsx
+./app/team/invitations/page.tsx
+
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+
+Failed to compile.
+
+./app/battlecards/competitors/page.tsx
+30:6  Warning: React Hook useEffect has a missing dependency: 
+'loadCompetitors'. Either include it or remove the dependency array.  
+react-hooks/exhaustive-deps
+454:21  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+454:27  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+
+./app/battlecards/page.tsx
+38:6  Warning: React Hook useEffect has a missing dependency: 'fetchData'. 
+Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/battlecards/[id]/page.tsx
+394:59  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+394:75  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+
+./app/prep/page.tsx
+45:6  Warning: React Hook useEffect has a missing dependency: 'fetchMeetings'. 
+Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/prep/[id]/page.tsx
+123:6  Warning: React Hook useEffect has a missing dependency: 'fetchData'. 
+Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/settings/integrations/salesforce/components/SalesforceFieldMappings.tsx
+23:6  Warning: React Hook useEffect has missing dependencies: 'loadMappings' 
+and 'loadSalesforceFields'. Either include them or remove the dependency array. 
+ react-hooks/exhaustive-deps
+
+./app/team/layout.tsx
+51:37  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+
+./app/team/settings/page.tsx
+88:38  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+
+./app/team/[id]/page.tsx
+29:6  Warning: React Hook useEffect has a missing dependency: 'fetchData'. 
+Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/transcript/[id]/page.tsx
+61:6  Warning: React Hook useEffect has a missing dependency: 'loadTranscript'. 
+Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+347:29  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+347:50  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+
+./app/[room_slug]/page.tsx
+78:6  Warning: React Hook useEffect has a missing dependency: 'trackView'. 
+Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+220:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+368:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+550:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/deck/Slide.tsx
+53:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/followup/FollowUpList.tsx
+45:6  Warning: React Hook useEffect has a missing dependency: 'fetchFollowUps'. 
+Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/linkedin/LinkedInCompanyCard.tsx
+31:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+77:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/linkedin/LinkedInProfileCard.tsx
+48:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+108:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/prospects/CompanyCard.tsx
+28:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/search/SearchHistory.tsx
+37:6  Warning: React Hook useEffect has a missing dependency: 'loadHistory'. 
+Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/search/SearchModal.tsx
+59:6  Warning: React Hook useEffect has missing dependencies: 'query' and 
+'setQuery'. Either include them or remove the dependency array.  
+react-hooks/exhaustive-deps
+281:58  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+281:69  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+
+./components/search/SearchResults.tsx
+89:25  Error: Parsing error: '{' or JSX element expected.
+
+./components/settings/AvatarUpload.tsx
+78:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/spiced/SPICEDCard.tsx
+143:23  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+143:31  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+
+./components/talktracks/TalkTrackLibrary.tsx
+41:6  Warning: React Hook useEffect has a missing dependency: 'loadLibrary'. 
+Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/talktracks/TalkTrackPerformance.tsx
+23:6  Warning: React Hook useEffect has a missing dependency: 
+'loadBestPerformers'. Either include it or remove the dependency array.  
+react-hooks/exhaustive-deps
+
+./components/talktracks/TalkTrackViewer.tsx
+29:6  Warning: React Hook useEffect has a missing dependency: 'loadTalkTrack'. 
+Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+146:27  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+146:55  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+165:53  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+165:73  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+197:53  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+197:75  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+202:48  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+202:79  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+227:23  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+227:55  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, 
+`&rdquo;`.  react/no-unescaped-entities
+
+./components/team/UserList.tsx
+67:23  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/transcript/CallNotesEditor.tsx
+43:25  Warning: React Hook useCallback received a function whose dependencies 
+are unknown. Pass an inline function instead.  react-hooks/exhaustive-deps
+
+./lib/hooks/useNotifications.ts
+314:6  Warning: React Hook useCallback has a missing dependency: 
+'fetchUnreadCount'. Either include it or remove the dependency array.  
+react-hooks/exhaustive-deps
+
+./lib/hooks/useTranscript.ts
+64:6  Warning: React Hook useEffect has a missing dependency: 'transcript'. 
+Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: 
+https://nextjs.org/docs/basic-features/eslint#disabling-rules

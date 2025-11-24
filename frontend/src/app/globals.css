@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 :root {
-<<<<<<< HEAD
   /* Sales OS Brand Colors */
   --primary: #2563eb;
   --primary-dark: #1d4ed8;
@@ -74,23 +73,11 @@
     --border: #334155;
     --border-focus: #3b82f6;
   }
-=======
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
->>>>>>> origin/claude/frontend-coaching-ui-01ACvPTYwnXPyzreDZDTsLry
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-<<<<<<< HEAD
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
 }
 
@@ -109,7 +96,4 @@ html {
 ::selection {
   background-color: var(--primary);
   color: white;
-=======
-  font-family: var(--font-sans);
->>>>>>> origin/claude/frontend-coaching-ui-01ACvPTYwnXPyzreDZDTsLry
 }

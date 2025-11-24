@@ -88,12 +88,8 @@ export function SearchResults({
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
         </svg>
-        <h3 className="text-lg font-medium text-gray-900 mb-1">
-          No results found
-        </h3>
-        <p className="text-gray-500">
-          Try adjusting your search or filters to find what you're looking for.
-        </p>
+        <p className="text-gray-500 text-lg font-medium">No results found</p>
+        <p className="text-gray-400 text-sm">Try adjusting your search terms</p>
       </div>
     );
   }
@@ -271,11 +267,10 @@ export function SearchResults({
                     <button
                       key={pageNum}
                       onClick={() => onPageChange(pageNum as number)}
-                      className={`px-3 py-1 text-sm rounded-md ${
-                        pageNum === response.page
+                      className={`px-3 py-1 text-sm rounded-md ${pageNum === response.page
                           ? 'bg-blue-500 text-white'
                           : 'border border-gray-300 hover:bg-gray-50'
-                      }`}
+                        }`}
                     >
                       {pageNum}
                     </button>
