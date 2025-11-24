@@ -222,3 +222,91 @@ export enum InvitationStatus {
   EXPIRED = 'expired',
   REVOKED = 'revoked',
 }
+
+// Outreach Campaign types
+export interface EmailMessage {
+  email_number: number
+  subject: string
+  body: string
+  delay_days: number
+}
+
+export interface EmailSequence {
+  emails: EmailMessage[]
+  total_emails: number
+}
+
+export interface LinkedInMessage {
+  message_type: 'connection_request' | 'followup_1' | 'followup_2'
+  message: string
+  delay_days: number
+}
+
+export interface LinkedInSequence {
+  connection_request: string
+  followup_1: string
+  followup_2: string
+  messages: LinkedInMessage[]
+}
+
+export interface OutreachCampaign {
+  campaign_id: string
+  prospect_id: string
+  prospect_name: string
+  prospect_email: string | null
+  company_name: string | null
+  linkedin_url: string | null
+  email_sequence: EmailSequence
+  linkedin_sequence: LinkedInSequence
+  created_at: string
+}
+
+export interface GenerateCampaignRequest {
+  prospect_id: string
+  prospect_email?: string
+  prospect_name: string
+  prospect_title?: string
+  company_name?: string
+  company_description?: string
+  company_industry?: string
+  company_size?: string
+  linkedin_url?: string
+  recent_news?: string
+  pain_points?: string[]
+}
+
+export interface CampaignPreview {
+  email_1_subject: string
+  email_1_preview: string
+  email_2_subject: string
+  email_2_preview: string
+  email_3_subject: string
+  email_3_preview: string
+  linkedin_connection: string
+  linkedin_followup_1_preview: string
+}
+
+export interface GenerateCampaignResponse {
+  success: boolean
+  campaign_id: string
+  prospect_id: string
+  prospect_name: string
+  preview: CampaignPreview
+  message: string
+}
+
+export interface BulkGenerateRequest {
+  prospects: GenerateCampaignRequest[]
+}
+
+export interface BulkGenerateResponse {
+  success: boolean
+  total_requested: number
+  total_generated: number
+  campaign_ids: string[]
+  failures: {
+    prospect_id: string
+    prospect_name: string
+    error: string
+  }[]
+}

@@ -10,6 +10,7 @@ import {
   ProspectsTable,
   SingleLookupForm,
   ExportMenu,
+  OutreachPanel,
 } from '@/components/prospects'
 import {
   lookupProspect,
@@ -199,6 +200,9 @@ export default function ProspectsPage() {
   const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(null)
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
   const [lookupResult, setLookupResult] = useState<SingleLookupResponse | null>(null)
+  const [showOutreachPanel, setShowOutreachPanel] = useState(false)
+  const [outreachProspect, setOutreachProspect] = useState<Prospect | null>(null)
+  const [outreachCompany, setOutreachCompany] = useState<Company | null>(null)
 
   // Fetch prospects (with mock data fallback)
   const fetchProspects = useCallback(async () => {
@@ -406,6 +410,25 @@ export default function ProspectsPage() {
     }
   }
 
+  // Handle generate outreach
+  const handleGenerateOutreach = async (prospectId: string) => {
+    const prospect = prospects.find((p) => p.id === prospectId)
+    if (!prospect) return
+
+    setOutreachProspect(prospect)
+    if (prospect.companyId) {
+      try {
+        const company = await getCompany(prospect.companyId)
+        setOutreachCompany(company)
+      } catch {
+        setOutreachCompany(mockCompanies.get(prospect.companyId) || null)
+      }
+    } else {
+      setOutreachCompany(null)
+    }
+    setShowOutreachPanel(true)
+  }
+
   // Get progress for batches
   const handleGetProgress = async (batchId: string) => {
     try {
@@ -544,12 +567,22 @@ export default function ProspectsPage() {
 
               {lookupResult?.success && lookupResult.prospect && (
                 <div className="grid md:grid-cols-2 gap-6">
-                  <ProspectCard
-                    prospect={lookupResult.prospect}
-                    company={lookupResult.company}
-                    onReEnrich={handleReEnrich}
-                    onSyncCRM={(id) => handleSyncCRM([id])}
-                  />
+                  <div className="space-y-4">
+                    <ProspectCard
+                      prospect={lookupResult.prospect}
+                      company={lookupResult.company}
+                      onReEnrich={handleReEnrich}
+                      onSyncCRM={(id) => handleSyncCRM([id])}
+                      onGenerateOutreach={handleGenerateOutreach}
+                    />
+                    {showOutreachPanel && outreachProspect && outreachProspect.id === lookupResult.prospect.id && (
+                      <OutreachPanel
+                        prospect={outreachProspect}
+                        company={outreachCompany}
+                        onClose={() => setShowOutreachPanel(false)}
+                      />
+                    )}
+                  </div>
                   {lookupResult.company && (
                     <CompanyCard company={lookupResult.company} />
                   )}
@@ -590,6 +623,7 @@ export default function ProspectsPage() {
                 onClick={() => {
                   setSelectedProspect(null)
                   setSelectedCompany(null)
+                  setShowOutreachPanel(false)
                 }}
                 className="text-sm text-gray-500 hover:text-gray-700"
               >
@@ -601,9 +635,17 @@ export default function ProspectsPage() {
               company={selectedCompany}
               onReEnrich={handleReEnrich}
               onSyncCRM={(id) => handleSyncCRM([id])}
+              onGenerateOutreach={handleGenerateOutreach}
             />
             {selectedCompany && (
               <CompanyCard company={selectedCompany} />
+            )}
+            {showOutreachPanel && outreachProspect && outreachProspect.id === selectedProspect.id && (
+              <OutreachPanel
+                prospect={outreachProspect}
+                company={outreachCompany}
+                onClose={() => setShowOutreachPanel(false)}
+              />
             )}
           </div>
         )}

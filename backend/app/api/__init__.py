@@ -73,4 +73,10 @@ try:
 except ImportError:
     pass
 
+try:
+    from app.api.outreach import router as outreach_router
+    api_router.include_router(outreach_router, prefix="/outreach", tags=["Outreach"])
+except ImportError:
+    pass
+
 __all__ = ["api_router"]

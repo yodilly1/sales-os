@@ -1,6 +1,6 @@
 'use client'
 
-import { Mail, Phone, MapPin, Linkedin, Building2, Briefcase, RefreshCw, ExternalLink } from 'lucide-react'
+import { Mail, Phone, MapPin, Linkedin, Building2, Briefcase, RefreshCw, ExternalLink, Sparkles } from 'lucide-react'
 import type { Prospect, Company, EnrichmentStatus, CRMSyncStatus } from '@/types'
 import { cn, formatDateTime, getInitials } from '@/lib/utils'
 
@@ -9,7 +9,9 @@ interface ProspectCardProps {
   company?: Company | null
   onReEnrich?: (prospectId: string) => void
   onSyncCRM?: (prospectId: string) => void
+  onGenerateOutreach?: (prospectId: string) => void
   isReEnriching?: boolean
+  showOutreachButton?: boolean
 }
 
 function EnrichmentStatusBadge({ status }: { status: EnrichmentStatus }) {
@@ -43,7 +45,9 @@ export function ProspectCard({
   company,
   onReEnrich,
   onSyncCRM,
+  onGenerateOutreach,
   isReEnriching,
+  showOutreachButton = true,
 }: ProspectCardProps) {
   const initials = getInitials(prospect.name)
 
@@ -196,25 +200,36 @@ export function ProspectCard({
       </div>
 
       {/* Actions */}
-      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between rounded-b-xl">
-        <button
-          onClick={() => onReEnrich?.(prospect.id)}
-          disabled={isReEnriching || prospect.enrichmentStatus === 'in_progress'}
-          className="btn-secondary text-sm flex items-center gap-2"
-        >
-          <RefreshCw className={cn('w-4 h-4', isReEnriching && 'animate-spin')} />
-          {isReEnriching ? 'Enriching...' : 'Re-enrich'}
-        </button>
-        <button
-          onClick={() => onSyncCRM?.(prospect.id)}
-          disabled={prospect.crmSyncStatus === 'pending'}
-          className={cn(
-            'btn-primary text-sm',
-            prospect.crmSyncStatus === 'synced' && 'bg-success-600 hover:bg-success-500'
-          )}
-        >
-          {prospect.crmSyncStatus === 'synced' ? 'Synced to CRM' : 'Sync to CRM'}
-        </button>
+      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-xl">
+        <div className="flex items-center justify-between gap-2">
+          <button
+            onClick={() => onReEnrich?.(prospect.id)}
+            disabled={isReEnriching || prospect.enrichmentStatus === 'in_progress'}
+            className="btn-secondary text-sm flex items-center gap-2"
+          >
+            <RefreshCw className={cn('w-4 h-4', isReEnriching && 'animate-spin')} />
+            {isReEnriching ? 'Enriching...' : 'Re-enrich'}
+          </button>
+          <button
+            onClick={() => onSyncCRM?.(prospect.id)}
+            disabled={prospect.crmSyncStatus === 'pending'}
+            className={cn(
+              'btn-primary text-sm',
+              prospect.crmSyncStatus === 'synced' && 'bg-success-600 hover:bg-success-500'
+            )}
+          >
+            {prospect.crmSyncStatus === 'synced' ? 'Synced to CRM' : 'Sync to CRM'}
+          </button>
+        </div>
+        {showOutreachButton && prospect.enrichmentStatus === 'completed' && (
+          <button
+            onClick={() => onGenerateOutreach?.(prospect.id)}
+            className="btn-primary w-full mt-3 flex items-center justify-center gap-2 bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-500 hover:to-purple-500"
+          >
+            <Sparkles className="w-4 h-4" />
+            Generate Outreach Campaign
+          </button>
+        )}
       </div>
     </div>
   )
