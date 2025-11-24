@@ -109,7 +109,7 @@ class Notification(Base):
     entity_id = Column(PGUUID(as_uuid=True), nullable=True)
 
     # Additional metadata
-    metadata = Column(JSON, nullable=True, default=dict)
+    meta_data = Column(JSON, nullable=True, default=dict)
 
     # Delivery tracking
     status = Column(SQLEnum(NotificationStatus), nullable=False, default=NotificationStatus.PENDING)

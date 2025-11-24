@@ -1,216 +1,76 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 """API route handlers."""
-=======
-"""
-Sales OS API Endpoints
-
-FastAPI routers for all Sales OS functionality.
-"""
-
-from .coaching import router as coaching_router
-
-__all__ = [
-    "coaching_router",
-]
->>>>>>> origin/claude/spiced-coaching-module-01AiTWp9Wpsm2vQQXbEqCfvu
-=======
-"""Sales OS API Routes."""
->>>>>>> origin/claude/pdf-deck-renderer-01QnNpwQFSMU7WYfb9J8gfKi
-=======
-"""
-API routes for Sales OS backend.
-"""
-
-from .avoma import router as avoma_router
-from .webhooks import router as webhooks_router
-
-__all__ = ["avoma_router", "webhooks_router"]
->>>>>>> origin/claude/avoma-integration-012eUdYgqKTMNxw384aFQkWN
-=======
-"""API routes."""
 
 from fastapi import APIRouter
 
 from app.api.auth import router as auth_router
 from app.api.health import router as health_router
 
-api_router = APIRouter()
-
-api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
-api_router.include_router(health_router, prefix="/health", tags=["Health"])
->>>>>>> origin/claude/auth-security-jwt-01NGdma4oBRc5QyZNZQsX6Ef
-=======
-"""
-API routes for Sales OS.
-
-This package contains all REST API route definitions organized
-by domain area.
-=======
-"""
-API Routes for Sales OS
-
-FastAPI router definitions for all API endpoints.
->>>>>>> origin/claude/email-integration-017ZiRSG6H1WHpye9kKe1ehW
-"""
-
-from fastapi import APIRouter
-
-<<<<<<< HEAD
-from .notifications import router as notifications_router
-=======
-from .email import router as email_router
-
->>>>>>> origin/claude/email-integration-017ZiRSG6H1WHpye9kKe1ehW
-
 # Create main API router
 api_router = APIRouter()
 
-<<<<<<< HEAD
-# Include domain routers
-api_router.include_router(notifications_router)
+# Include core routers
+api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+api_router.include_router(health_router, prefix="/health", tags=["Health"])
 
-__all__ = [
-    "api_router",
-    "notifications_router",
-]
->>>>>>> origin/claude/notification-system-011TGLjzAos8ag9kBQK32dgF
-=======
-=======
->>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
-"""API routes for Sales OS."""
+# Try to include other routers if they exist
+try:
+    from app.api.webhooks import router as webhooks_router
+    api_router.include_router(webhooks_router)
+except ImportError:
+    pass
 
-from fastapi import APIRouter
+try:
+    from app.api.avoma import router as avoma_router
+    api_router.include_router(avoma_router, prefix="/avoma", tags=["Avoma"])
+except ImportError:
+    pass
 
-<<<<<<< HEAD
-from .files import router as files_router
+try:
+    from app.api.zoom import router as zoom_router
+    api_router.include_router(zoom_router, prefix="/zoom", tags=["Zoom"])
+except ImportError:
+    pass
 
-api_router = APIRouter()
-api_router.include_router(files_router, prefix="/files", tags=["files"])
+try:
+    from app.api.notifications import router as notifications_router
+    api_router.include_router(notifications_router, prefix="/notifications", tags=["Notifications"])
+except ImportError:
+    pass
+
+try:
+    from app.api.files import router as files_router
+    api_router.include_router(files_router, prefix="/files", tags=["Files"])
+except ImportError:
+    pass
+
+try:
+    from app.api import activity
+    api_router.include_router(activity.router, prefix="/activities", tags=["Activities"])
+except ImportError:
+    pass
+
+try:
+    from app.api.linkedin import router as linkedin_router
+    api_router.include_router(linkedin_router, prefix="/linkedin", tags=["LinkedIn"])
+except ImportError:
+    pass
+
+try:
+    from app.api.slack import router as slack_router
+    api_router.include_router(slack_router, prefix="/slack", tags=["Slack"])
+except ImportError:
+    pass
+
+try:
+    from app.api.battlecards import router as battlecards_router
+    api_router.include_router(battlecards_router, prefix="/battlecards", tags=["Battlecards"])
+except ImportError:
+    pass
+
+try:
+    from app.api.dealroom import router as dealroom_router
+    api_router.include_router(dealroom_router, prefix="/dealroom", tags=["DealRoom"])
+except ImportError:
+    pass
 
 __all__ = ["api_router"]
->>>>>>> origin/claude/file-upload-service-01Fp4Hpux99bpp7yFrPVgU3s
-=======
-"""
-API routes for Sales OS.
-
-This module exports all API routers.
-"""
-
-from .search import router as search_router
-
-__all__ = ["search_router"]
->>>>>>> origin/claude/search-filtering-service-013Ca1SFsW8utCJ4NV94ST1R
-=======
-from app.api import activity
-
-api_router = APIRouter()
-
-# Include activity routes
-api_router.include_router(
-    activity.router,
-    prefix="/activities",
-    tags=["activities"],
-)
-
-__all__ = [
-    "api_router",
-]
->>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
-=======
-# API routes
->>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
-=======
-"""API route handlers."""
-
-from . import export, import_api
-
-__all__ = ["export", "import_api"]
->>>>>>> origin/claude/export-import-service-01K8LsZNbidmjJoTxFQ47hx3
-=======
-# Include sub-routers
-api_router.include_router(email_router)
-
-
-__all__ = ["api_router", "email_router"]
->>>>>>> origin/claude/email-integration-017ZiRSG6H1WHpye9kKe1ehW
-=======
-"""
-Sales OS API Routes
-
-This module contains all FastAPI route handlers.
-"""
-
-from .linkedin import router as linkedin_router
-
-__all__ = [
-    "linkedin_router",
-]
->>>>>>> origin/claude/linkedin-integration-01VmE4MUdZtsYVbAeCay7X3m
-=======
-"""Sales OS API routes."""
-
-from app.api.slack import router as slack_router
-from app.api.webhooks import router as webhooks_router
-
-__all__ = ["slack_router", "webhooks_router"]
->>>>>>> origin/claude/slack-integration-01FAipAuMUsRJRL7psy92hdb
-=======
-"""
-API routes for Sales OS.
-"""
->>>>>>> origin/claude/salesforce-integration-01Jk6WSRuSJXErwMJ2igKMJQ
-=======
-"""API routes package."""
-
-from app.api import health, zoom, webhooks
-
-__all__ = ["health", "zoom", "webhooks"]
->>>>>>> origin/claude/zoom-integration-01Dy2JADoQefKcjQi2GPsjPP
-=======
-"""
-Sales OS API Routes Package
-
-FastAPI route handlers for all API endpoints.
-"""
->>>>>>> origin/claude/gong-integration-01Mysb6zKfXmpQEHrWqe4iA8
-=======
-"""
-API routes for Sales OS.
-"""
-
-from .battlecards import router as battlecards_router
-
-__all__ = ["battlecards_router"]
->>>>>>> origin/claude/battlecard-engine-01BqFWt3icJnvnL8Axa5JjUe
-=======
-"""
-Sales OS API Endpoints
-
-FastAPI routers for all API endpoints.
-"""
-
-from backend.app.api.dealroom import router as dealroom_router, public_router as dealroom_public_router
-
-__all__ = ["dealroom_router", "dealroom_public_router"]
->>>>>>> origin/claude/build-deal-room-service-015bodWQAKS2cU2aLeKp7Upx
-=======
-# API Routes
->>>>>>> origin/claude/analytics-dashboard-01M24DLkEb1rR8wBY9c26gKw

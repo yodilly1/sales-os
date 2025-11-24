@@ -8,7 +8,7 @@ import json
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from ...models.battlecard import (
     Battlecard,
@@ -59,7 +59,7 @@ class BattlecardService:
         if not self.battlecards_file.exists():
             self._save_battlecards([])
 
-    def _load_battlecards(self) -> list[dict]:
+    def _load_battlecards(self) -> List[dict]:
         """Load battlecards from JSON file."""
         try:
             with open(self.battlecards_file, "r") as f:
@@ -67,7 +67,7 @@ class BattlecardService:
         except (json.JSONDecodeError, FileNotFoundError):
             return []
 
-    def _save_battlecards(self, battlecards: list[dict]) -> None:
+    def _save_battlecards(self, battlecards: List[dict]) -> None:
         """Save battlecards to JSON file."""
         with open(self.battlecards_file, "w") as f:
             json.dump(battlecards, f, indent=2, default=str)
@@ -349,7 +349,7 @@ class BattlecardService:
     def share(
         self,
         battlecard_id: str,
-        team_ids: list[str],
+        team_ids: List[str],
     ) -> BattlecardResponse:
         """
         Share a battlecard with teams.
@@ -389,7 +389,7 @@ class BattlecardService:
     def unshare(
         self,
         battlecard_id: str,
-        team_ids: list[str],
+        team_ids: List[str],
     ) -> BattlecardResponse:
         """
         Unshare a battlecard from teams.
@@ -508,7 +508,7 @@ class BattlecardService:
     def get_version_history(
         self,
         battlecard_id: str,
-    ) -> list[BattlecardVersion]:
+    ) -> List[BattlecardVersion]:
         """
         Get version history for a battlecard.
 
@@ -592,7 +592,7 @@ class BattlecardService:
     async def refresh_from_win_loss(
         self,
         battlecard_id: str,
-        win_loss_data: list[dict],
+        win_loss_data: List[dict],
     ) -> BattlecardResponse:
         """
         Refresh a battlecard with new win/loss data.

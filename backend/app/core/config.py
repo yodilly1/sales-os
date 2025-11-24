@@ -41,8 +41,13 @@ class Settings(BaseSettings):
     secret_key: str = "your-super-secret-key-change-in-production"
     jwt_secret_key: str = "your-jwt-secret-key-change-in-production"
     jwt_algorithm: str = "HS256"
+    jwt_access_token_expire_minutes: int = 30
+    jwt_refresh_token_expire_days: int = 7
     access_token_expire_minutes: int = 30
     refresh_token_expire_days: int = 7
+
+    # Rate Limiting
+    rate_limit_per_minute: int = 60
 
     # CORS Settings
     cors_origins: str = "http://localhost:3000,http://localhost:5173"

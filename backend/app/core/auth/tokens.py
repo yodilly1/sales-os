@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional, List
 
-import jwt
+from jose import jwt, JWTError
 from pydantic import BaseModel, Field
 
 from app.core.config import settings
@@ -168,15 +168,17 @@ def decode_token(token: str) -> TokenPayload:
         TokenPayload with decoded data
 
     Raises:
-        jwt.ExpiredSignatureError: If token is expired
-        jwt.InvalidTokenError: If token is invalid
+        JWTError: If token is invalid or expired
     """
-    payload = jwt.decode(
-        token,
-        settings.jwt_secret_key,
-        algorithms=[settings.jwt_algorithm],
-    )
-    return TokenPayload(**payload)
+    try:
+        payload = jwt.decode(
+            token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+        )
+        return TokenPayload(**payload)
+    except JWTError as e:
+        raise e
 
 
 def verify_token(
@@ -194,8 +196,8 @@ def verify_token(
         TokenData with parsed user information
 
     Raises:
-        jwt.ExpiredSignatureError: If token is expired
-        jwt.InvalidTokenError: If token is invalid
+    Raises:
+        JWTError: If token is invalid or expired
         ValueError: If token type doesn't match expected type
     """
     payload = decode_token(token)

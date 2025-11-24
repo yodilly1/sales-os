@@ -101,7 +101,7 @@ ROLE_PERMISSIONS: dict[UserRole, Set[Permission]] = {
         Permission.ANALYTICS_READ,
         Permission.ANALYTICS_READ_ALL,
     },
-    UserRole.REP: {
+    UserRole.SALES_REP: {
         # User (own profile)
         Permission.USER_READ,
         # Team (read only)

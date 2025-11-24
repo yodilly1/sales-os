@@ -204,7 +204,7 @@ class DealRoomContent(Base):
     version = Column(Integer, default=1)
 
     # Metadata
-    metadata = Column(JSON, default=dict)  # Flexible metadata storage
+    meta_data = Column(JSON, default=dict)  # Flexible metadata storage
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

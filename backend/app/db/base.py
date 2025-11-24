@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 """SQLAlchemy Base model with common fields."""
 from datetime import datetime
 from typing import Any
@@ -10,33 +7,11 @@ from sqlalchemy import DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-=======
-"""SQLAlchemy Base model."""
-
-from sqlalchemy.orm import DeclarativeBase
->>>>>>> origin/claude/auth-security-jwt-01NGdma4oBRc5QyZNZQsX6Ef
-=======
-"""SQLAlchemy Base model with common functionality."""
-
-from datetime import datetime, timezone
-from typing import Any
-from uuid import uuid4
-
-from sqlalchemy import DateTime, String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-
-
-def generate_uuid() -> str:
-    """Generate a UUID string."""
-    return str(uuid4())
->>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
 
 
 class Base(DeclarativeBase):
     """Base class for all database models."""
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     id: Mapped[str] = mapped_column(
         UUID(as_uuid=False),
         primary_key=True,
@@ -55,61 +30,22 @@ class Base(DeclarativeBase):
 
 class TimestampMixin:
     """Mixin for created_at and updated_at timestamps."""
-=======
-"""SQLAlchemy base model and common mixins."""
-
-from datetime import datetime
-from typing import Any
-
-from sqlalchemy import DateTime, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-
-
-class Base(DeclarativeBase):
-    """Base class for all SQLAlchemy models."""
-
-=======
->>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
-    pass
-
-
-class TimestampMixin:
-<<<<<<< HEAD
-    """Mixin that adds created_at and updated_at timestamp columns."""
->>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
-=======
-    """Mixin for adding created_at and updated_at timestamps."""
-
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
->>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
         nullable=False,
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-<<<<<<< HEAD
         server_default=func.now(),
         onupdate=func.now(),
-=======
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
->>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw
         nullable=False,
     )
 
 
-<<<<<<< HEAD
 class SoftDeleteMixin:
-<<<<<<< HEAD
     """Mixin for soft delete functionality."""
-=======
-    """Mixin that adds soft delete capability."""
->>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
 
     deleted_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
@@ -119,23 +55,5 @@ class SoftDeleteMixin:
 
     @property
     def is_deleted(self) -> bool:
-<<<<<<< HEAD
         """Check if record is soft-deleted."""
         return self.deleted_at is not None
-=======
-    pass
->>>>>>> origin/claude/auth-security-jwt-01NGdma4oBRc5QyZNZQsX6Ef
-=======
-        """Check if the record is soft deleted."""
-        return self.deleted_at is not None
->>>>>>> origin/claude/activity-logging-system-01XwEaki97iEcvBSReHjaGCK
-=======
-class UUIDMixin:
-    """Mixin for UUID primary key."""
-
-    id: Mapped[str] = mapped_column(
-        String(36),
-        primary_key=True,
-        default=generate_uuid,
-    )
->>>>>>> origin/claude/team-management-features-01YbA13LtG8bARp7mPDMFyPw

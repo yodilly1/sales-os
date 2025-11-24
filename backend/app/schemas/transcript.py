@@ -8,6 +8,71 @@ from app.models.transcript import CallSource, CallStatus, CallType
 from app.schemas.base import BaseSchema, IDSchema, TimestampSchema
 
 
+from enum import Enum
+
+# ==================== Enums ====================
+
+class TranscriptFormat(str, Enum):
+    """Supported transcript source formats."""
+    ZOOM = "zoom"
+    TEAMS = "teams"
+    AVOMA = "avoma"
+    GONG = "gong"
+    CHORUS = "chorus"
+    GENERIC = "generic"
+
+
+class TaskPriority(str, Enum):
+    """Priority levels for follow-up tasks."""
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
+# ==================== Transcript Components ====================
+
+class TranscriptSpeaker(BaseSchema):
+    """A speaker in the transcript."""
+    id: Optional[str] = Field(default=None, description="Unique speaker identifier")
+    name: str = Field(..., description="Speaker name")
+    role: Optional[str] = Field(default=None, description="Speaker role")
+    email: Optional[str] = Field(default=None, description="Speaker email")
+    company: Optional[str] = Field(default=None, description="Speaker company")
+
+
+class TranscriptTurn(BaseSchema):
+    """A single turn/utterance in the transcript."""
+    speaker: str = Field(..., description="Name of the speaker")
+    text: str = Field(..., description="What was said")
+    timestamp: Optional[str] = Field(default=None, description="Timestamp string")
+    start_time: Optional[float] = Field(default=None, description="Start time in seconds")
+    end_time: Optional[float] = Field(default=None, description="End time in seconds")
+
+
+class FollowUpTask(BaseSchema):
+    """A recommended follow-up task."""
+    title: str = Field(..., description="Task title")
+    description: str = Field(..., description="Detailed task description")
+    priority: TaskPriority = Field(default=TaskPriority.MEDIUM, description="Task priority")
+    due_date_suggestion: Optional[str] = Field(default=None, description="Suggested due date")
+    assignee_suggestion: Optional[str] = Field(default=None, description="Suggested assignee")
+    related_spiced_component: Optional[str] = Field(default=None, description="Related SPICED component")
+    crm_task_type: Optional[str] = Field(default=None, description="Suggested CRM task type")
+
+
+class CallNote(BaseSchema):
+    """Formatted call notes."""
+    summary: str = Field(..., description="Executive summary")
+    attendees: List[str] = Field(default_factory=list, description="List of attendees")
+    key_discussion_points: List[str] = Field(default_factory=list, description="Main topics")
+    customer_sentiment: Optional[str] = Field(default=None, description="Sentiment assessment")
+    next_steps_discussed: List[str] = Field(default_factory=list, description="Next steps")
+    objections_raised: List[str] = Field(default_factory=list, description="Objections raised")
+    questions_asked: List[str] = Field(default_factory=list, description="Questions asked")
+    commitments_made: List[str] = Field(default_factory=list, description="Commitments made")
+    formatted_note: str = Field(..., description="Full formatted call note")
+
+
 # ==================== Transcript Schemas ====================
 
 
@@ -35,6 +100,36 @@ class TranscriptResponse(TranscriptBase, IDSchema, TimestampSchema):
     confidence_score: Optional[float] = None
     transcription_service: Optional[str] = None
     processed_at: Optional[datetime] = None
+    
+    # Expanded fields from HEAD model
+    format: TranscriptFormat = Field(default=TranscriptFormat.GENERIC)
+    turns: List[TranscriptTurn] = Field(default_factory=list)
+    speakers: List[TranscriptSpeaker] = Field(default_factory=list)
+    duration_minutes: Optional[int] = None
+    call_date: Optional[datetime] = None
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+
+
+class TranscriptParseRequest(BaseSchema):
+    """Request to parse a transcript."""
+    transcript_text: str = Field(..., min_length=50)
+    format: TranscriptFormat = Field(default=TranscriptFormat.GENERIC)
+    call_title: Optional[str] = None
+    call_date: Optional[datetime] = None
+    company_name: Optional[str] = None
+    sales_rep_name: Optional[str] = None
+    generate_tasks: bool = True
+    generate_call_note: bool = True
+
+
+class TranscriptParseResponse(BaseSchema):
+    """Response from transcript parsing."""
+    transcript: TranscriptResponse
+    spiced_analysis: Any = Field(..., description="SPICED Analysis") # Typed as Any to avoid circular import
+    call_note: Optional[CallNote] = None
+    follow_up_tasks: List[FollowUpTask] = Field(default_factory=list)
+    processing_time_ms: Optional[int] = None
+    warnings: List[str] = Field(default_factory=list)
 
 
 # ==================== Call Schemas ====================

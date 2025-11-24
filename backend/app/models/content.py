@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """Content generation data models and schemas."""
 
 from datetime import datetime
@@ -8,6 +7,9 @@ from uuid import UUID, uuid4
 from pydantic import BaseModel, Field
 
 from app.core.constants import AudienceType, BrandVoice, ContentStatus, ContentType
+from sqlalchemy import Boolean, Column, DateTime as SQLDateTime, ForeignKey, Integer, String, Text, JSON, Enum as SQLEnum
+from sqlalchemy.orm import relationship
+from .base import BaseDBModel, TimestampMixin
 
 
 # =============================================================================
@@ -102,6 +104,81 @@ class SPICEDContext(BaseModel):
     critical_event: Optional[str] = Field(None, description="Timeline drivers")
     expected_decision: Optional[str] = Field(None, description="Decision process info")
     decision_criteria: Optional[str] = Field(None, description="Evaluation criteria")
+
+
+    decision_criteria: Optional[str] = Field(None, description="Evaluation criteria")
+
+
+# =============================================================================
+# Database Models
+# =============================================================================
+
+# =============================================================================
+# Database Models
+# =============================================================================
+
+class ContentTemplate(BaseDBModel, TimestampMixin):
+    """Content template model."""
+
+    __tablename__ = "content_templates"
+
+    name = Column(String(255), nullable=False)
+    description = Column(Text)
+    content_type = Column(SQLEnum(ContentType), nullable=False)
+    
+    template_structure = Column(JSON, nullable=False)
+    brand_guidelines = Column(JSON)
+    color_scheme = Column(JSON)
+    font_family = Column(String(100))
+    
+    is_default = Column(Boolean, default=False)
+    is_public = Column(Boolean, default=False)
+    version = Column(Integer, default=1)
+    usage_count = Column(Integer, default=0)
+    
+    organization_id = Column(String(36), ForeignKey("organizations.id"))
+    
+    contents = relationship("Content", back_populates="template")
+
+
+class Content(BaseDBModel, TimestampMixin):
+    """Generated content model."""
+
+    __tablename__ = "contents"
+
+    title = Column(String(500), nullable=False)
+    content_type = Column(SQLEnum(ContentType), nullable=False)
+    status = Column(SQLEnum(ContentStatus), default=ContentStatus.DRAFT)
+    
+    goal = Column(Text)
+    product_info = Column(JSON)
+    audience_info = Column(JSON)
+    additional_context = Column(Text)
+    
+    content_data = Column(JSON)  # The actual generated content structure
+    
+    rendered_html = Column(Text)
+    rendered_pdf_url = Column(String(500))
+    rendered_pptx_url = Column(String(500))
+    
+    version = Column(Integer, default=1)
+    parent_id = Column(String(36), ForeignKey("contents.id"))
+    tags = Column(JSON, default=list)
+    
+    generated_at = Column(SQLDateTime)
+    model_version = Column(String(50))
+    
+    # Ownership
+    created_by_id = Column(String(36), ForeignKey("users.id"), nullable=False)
+    template_id = Column(String(36), ForeignKey("content_templates.id"))
+    prospect_id = Column(String(36), ForeignKey("prospects.id"))
+    company_id = Column(String(36), ForeignKey("companies.id"))
+    
+    # Relationships
+    template = relationship("ContentTemplate", back_populates="contents")
+    children = relationship("Content", backref=relationship("Content", remote_side="Content.id"))
+    prospect = relationship("Prospect", back_populates="content")
+    company = relationship("Company", back_populates="content")
 
 
 # =============================================================================
@@ -378,137 +455,3 @@ class ContentGenerationResponse(BaseModel):
                 },
             }
         }
-=======
-"""Content and Content Template models."""
-
-from datetime import datetime
-from typing import Optional, List, Dict, Any
-from enum import Enum
-from sqlalchemy import Column, String, Text, ForeignKey, JSON, Enum as SQLEnum
-
-from .base import BaseDBModel, BaseModel, TimestampedSchema
-
-
-class ContentType(str, Enum):
-    """Type of generated content."""
-
-    SALES_DECK = "sales_deck"
-    PROPOSAL = "proposal"
-    ONE_PAGER = "one_pager"
-    BATTLECARD = "battlecard"
-    CASE_STUDY = "case_study"
-    EMAIL_SEQUENCE = "email_sequence"
-    FOLLOW_UP = "follow_up"
-
-
-class ContentStatus(str, Enum):
-    """Status of content generation."""
-
-    DRAFT = "draft"
-    GENERATING = "generating"
-    READY = "ready"
-    APPROVED = "approved"
-    ARCHIVED = "archived"
-
-
-class ContentTemplate(BaseDBModel):
-    """Reusable content template."""
-
-    __tablename__ = "content_templates"
-
-    name = Column(String(255), nullable=False)
-    description = Column(Text)
-    content_type = Column(SQLEnum(ContentType), nullable=False)
-    template_body = Column(Text, nullable=False)
-    variables = Column(JSON, default=list)  # List of required variables
-    styling = Column(JSON, default=dict)  # Brand styling options
-    is_active = Column(Boolean, default=True)
-
-    organization_id = Column(String(36), ForeignKey("organizations.id"), nullable=False)
-
-
-# Add Boolean import
-from sqlalchemy import Boolean
-
-
-class Content(BaseDBModel):
-    """Generated content asset."""
-
-    __tablename__ = "contents"
-
-    title = Column(String(500), nullable=False)
-    content_type = Column(SQLEnum(ContentType), nullable=False)
-    status = Column(SQLEnum(ContentStatus), default=ContentStatus.DRAFT)
-    body = Column(Text)  # HTML/Markdown content
-    rendered_html = Column(Text)  # Rendered HTML
-    metadata = Column(JSON, default=dict)
-
-    # File references
-    pdf_path = Column(String(500))
-    pptx_path = Column(String(500))
-
-    # Source references
-    transcript_id = Column(String(36), ForeignKey("transcripts.id"))
-    template_id = Column(String(36), ForeignKey("content_templates.id"))
-    prospect_id = Column(String(36), ForeignKey("prospects.id"))
-
-    # Ownership
-    user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
-    organization_id = Column(String(36), ForeignKey("organizations.id"), nullable=False)
-
-
-# Pydantic Schemas
-class ContentTemplateSchema(TimestampedSchema):
-    """Content template response schema."""
-
-    name: str
-    description: Optional[str] = None
-    content_type: ContentType
-    template_body: str
-    variables: List[str] = []
-    styling: Dict[str, Any] = {}
-    is_active: bool = True
-    organization_id: str
-
-
-class ContentSchema(TimestampedSchema):
-    """Content response schema."""
-
-    title: str
-    content_type: ContentType
-    status: ContentStatus
-    body: Optional[str] = None
-    rendered_html: Optional[str] = None
-    metadata: Dict[str, Any] = {}
-    pdf_path: Optional[str] = None
-    pptx_path: Optional[str] = None
-    transcript_id: Optional[str] = None
-    template_id: Optional[str] = None
-    prospect_id: Optional[str] = None
-    user_id: str
-    organization_id: str
-
-
-class ContentCreate(BaseModel):
-    """Content creation schema."""
-
-    title: str
-    content_type: ContentType
-    body: Optional[str] = None
-    template_id: Optional[str] = None
-    transcript_id: Optional[str] = None
-    prospect_id: Optional[str] = None
-    variables: Dict[str, Any] = {}
-
-
-class ContentExport(BaseModel):
-    """Content export data format."""
-
-    id: str
-    title: str
-    content_type: str
-    status: str
-    body: Optional[str] = None
-    created_at: str
-    files: List[str] = []  # List of file paths to include
->>>>>>> origin/claude/export-import-service-01K8LsZNbidmjJoTxFQ47hx3

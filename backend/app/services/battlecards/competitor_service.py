@@ -6,7 +6,7 @@ import json
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from ...models.battlecard import (
     Competitor,
@@ -37,7 +37,7 @@ class CompetitorService:
         if not self.competitors_file.exists():
             self._save_competitors([])
 
-    def _load_competitors(self) -> list[dict]:
+    def _load_competitors(self) -> List[dict]:
         """Load competitors from JSON file."""
         try:
             with open(self.competitors_file, "r") as f:
@@ -45,7 +45,7 @@ class CompetitorService:
         except (json.JSONDecodeError, FileNotFoundError):
             return []
 
-    def _save_competitors(self, competitors: list[dict]) -> None:
+    def _save_competitors(self, competitors: List[dict]) -> None:
         """Save competitors to JSON file."""
         with open(self.competitors_file, "w") as f:
             json.dump(competitors, f, indent=2, default=str)
@@ -345,7 +345,7 @@ class CompetitorService:
 
         return None
 
-    def get_all_for_comparison(self, competitor_ids: list[str]) -> list[Competitor]:
+    def get_all_for_comparison(self, competitor_ids: List[str]) -> List[Competitor]:
         """
         Get multiple competitors for feature comparison.
 
@@ -364,7 +364,7 @@ class CompetitorService:
 
         return result
 
-    def search_by_market(self, market: str) -> list[Competitor]:
+    def search_by_market(self, market: str) -> List[Competitor]:
         """
         Find competitors targeting a specific market.
 

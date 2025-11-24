@@ -3,7 +3,7 @@
 import uuid
 from typing import Annotated, List, Optional
 
-import jwt
+from jose import jwt, JWTError
 from fastapi import Depends, Header, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
@@ -55,16 +55,10 @@ async def _authenticate_jwt(
     """Authenticate using JWT token."""
     try:
         token_data = verify_token(credentials.credentials, TokenType.ACCESS)
-    except jwt.ExpiredSignatureError:
+    except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token has expired",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    except jwt.InvalidTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            detail="Invalid or expired token",
             headers={"WWW-Authenticate": "Bearer"},
         )
     except ValueError as e:

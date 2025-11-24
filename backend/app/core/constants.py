@@ -3,7 +3,6 @@
 from enum import Enum
 
 
-<<<<<<< HEAD
 class ContentType(str, Enum):
     """Supported content types for generation."""
 
@@ -29,6 +28,7 @@ class ContentType(str, Enum):
 class ContentStatus(str, Enum):
     """Content generation status."""
 
+    DRAFT = "draft"
     PENDING = "pending"
     GENERATING = "generating"
     COMPLETED = "completed"
@@ -53,6 +53,50 @@ class AudienceType(str, Enum):
     INDIVIDUAL_CONTRIBUTOR = "individual_contributor"
     TECHNICAL = "technical"
     BUSINESS = "business"
+
+
+class TokenType(str, Enum):
+    """JWT token types."""
+
+    ACCESS = "access"
+    REFRESH = "refresh"
+
+
+class OAuthProvider(str, Enum):
+    """OAuth provider types."""
+
+    GOOGLE = "google"
+    MICROSOFT = "microsoft"
+    GITHUB = "github"
+    HUBSPOT = "hubspot"
+    AVOMA = "avoma"
+
+
+class AuditAction(str, Enum):
+    """Audit log action types."""
+
+    CREATE = "create"
+    READ = "read"
+    UPDATE = "update"
+    DELETE = "delete"
+    LOGIN = "login"
+    LOGOUT = "logout"
+    TOKEN_REFRESH = "token_refresh"
+    EXPORT = "export"
+    IMPORT = "import"
+
+
+class UserRole(str, Enum):
+    """User role types."""
+
+    ADMIN = "admin"
+    MANAGER = "manager"
+    SALES_REP = "sales_rep"
+    VIEWER = "viewer"
+
+
+# API Key Header Name
+API_KEY_HEADER = "X-API-Key"
 
 
 # Content type categories for grouping
@@ -83,59 +127,3 @@ SPICED_ELEMENTS = [
     "expected_decision",
     "decision_criteria",
 ]
-=======
-class UserRole(str, Enum):
-    """User roles for RBAC."""
-
-    ADMIN = "admin"
-    MANAGER = "manager"
-    REP = "rep"
-    VIEWER = "viewer"
-
-
-class TokenType(str, Enum):
-    """Token types for JWT."""
-
-    ACCESS = "access"
-    REFRESH = "refresh"
-
-
-class AuditAction(str, Enum):
-    """Audit log action types."""
-
-    LOGIN = "login"
-    LOGOUT = "logout"
-    LOGIN_FAILED = "login_failed"
-    TOKEN_REFRESH = "token_refresh"
-    PASSWORD_CHANGE = "password_change"
-    API_KEY_CREATED = "api_key_created"
-    API_KEY_REVOKED = "api_key_revoked"
-    USER_CREATED = "user_created"
-    USER_UPDATED = "user_updated"
-    USER_DELETED = "user_deleted"
-    OAUTH_CONNECTED = "oauth_connected"
-    OAUTH_DISCONNECTED = "oauth_disconnected"
-    TRANSCRIPT_UPLOADED = "transcript_uploaded"
-    CONTENT_GENERATED = "content_generated"
-    PROSPECT_ENRICHED = "prospect_enriched"
-    COACHING_GENERATED = "coaching_generated"
-
-
-class OAuthProvider(str, Enum):
-    """Supported OAuth providers."""
-
-    HUBSPOT = "hubspot"
-    AVOMA = "avoma"
-
-
-# API Key settings
-API_KEY_HEADER = "X-API-Key"
-API_KEY_QUERY_PARAM = "api_key"
-
-# JWT settings
-JWT_BEARER_SCHEME = "Bearer"
-
-# Rate limiting
-DEFAULT_RATE_LIMIT = "100/minute"
-AUTH_RATE_LIMIT = "10/minute"
->>>>>>> origin/claude/auth-security-jwt-01NGdma4oBRc5QyZNZQsX6Ef

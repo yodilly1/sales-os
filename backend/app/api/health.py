@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """Health check endpoints."""
 
 from datetime import datetime, timezone
@@ -10,16 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.db.session import get_db
-=======
-"""Health check endpoint."""
-
-from fastapi import APIRouter
->>>>>>> origin/claude/zoom-integration-01Dy2JADoQefKcjQi2GPsjPP
 
 router = APIRouter()
 
 
-<<<<<<< HEAD
 class HealthResponse(BaseModel):
     """Health check response."""
 
@@ -70,9 +63,3 @@ async def detailed_health_check(
             "rate_limiter": "healthy",
         },
     )
-=======
-@router.get("/health")
-async def health_check():
-    """Health check endpoint."""
-    return {"status": "ok"}
->>>>>>> origin/claude/zoom-integration-01Dy2JADoQefKcjQi2GPsjPP

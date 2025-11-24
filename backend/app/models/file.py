@@ -89,7 +89,7 @@ class File(Base):
     uploaded_chunks = Column(Integer, default=0)
 
     # Metadata
-    metadata = Column(JSON, nullable=True, default=dict)
+    meta_data = Column(JSON, nullable=True, default=dict)
     checksum = Column(String(64), nullable=True)  # SHA-256
 
     # Flags
