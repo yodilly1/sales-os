@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "leadmagic": {
+      "command": "npx",
+      "args": ["-y", "leadmagic-mcp-server"],
+      "env": {
+        "LEADMAGIC_API_KEY": "2c3e4c0a9a47d3f772db15442fd98f42"
+      }
+    }
+  }
+}

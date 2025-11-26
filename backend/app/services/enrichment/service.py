@@ -51,6 +51,11 @@ try:
 except ImportError:
     NewsProvider = None
 
+try:
+    from .providers.leadmagic import LeadMagicProvider
+except ImportError:
+    LeadMagicProvider = None
+
 logger = logging.getLogger(__name__)
 
 
@@ -113,6 +118,16 @@ class EnrichmentService:
                 )
             except Exception as e:
                 logger.warning(f"Failed to initialize News provider: {e}")
+
+        # LeadMagic (comprehensive enrichment)
+        if settings.leadmagic_api_key and LeadMagicProvider:
+            try:
+                self.providers["leadmagic"] = LeadMagicProvider(
+                    api_key=settings.leadmagic_api_key,
+                    rate_limit=300,  # LeadMagic allows 300 req/min
+                )
+            except Exception as e:
+                logger.warning(f"Failed to initialize LeadMagic provider: {e}")
 
         logger.info(f"Initialized {len(self.providers)} enrichment providers: {list(self.providers.keys())}")
 
@@ -177,6 +192,7 @@ class EnrichmentService:
                     name=prospect.full_name or f"{prospect.first_name or ''} {prospect.last_name or ''}".strip(),
                     company=prospect.company_name,
                     domain=prospect.company_domain,
+                    linkedin_url=prospect.linkedin_url,
                 )
             )
 
@@ -299,15 +315,36 @@ class EnrichmentService:
         name: Optional[str],
         company: Optional[str],
         domain: Optional[str],
+        linkedin_url: Optional[str] = None,
     ) -> Optional[tuple[dict[str, Any], EnrichmentSource]]:
         """Enrich prospect from a single provider."""
         try:
-            data = await provider.enrich_prospect(
-                email=email,
-                name=name,
-                company=company,
-                domain=domain,
-            )
+            # Pass linkedin_url if provider supports it (like LeadMagic)
+            if hasattr(provider, 'enrich_prospect'):
+                import inspect
+                sig = inspect.signature(provider.enrich_prospect)
+                if 'linkedin_url' in sig.parameters:
+                    data = await provider.enrich_prospect(
+                        email=email,
+                        name=name,
+                        company=company,
+                        domain=domain,
+                        linkedin_url=linkedin_url,
+                    )
+                else:
+                    data = await provider.enrich_prospect(
+                        email=email,
+                        name=name,
+                        company=company,
+                        domain=domain,
+                    )
+            else:
+                data = await provider.enrich_prospect(
+                    email=email,
+                    name=name,
+                    company=company,
+                    domain=domain,
+                )
             if data:
                 return data, provider.source
         except Exception as e:

@@ -433,14 +433,14 @@ export const contentApi = {
   async generateContent(formData: ContentFormData): Promise<GeneratedContent> {
     const request = mapFormToRequest(formData);
     const response = await apiClient.post<BackendContentResponse>(
-      '/v1/content/generate',
+      '/content/generate',
       request
     );
     return mapResponseToContent(response, formData.contentType);
   },
 
   async getContent(id: string): Promise<GeneratedContent> {
-    const response = await apiClient.get<BackendContentResponse>(`/v1/content/${id}`);
+    const response = await apiClient.get<BackendContentResponse>(`/content/${id}`);
     // Extract content type from the response
     const contentType = response.metadata.content_type;
     let frontendType = 'deck';
@@ -455,13 +455,13 @@ export const contentApi = {
     id: string,
     format: ExportFormat
   ): Promise<ExportContentResponse> {
-    return apiClient.post<ExportContentResponse>(`/v1/content/${id}/export`, {
+    return apiClient.post<ExportContentResponse>(`/content/${id}/export`, {
       format,
     });
   },
 
   async listContent(): Promise<GeneratedContent[]> {
-    const response = await apiClient.get<BackendContentResponse[]>('/v1/content');
+    const response = await apiClient.get<BackendContentResponse[]>('/content');
     return response.map((item) => {
       const contentType = item.metadata.content_type;
       let frontendType = 'deck';
@@ -473,6 +473,6 @@ export const contentApi = {
   },
 
   async deleteContent(id: string): Promise<void> {
-    await apiClient.delete(`/v1/content/${id}`);
+    await apiClient.delete(`/content/${id}`);
   },
 };

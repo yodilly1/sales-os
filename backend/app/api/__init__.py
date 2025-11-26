@@ -95,4 +95,11 @@ except ImportError as e:
     import logging
     logging.getLogger(__name__).warning(f"Failed to load content router: {e}")
 
+try:
+    from app.api.analytics import router as analytics_router
+    api_router.include_router(analytics_router, prefix="/analytics", tags=["Analytics"])
+except ImportError as e:
+    import logging
+    logging.getLogger(__name__).warning(f"Failed to load analytics router: {e}")
+
 __all__ = ["api_router"]

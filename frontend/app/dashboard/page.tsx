@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import {
   Phone,
   FileText,
@@ -7,24 +8,76 @@ import {
   Target,
   TrendingUp,
   DollarSign,
+  Loader2,
 } from 'lucide-react'
 import { MetricCard, ActivityFeed, QuickActions, WelcomeBanner } from '@/components/dashboard'
 
-// Mock metrics data - in production this would come from API
-const metrics = {
-  callsProcessed: { value: 247, change: 12.5 },
-  contentGenerated: { value: 89, change: 8.3 },
-  prospectsEnriched: { value: 156, change: 23.1 },
-  pipelineValue: { value: 2450000, change: 5.7 },
-  dealsClosed: { value: 34, change: -2.1 },
-  conversionRate: { value: 24, change: 3.2 },
+interface DashboardMetrics {
+  callsProcessed: { value: number; change: number }
+  contentGenerated: { value: number; change: number }
+  prospectsEnriched: { value: number; change: number }
+  pipelineValue: { value: number; change: number }
+  dealsClosed: { value: number; change: number }
+  conversionRate: { value: number; change: number }
+}
+
+const defaultMetrics: DashboardMetrics = {
+  callsProcessed: { value: 0, change: 0 },
+  contentGenerated: { value: 0, change: 0 },
+  prospectsEnriched: { value: 0, change: 0 },
+  pipelineValue: { value: 0, change: 0 },
+  dealsClosed: { value: 0, change: 0 },
+  conversionRate: { value: 0, change: 0 },
 }
 
 export default function DashboardPage() {
+  const [metrics, setMetrics] = useState<DashboardMetrics>(defaultMetrics)
+  const [isLoading, setIsLoading] = useState(true)
+  const [userName, setUserName] = useState('User')
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setIsLoading(true)
+      try {
+        // Try to fetch from analytics API
+        const response = await fetch('/api/v1/analytics/overview')
+        if (response.ok) {
+          const data = await response.json()
+          setMetrics({
+            callsProcessed: { value: data.overview?.total_transcripts || 0, change: 0 },
+            contentGenerated: { value: data.overview?.total_content || 0, change: 0 },
+            prospectsEnriched: { value: data.overview?.total_prospects || 0, change: 0 },
+            pipelineValue: { value: 0, change: 0 },
+            dealsClosed: { value: data.overview?.total_campaigns || 0, change: 0 },
+            conversionRate: { value: 0, change: 0 },
+          })
+        }
+      } catch (err) {
+        console.log('Dashboard API not available, showing empty state')
+        // Keep default metrics (zeros)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary-600 mx-auto mb-4" />
+          <p className="text-neutral-600">Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Welcome Banner */}
-      <WelcomeBanner userName="Alex" pendingCalls={3} />
+      <WelcomeBanner userName={userName} pendingCalls={0} />
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

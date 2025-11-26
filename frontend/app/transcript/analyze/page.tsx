@@ -417,7 +417,7 @@ export default function TranscriptAnalyzePage() {
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-2">
-          <Link href="/transcript" className="text-neutral-500 hover:text-neutral-700">
+          <Link href="/" className="text-neutral-500 hover:text-neutral-700">
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <h1 className="text-2xl font-bold text-neutral-900">Analyze Transcript</h1>

@@ -1,59 +1,30 @@
 'use client'
 
-import { useState } from 'react'
-import { Users, TrendingUp, DollarSign, Target, ArrowRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Users, TrendingUp, DollarSign, Target, ArrowRight, Loader2, AlertCircle } from 'lucide-react'
 import { format, subDays } from 'date-fns'
 import { MetricCard, DateRangePicker, ChartCard, ExportButton } from '@/components/analytics'
 import { LineChart, BarChart, PieChart, DataTable, Column } from '@/components/charts'
-import { formatCurrency, formatPercent, formatNumber, formatDate } from '@/lib/utils/format'
-import type { DateRange } from '@/lib/types/analytics'
+import { formatCurrency } from '@/lib/utils/format'
+import type { DateRange, MetricValue, PipelineStageData, EnrichmentTrendData, ProspectSource } from '@/lib/types/analytics'
 
-// Mock data
-const enrichmentTrendData = [
-  { date: '2024-01-01', enriched: 25, converted: 8, value: 45000 },
-  { date: '2024-01-02', enriched: 32, converted: 10, value: 62000 },
-  { date: '2024-01-03', enriched: 28, converted: 9, value: 54000 },
-  { date: '2024-01-04', enriched: 35, converted: 12, value: 78000 },
-  { date: '2024-01-05', enriched: 42, converted: 15, value: 95000 },
-  { date: '2024-01-06', enriched: 30, converted: 11, value: 68000 },
-  { date: '2024-01-07', enriched: 38, converted: 14, value: 88000 },
-  { date: '2024-01-08', enriched: 45, converted: 16, value: 102000 },
-  { date: '2024-01-09', enriched: 40, converted: 13, value: 82000 },
-  { date: '2024-01-10', enriched: 48, converted: 18, value: 115000 },
-]
+interface PipelineMetricsData {
+  prospectsEnriched: MetricValue
+  conversionRate: MetricValue
+  avgDealSize: MetricValue
+  pipelineValue: MetricValue
+}
 
-const pipelineStageData = [
-  { stage: 'Lead', count: 245, value: 2450000, conversionRate: 100 },
-  { stage: 'Qualified', count: 156, value: 1560000, conversionRate: 63.7 },
-  { stage: 'Meeting', count: 98, value: 980000, conversionRate: 62.8 },
-  { stage: 'Proposal', count: 64, value: 640000, conversionRate: 65.3 },
-  { stage: 'Negotiation', count: 42, value: 420000, conversionRate: 65.6 },
-  { stage: 'Closed Won', count: 28, value: 280000, conversionRate: 66.7 },
-]
+interface SourceDistribution {
+  name: string
+  value: number
+  color: string
+}
 
-const stageConversionData = [
-  { stage: 'Lead → Qualified', rate: 63.7 },
-  { stage: 'Qualified → Meeting', rate: 62.8 },
-  { stage: 'Meeting → Proposal', rate: 65.3 },
-  { stage: 'Proposal → Negotiation', rate: 65.6 },
-  { stage: 'Negotiation → Won', rate: 66.7 },
-]
-
-const prospectSourceData = [
-  { name: 'Inbound', value: 35, color: '#0ea5e9' },
-  { name: 'Outbound', value: 28, color: '#22c55e' },
-  { name: 'Referral', value: 18, color: '#f59e0b' },
-  { name: 'Event', value: 12, color: '#8b5cf6' },
-  { name: 'Partner', value: 7, color: '#ec4899' },
-]
-
-const sourcePerformance = [
-  { source: 'Inbound', count: 312, conversionRate: 28.5, avgDealSize: 42000 },
-  { source: 'Outbound', count: 248, conversionRate: 22.3, avgDealSize: 38000 },
-  { source: 'Referral', count: 156, conversionRate: 35.2, avgDealSize: 52000 },
-  { source: 'Event', count: 108, conversionRate: 18.5, avgDealSize: 35000 },
-  { source: 'Partner', count: 68, conversionRate: 32.4, avgDealSize: 48000 },
-]
+interface StageConversion {
+  stage: string
+  rate: number
+}
 
 interface ProspectRecord {
   id: string
@@ -66,16 +37,12 @@ interface ProspectRecord {
   probability: number
 }
 
-const recentProspects: ProspectRecord[] = [
-  { id: '1', company: 'Acme Corporation', stage: 'Proposal', value: 85000, source: 'Inbound', enrichedAt: '2024-01-10', daysinStage: 5, probability: 75 },
-  { id: '2', company: 'TechStart Inc', stage: 'Meeting', value: 42000, source: 'Outbound', enrichedAt: '2024-01-09', daysinStage: 8, probability: 45 },
-  { id: '3', company: 'Global Solutions', stage: 'Negotiation', value: 125000, source: 'Referral', enrichedAt: '2024-01-09', daysinStage: 3, probability: 85 },
-  { id: '4', company: 'DataFlow Systems', stage: 'Qualified', value: 38000, source: 'Event', enrichedAt: '2024-01-08', daysinStage: 12, probability: 30 },
-  { id: '5', company: 'CloudNet Pro', stage: 'Proposal', value: 67000, source: 'Partner', enrichedAt: '2024-01-08', daysinStage: 6, probability: 65 },
-  { id: '6', company: 'InnovateTech', stage: 'Meeting', value: 55000, source: 'Inbound', enrichedAt: '2024-01-07', daysinStage: 10, probability: 50 },
-  { id: '7', company: 'SmartBiz Ltd', stage: 'Negotiation', value: 92000, source: 'Outbound', enrichedAt: '2024-01-07', daysinStage: 4, probability: 80 },
-  { id: '8', company: 'Enterprise Plus', stage: 'Closed Won', value: 145000, source: 'Referral', enrichedAt: '2024-01-06', daysinStage: 0, probability: 100 },
-]
+const defaultMetrics: PipelineMetricsData = {
+  prospectsEnriched: { value: 0, change: 0, changePercent: 0, trend: 'stable' },
+  conversionRate: { value: 0, change: 0, changePercent: 0, trend: 'stable' },
+  avgDealSize: { value: 0, change: 0, changePercent: 0, trend: 'stable' },
+  pipelineValue: { value: 0, change: 0, changePercent: 0, trend: 'stable' },
+}
 
 const prospectColumns: Column<ProspectRecord>[] = [
   {
@@ -149,9 +116,155 @@ export default function PipelineAnalyticsPage() {
     startDate: format(subDays(new Date(), 30), 'yyyy-MM-dd'),
     endDate: format(new Date(), 'yyyy-MM-dd'),
   })
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [metrics, setMetrics] = useState<PipelineMetricsData>(defaultMetrics)
+  const [pipelineStages, setPipelineStages] = useState<PipelineStageData[]>([])
+  const [enrichmentTrend, setEnrichmentTrend] = useState<EnrichmentTrendData[]>([])
+  const [sourceDistribution, setSourceDistribution] = useState<SourceDistribution[]>([])
+  const [stageConversions, setStageConversions] = useState<StageConversion[]>([])
+  const [sourcePerformance, setSourcePerformance] = useState<ProspectSource[]>([])
+  const [recentProspects, setRecentProspects] = useState<ProspectRecord[]>([])
+
+  useEffect(() => {
+    loadPipelineData()
+  }, [dateRange])
+
+  const loadPipelineData = async () => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const params = new URLSearchParams({
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+      })
+
+      // Fetch all pipeline data in parallel
+      const [metricsRes, stagesRes, trendsRes, sourcesRes] = await Promise.all([
+        fetch(`/api/v1/analytics/pipeline/metrics?${params}`),
+        fetch(`/api/v1/analytics/pipeline/stages?${params}`),
+        fetch(`/api/v1/analytics/pipeline/enrichment-trends?${params}`),
+        fetch(`/api/v1/analytics/pipeline/sources?${params}`),
+      ])
+
+      // Process metrics
+      if (metricsRes.ok) {
+        const data = await metricsRes.json()
+        setMetrics({
+          prospectsEnriched: data.data?.prospects_enriched || data.data?.prospectsEnriched || defaultMetrics.prospectsEnriched,
+          conversionRate: data.data?.conversion_rate || data.data?.conversionRate || defaultMetrics.conversionRate,
+          avgDealSize: data.data?.avg_deal_size || data.data?.avgDealSize || defaultMetrics.avgDealSize,
+          pipelineValue: data.data?.pipeline_value || data.data?.pipelineValue || defaultMetrics.pipelineValue,
+        })
+      }
+
+      // Process stages
+      if (stagesRes.ok) {
+        const data = await stagesRes.json()
+        if (Array.isArray(data.data)) {
+          setPipelineStages(data.data.map((d: { stage: string; count: number; value: number; conversion_rate?: number; conversionRate?: number }) => ({
+            stage: d.stage,
+            count: d.count,
+            value: d.value,
+            conversionRate: d.conversion_rate || d.conversionRate || 0,
+          })))
+
+          // Calculate stage conversions
+          const conversions: StageConversion[] = []
+          for (let i = 1; i < data.data.length; i++) {
+            const prevStage = data.data[i - 1].stage
+            const currStage = data.data[i].stage
+            const rate = data.data[i].conversion_rate || data.data[i].conversionRate || 0
+            conversions.push({
+              stage: `${prevStage} → ${currStage}`,
+              rate: rate,
+            })
+          }
+          setStageConversions(conversions)
+        }
+      }
+
+      // Process enrichment trends
+      if (trendsRes.ok) {
+        const data = await trendsRes.json()
+        if (Array.isArray(data.data)) {
+          setEnrichmentTrend(data.data)
+        }
+      }
+
+      // Process sources
+      if (sourcesRes.ok) {
+        const data = await sourcesRes.json()
+        if (Array.isArray(data.data)) {
+          setSourcePerformance(data.data.map((d: { source: string; count: number; conversion_rate?: number; conversionRate?: number; avg_deal_size?: number; avgDealSize?: number }) => ({
+            source: d.source,
+            count: d.count,
+            conversionRate: d.conversion_rate || d.conversionRate || 0,
+            avgDealSize: d.avg_deal_size || d.avgDealSize || 0,
+          })))
+
+          // Create source distribution
+          const colors = ['#0ea5e9', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899']
+          const total = data.data.reduce((sum: number, d: { count: number }) => sum + d.count, 0)
+          setSourceDistribution(data.data.map((d: { source: string; count: number }, i: number) => ({
+            name: d.source,
+            value: total > 0 ? Math.round((d.count / total) * 100) : 0,
+            color: colors[i % colors.length],
+          })))
+        }
+      }
+
+      // For recent prospects, we'd need a separate endpoint - show empty for now
+      setRecentProspects([])
+
+    } catch (err) {
+      console.error('Failed to load pipeline analytics:', err)
+      setError('Failed to load pipeline analytics data. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleExport = async (exportFormat: 'csv' | 'pdf') => {
-    console.log('Exporting pipeline as', exportFormat)
+    try {
+      const params = new URLSearchParams({
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+        format: exportFormat,
+      })
+      window.open(`/api/v1/analytics/pipeline/export?${params}`, '_blank')
+    } catch (err) {
+      console.error('Export failed:', err)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary-600 mx-auto mb-4" />
+          <p className="text-neutral-600">Loading pipeline analytics...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-neutral-600 mb-4">{error}</p>
+          <button
+            onClick={loadPipelineData}
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -173,52 +286,58 @@ export default function PipelineAnalyticsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
           title="Prospects Enriched"
-          value="363"
-          metric={{ value: 363, change: 42, changePercent: 13.1, trend: 'up' }}
+          value={metrics.prospectsEnriched.value.toLocaleString()}
+          metric={metrics.prospectsEnriched}
           icon={<Users className="w-6 h-6" />}
         />
         <MetricCard
           title="Conversion Rate"
-          value="24.5%"
-          metric={{ value: 24.5, change: 2.3, changePercent: 10.4, trend: 'up' }}
+          value={`${metrics.conversionRate.value.toFixed(1)}%`}
+          metric={metrics.conversionRate}
           icon={<TrendingUp className="w-6 h-6" />}
         />
         <MetricCard
           title="Avg Deal Size"
-          value="$42.5K"
-          metric={{ value: 42500, change: 3200, changePercent: 8.1, trend: 'up' }}
+          value={formatCurrency(metrics.avgDealSize.value)}
+          metric={metrics.avgDealSize}
           icon={<DollarSign className="w-6 h-6" />}
         />
         <MetricCard
           title="Pipeline Value"
-          value="$2.4M"
-          metric={{ value: 2400000, change: 280000, changePercent: 13.2, trend: 'up' }}
+          value={formatCurrency(metrics.pipelineValue.value)}
+          metric={metrics.pipelineValue}
           icon={<Target className="w-6 h-6" />}
         />
       </div>
 
       {/* Pipeline Funnel */}
       <ChartCard title="Pipeline Funnel" description="Prospects by stage with value and conversion rates">
-        <div className="flex items-center justify-between gap-2 overflow-x-auto pb-4">
-          {pipelineStageData.map((stage, index) => (
-            <div key={stage.stage} className="flex items-center">
-              <div
-                className="flex-shrink-0 text-center p-4 bg-gradient-to-b from-primary-50 to-primary-100 rounded-lg min-w-[140px]"
-                style={{ opacity: 1 - (index * 0.1) }}
-              >
-                <p className="text-sm font-medium text-gray-600">{stage.stage}</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{stage.count}</p>
-                <p className="text-sm text-gray-500">{formatCurrency(stage.value)}</p>
-                {index > 0 && (
-                  <p className="text-xs text-primary-600 mt-1">{stage.conversionRate.toFixed(1)}% conv.</p>
+        {pipelineStages.length > 0 ? (
+          <div className="flex items-center justify-between gap-2 overflow-x-auto pb-4">
+            {pipelineStages.map((stage, index) => (
+              <div key={stage.stage} className="flex items-center">
+                <div
+                  className="flex-shrink-0 text-center p-4 bg-gradient-to-b from-primary-50 to-primary-100 rounded-lg min-w-[140px]"
+                  style={{ opacity: 1 - (index * 0.1) }}
+                >
+                  <p className="text-sm font-medium text-gray-600">{stage.stage}</p>
+                  <p className="text-2xl font-bold text-gray-900 mt-1">{stage.count}</p>
+                  <p className="text-sm text-gray-500">{formatCurrency(stage.value)}</p>
+                  {index > 0 && (
+                    <p className="text-xs text-primary-600 mt-1">{stage.conversionRate.toFixed(1)}% conv.</p>
+                  )}
+                </div>
+                {index < pipelineStages.length - 1 && (
+                  <ArrowRight className="w-5 h-5 text-gray-300 mx-2 flex-shrink-0" />
                 )}
               </div>
-              {index < pipelineStageData.length - 1 && (
-                <ArrowRight className="w-5 h-5 text-gray-300 mx-2 flex-shrink-0" />
-              )}
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-[150px] text-gray-500">
+            No pipeline data available
+          </div>
+        )}
       </ChartCard>
 
       {/* Charts Row 1 */}
@@ -228,65 +347,95 @@ export default function PipelineAnalyticsPage() {
           description="Daily prospects enriched and converted"
           className="lg:col-span-2"
         >
-          <LineChart
-            data={enrichmentTrendData}
-            xAxisKey="date"
-            xAxisFormatter={(value) => format(new Date(value), 'MMM d')}
-            lines={[
-              { dataKey: 'enriched', name: 'Enriched', color: '#0ea5e9' },
-              { dataKey: 'converted', name: 'Converted', color: '#22c55e' },
-            ]}
-            height={300}
-          />
+          {enrichmentTrend.length > 0 ? (
+            <LineChart
+              data={enrichmentTrend}
+              xAxisKey="date"
+              xAxisFormatter={(value) => format(new Date(value), 'MMM d')}
+              lines={[
+                { dataKey: 'enriched', name: 'Enriched', color: '#0ea5e9' },
+                { dataKey: 'converted', name: 'Converted', color: '#22c55e' },
+              ]}
+              height={300}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-[300px] text-gray-500">
+              No trend data available
+            </div>
+          )}
         </ChartCard>
 
         <ChartCard title="Prospect Sources" description="Distribution by lead source">
-          <PieChart
-            data={prospectSourceData}
-            height={300}
-            innerRadius={50}
-            outerRadius={90}
-          />
+          {sourceDistribution.length > 0 ? (
+            <PieChart
+              data={sourceDistribution}
+              height={300}
+              innerRadius={50}
+              outerRadius={90}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-[300px] text-gray-500">
+              No source data available
+            </div>
+          )}
         </ChartCard>
       </div>
 
       {/* Charts Row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartCard title="Stage Conversion Rates" description="Conversion rate between stages">
-          <BarChart
-            data={stageConversionData}
-            xAxisKey="stage"
-            layout="vertical"
-            bars={[{ dataKey: 'rate', name: 'Conversion Rate', color: '#0ea5e9' }]}
-            yAxisFormatter={(value) => `${value}%`}
-            height={280}
-          />
+          {stageConversions.length > 0 ? (
+            <BarChart
+              data={stageConversions}
+              xAxisKey="stage"
+              layout="vertical"
+              bars={[{ dataKey: 'rate', name: 'Conversion Rate', color: '#0ea5e9' }]}
+              yAxisFormatter={(value) => `${value}%`}
+              height={280}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-[280px] text-gray-500">
+              No conversion data available
+            </div>
+          )}
         </ChartCard>
 
         <ChartCard title="Source Performance" description="Conversion and deal size by source">
-          <BarChart
-            data={sourcePerformance}
-            xAxisKey="source"
-            bars={[
-              { dataKey: 'conversionRate', name: 'Conversion %', color: '#0ea5e9' },
-            ]}
-            yAxisFormatter={(value) => `${value}%`}
-            height={280}
-            colorByValue
-            colors={['#0ea5e9', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899']}
-          />
+          {sourcePerformance.length > 0 ? (
+            <BarChart
+              data={sourcePerformance}
+              xAxisKey="source"
+              bars={[
+                { dataKey: 'conversionRate', name: 'Conversion %', color: '#0ea5e9' },
+              ]}
+              yAxisFormatter={(value) => `${value}%`}
+              height={280}
+              colorByValue
+              colors={['#0ea5e9', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899']}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-[280px] text-gray-500">
+              No source performance data available
+            </div>
+          )}
         </ChartCard>
       </div>
 
       {/* Recent Prospects Table */}
       <ChartCard title="Active Prospects" description="Recently enriched prospects in pipeline">
-        <DataTable
-          data={recentProspects}
-          columns={prospectColumns}
-          keyField="id"
-          maxHeight="400px"
-          stickyHeader
-        />
+        {recentProspects.length > 0 ? (
+          <DataTable
+            data={recentProspects}
+            columns={prospectColumns}
+            keyField="id"
+            maxHeight="400px"
+            stickyHeader
+          />
+        ) : (
+          <div className="flex items-center justify-center h-[200px] text-gray-500">
+            No active prospects to display. Enrich prospects to see them here.
+          </div>
+        )}
       </ChartCard>
     </div>
   )

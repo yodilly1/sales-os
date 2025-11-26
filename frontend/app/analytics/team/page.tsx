@@ -1,62 +1,29 @@
 'use client'
 
-import { useState } from 'react'
-import { Users, Phone, FileText, Trophy, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Users, Phone, FileText, Trophy, TrendingUp, TrendingDown, Minus, Loader2, AlertCircle } from 'lucide-react'
 import { format, subDays } from 'date-fns'
 import { MetricCard, DateRangePicker, ChartCard, ExportButton } from '@/components/analytics'
 import { LineChart, BarChart, DataTable, Column } from '@/components/charts'
 import { formatCurrency, formatNumber, formatScore } from '@/lib/utils/format'
 import { cn } from '@/lib/utils/cn'
-import type { DateRange } from '@/lib/types/analytics'
+import type { DateRange, MetricValue, TeamMemberPerformance, TeamTrendData, LeaderboardEntry } from '@/lib/types/analytics'
 
-// Mock data
-const teamTrendData = [
-  { date: '2024-01-01', calls: 145, content: 42, deals: 8 },
-  { date: '2024-01-02', calls: 168, content: 48, deals: 10 },
-  { date: '2024-01-03', calls: 152, content: 45, deals: 7 },
-  { date: '2024-01-04', calls: 178, content: 52, deals: 12 },
-  { date: '2024-01-05', calls: 165, content: 50, deals: 9 },
-  { date: '2024-01-06', calls: 142, content: 38, deals: 6 },
-  { date: '2024-01-07', calls: 175, content: 55, deals: 11 },
-  { date: '2024-01-08', calls: 188, content: 58, deals: 14 },
-  { date: '2024-01-09', calls: 172, content: 52, deals: 10 },
-  { date: '2024-01-10', calls: 195, content: 62, deals: 15 },
-]
-
-interface TeamMember {
-  id: string
-  name: string
-  avatar: string
-  calls: number
-  contentGenerated: number
-  prospectsEnriched: number
-  dealsWon: number
-  dealValue: number
-  spicedScore: number
-  rank: number
-  previousRank: number
-  trend: 'up' | 'down' | 'stable'
+interface TeamMetricsData {
+  totalMembers: number
+  avgCallsPerRep: MetricValue
+  avgContentPerRep: MetricValue
+  avgDealValue: MetricValue
 }
 
-const teamPerformance: TeamMember[] = [
-  { id: '1', name: 'Sarah Johnson', avatar: 'SJ', calls: 125, contentGenerated: 45, prospectsEnriched: 82, dealsWon: 8, dealValue: 245000, spicedScore: 8.5, rank: 1, previousRank: 2, trend: 'up' },
-  { id: '2', name: 'Michael Chen', avatar: 'MC', calls: 118, contentGenerated: 38, prospectsEnriched: 75, dealsWon: 7, dealValue: 218000, spicedScore: 8.2, rank: 2, previousRank: 1, trend: 'down' },
-  { id: '3', name: 'Emily Davis', avatar: 'ED', calls: 105, contentGenerated: 52, prospectsEnriched: 68, dealsWon: 6, dealValue: 185000, spicedScore: 7.9, rank: 3, previousRank: 3, trend: 'stable' },
-  { id: '4', name: 'David Wilson', avatar: 'DW', calls: 98, contentGenerated: 35, prospectsEnriched: 62, dealsWon: 5, dealValue: 162000, spicedScore: 7.6, rank: 4, previousRank: 5, trend: 'up' },
-  { id: '5', name: 'Jessica Martinez', avatar: 'JM', calls: 92, contentGenerated: 42, prospectsEnriched: 58, dealsWon: 5, dealValue: 148000, spicedScore: 7.8, rank: 5, previousRank: 4, trend: 'down' },
-  { id: '6', name: 'James Brown', avatar: 'JB', calls: 88, contentGenerated: 32, prospectsEnriched: 52, dealsWon: 4, dealValue: 125000, spicedScore: 7.4, rank: 6, previousRank: 7, trend: 'up' },
-  { id: '7', name: 'Amanda Taylor', avatar: 'AT', calls: 82, contentGenerated: 28, prospectsEnriched: 48, dealsWon: 4, dealValue: 112000, spicedScore: 7.2, rank: 7, previousRank: 6, trend: 'down' },
-  { id: '8', name: 'Robert Lee', avatar: 'RL', calls: 78, contentGenerated: 25, prospectsEnriched: 45, dealsWon: 3, dealValue: 95000, spicedScore: 7.0, rank: 8, previousRank: 8, trend: 'stable' },
-]
-
-const topByMetric = {
-  calls: teamPerformance.slice().sort((a, b) => b.calls - a.calls).slice(0, 5),
-  content: teamPerformance.slice().sort((a, b) => b.contentGenerated - a.contentGenerated).slice(0, 5),
-  deals: teamPerformance.slice().sort((a, b) => b.dealValue - a.dealValue).slice(0, 5),
-  spiced: teamPerformance.slice().sort((a, b) => b.spicedScore - a.spicedScore).slice(0, 5),
+const defaultMetrics: TeamMetricsData = {
+  totalMembers: 0,
+  avgCallsPerRep: { value: 0, change: 0, changePercent: 0, trend: 'stable' },
+  avgContentPerRep: { value: 0, change: 0, changePercent: 0, trend: 'stable' },
+  avgDealValue: { value: 0, change: 0, changePercent: 0, trend: 'stable' },
 }
 
-const teamColumns: Column<TeamMember>[] = [
+const teamColumns: Column<TeamMemberPerformance>[] = [
   {
     key: 'rank',
     header: '#',
@@ -142,13 +109,25 @@ const teamColumns: Column<TeamMember>[] = [
 
 interface LeaderboardProps {
   title: string
-  metric: 'calls' | 'content' | 'deals' | 'spiced'
+  data: LeaderboardEntry[]
   icon: React.ReactNode
-  formatValue: (member: TeamMember) => string
+  formatValue: (entry: LeaderboardEntry) => string
 }
 
-function Leaderboard({ title, metric, icon, formatValue }: LeaderboardProps) {
-  const data = topByMetric[metric]
+function Leaderboard({ title, data, icon, formatValue }: LeaderboardProps) {
+  if (data.length === 0) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+          <div className="text-primary-600">{icon}</div>
+          <h4 className="text-sm font-semibold text-gray-900">{title}</h4>
+        </div>
+        <div className="flex items-center justify-center h-[200px] text-gray-500">
+          No data available
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -157,8 +136,8 @@ function Leaderboard({ title, metric, icon, formatValue }: LeaderboardProps) {
         <h4 className="text-sm font-semibold text-gray-900">{title}</h4>
       </div>
       <div className="divide-y divide-gray-100">
-        {data.map((member, index) => (
-          <div key={member.id} className="px-4 py-3 flex items-center justify-between">
+        {data.map((entry, index) => (
+          <div key={entry.userId} className="px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className={cn(
                 'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold',
@@ -171,12 +150,12 @@ function Leaderboard({ title, metric, icon, formatValue }: LeaderboardProps) {
               </span>
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center">
-                  <span className="text-xs font-medium text-primary-700">{member.avatar}</span>
+                  <span className="text-xs font-medium text-primary-700">{entry.avatar || entry.name.substring(0, 2)}</span>
                 </div>
-                <span className="text-sm font-medium text-gray-900">{member.name}</span>
+                <span className="text-sm font-medium text-gray-900">{entry.name}</span>
               </div>
             </div>
-            <span className="text-sm font-semibold text-gray-900">{formatValue(member)}</span>
+            <span className="text-sm font-semibold text-gray-900">{formatValue(entry)}</span>
           </div>
         ))}
       </div>
@@ -189,9 +168,183 @@ export default function TeamAnalyticsPage() {
     startDate: format(subDays(new Date(), 30), 'yyyy-MM-dd'),
     endDate: format(new Date(), 'yyyy-MM-dd'),
   })
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [metrics, setMetrics] = useState<TeamMetricsData>(defaultMetrics)
+  const [trendData, setTrendData] = useState<TeamTrendData[]>([])
+  const [teamPerformance, setTeamPerformance] = useState<TeamMemberPerformance[]>([])
+  const [leaderboards, setLeaderboards] = useState<{
+    calls: LeaderboardEntry[]
+    content: LeaderboardEntry[]
+    deals: LeaderboardEntry[]
+    spiced: LeaderboardEntry[]
+  }>({
+    calls: [],
+    content: [],
+    deals: [],
+    spiced: [],
+  })
+
+  useEffect(() => {
+    loadTeamData()
+  }, [dateRange])
+
+  const loadTeamData = async () => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const params = new URLSearchParams({
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+      })
+
+      // Fetch all team data in parallel
+      const [metricsRes, trendsRes, performanceRes, callsLbRes, contentLbRes, dealsLbRes, spicedLbRes] = await Promise.all([
+        fetch(`/api/v1/analytics/team/metrics?${params}`),
+        fetch(`/api/v1/analytics/team/trends?${params}`),
+        fetch(`/api/v1/analytics/team/performance?${params}&sortBy=deals&pageSize=20`),
+        fetch(`/api/v1/analytics/team/leaderboard?${params}&metric=calls`),
+        fetch(`/api/v1/analytics/team/leaderboard?${params}&metric=content`),
+        fetch(`/api/v1/analytics/team/leaderboard?${params}&metric=deals`),
+        fetch(`/api/v1/analytics/team/leaderboard?${params}&metric=spiced`),
+      ])
+
+      // Process metrics
+      if (metricsRes.ok) {
+        const data = await metricsRes.json()
+        setMetrics({
+          totalMembers: data.data?.total_members || data.data?.totalMembers || 0,
+          avgCallsPerRep: data.data?.avg_calls_per_rep || data.data?.avgCallsPerRep || defaultMetrics.avgCallsPerRep,
+          avgContentPerRep: data.data?.avg_content_per_rep || data.data?.avgContentPerRep || defaultMetrics.avgContentPerRep,
+          avgDealValue: data.data?.avg_deals_per_rep || data.data?.avgDealsPerRep || defaultMetrics.avgDealValue,
+        })
+      }
+
+      // Process trends
+      if (trendsRes.ok) {
+        const data = await trendsRes.json()
+        if (Array.isArray(data.data)) {
+          setTrendData(data.data)
+        }
+      }
+
+      // Process performance
+      if (performanceRes.ok) {
+        const data = await performanceRes.json()
+        if (Array.isArray(data.data)) {
+          setTeamPerformance(data.data.map((d: {
+            id: string
+            name: string
+            avatar?: string
+            calls: number
+            content_generated?: number
+            contentGenerated?: number
+            prospects_enriched?: number
+            prospectsEnriched?: number
+            deals_won?: number
+            dealsWon?: number
+            deal_value?: number
+            dealValue?: number
+            spiced_score?: number
+            spicedScore?: number
+            rank: number
+            trend: 'up' | 'down' | 'stable'
+          }) => ({
+            id: d.id,
+            name: d.name,
+            avatar: d.avatar,
+            calls: d.calls,
+            contentGenerated: d.content_generated || d.contentGenerated || 0,
+            prospectsEnriched: d.prospects_enriched || d.prospectsEnriched || 0,
+            dealsWon: d.deals_won || d.dealsWon || 0,
+            dealValue: d.deal_value || d.dealValue || 0,
+            spicedScore: d.spiced_score || d.spicedScore || 0,
+            rank: d.rank,
+            trend: d.trend,
+          })))
+        }
+      }
+
+      // Process leaderboards
+      const processLeaderboard = async (res: Response): Promise<LeaderboardEntry[]> => {
+        if (res.ok) {
+          const data = await res.json()
+          if (Array.isArray(data.data)) {
+            return data.data.map((d: { rank: number; user_id?: string; userId?: string; name: string; avatar?: string; metric: number; change: number }) => ({
+              rank: d.rank,
+              userId: d.user_id || d.userId || d.name,
+              name: d.name,
+              avatar: d.avatar,
+              metric: d.metric,
+              change: d.change,
+            }))
+          }
+        }
+        return []
+      }
+
+      const [callsLb, contentLb, dealsLb, spicedLb] = await Promise.all([
+        processLeaderboard(callsLbRes),
+        processLeaderboard(contentLbRes),
+        processLeaderboard(dealsLbRes),
+        processLeaderboard(spicedLbRes),
+      ])
+
+      setLeaderboards({
+        calls: callsLb,
+        content: contentLb,
+        deals: dealsLb,
+        spiced: spicedLb,
+      })
+
+    } catch (err) {
+      console.error('Failed to load team analytics:', err)
+      setError('Failed to load team analytics data. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleExport = async (exportFormat: 'csv' | 'pdf') => {
-    console.log('Exporting team as', exportFormat)
+    try {
+      const params = new URLSearchParams({
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+        format: exportFormat,
+      })
+      window.open(`/api/v1/analytics/team/export?${params}`, '_blank')
+    } catch (err) {
+      console.error('Export failed:', err)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary-600 mx-auto mb-4" />
+          <p className="text-neutral-600">Loading team analytics...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-neutral-600 mb-4">{error}</p>
+          <button
+            onClick={loadTeamData}
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -213,94 +366,112 @@ export default function TeamAnalyticsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
           title="Team Members"
-          value="8"
+          value={metrics.totalMembers.toString()}
           icon={<Users className="w-6 h-6" />}
         />
         <MetricCard
           title="Avg Calls/Rep"
-          value="98"
-          metric={{ value: 98, change: 8, changePercent: 8.9, trend: 'up' }}
+          value={Math.round(metrics.avgCallsPerRep.value).toString()}
+          metric={metrics.avgCallsPerRep}
           icon={<Phone className="w-6 h-6" />}
         />
         <MetricCard
           title="Avg Content/Rep"
-          value="37"
-          metric={{ value: 37, change: 5, changePercent: 15.6, trend: 'up' }}
+          value={Math.round(metrics.avgContentPerRep.value).toString()}
+          metric={metrics.avgContentPerRep}
           icon={<FileText className="w-6 h-6" />}
         />
         <MetricCard
           title="Avg Deal Value"
-          value="$161K"
-          metric={{ value: 161250, change: 12500, changePercent: 8.4, trend: 'up' }}
+          value={formatCurrency(metrics.avgDealValue.value)}
+          metric={metrics.avgDealValue}
           icon={<Trophy className="w-6 h-6" />}
         />
       </div>
 
       {/* Team Activity Trend */}
       <ChartCard title="Team Activity Trend" description="Combined team metrics over time">
-        <LineChart
-          data={teamTrendData}
-          xAxisKey="date"
-          xAxisFormatter={(value) => format(new Date(value), 'MMM d')}
-          lines={[
-            { dataKey: 'calls', name: 'Calls', color: '#0ea5e9' },
-            { dataKey: 'content', name: 'Content', color: '#22c55e' },
-            { dataKey: 'deals', name: 'Deals', color: '#f59e0b' },
-          ]}
-          height={300}
-        />
+        {trendData.length > 0 ? (
+          <LineChart
+            data={trendData}
+            xAxisKey="date"
+            xAxisFormatter={(value) => format(new Date(value), 'MMM d')}
+            lines={[
+              { dataKey: 'calls', name: 'Calls', color: '#0ea5e9' },
+              { dataKey: 'content', name: 'Content', color: '#22c55e' },
+              { dataKey: 'deals', name: 'Deals', color: '#f59e0b' },
+            ]}
+            height={300}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-[300px] text-gray-500">
+            No trend data available
+          </div>
+        )}
       </ChartCard>
 
       {/* Leaderboards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Leaderboard
           title="Top by Calls"
-          metric="calls"
+          data={leaderboards.calls}
           icon={<Phone className="w-4 h-4" />}
-          formatValue={(m) => formatNumber(m.calls)}
+          formatValue={(entry) => formatNumber(entry.metric)}
         />
         <Leaderboard
           title="Top by Content"
-          metric="content"
+          data={leaderboards.content}
           icon={<FileText className="w-4 h-4" />}
-          formatValue={(m) => formatNumber(m.contentGenerated)}
+          formatValue={(entry) => formatNumber(entry.metric)}
         />
         <Leaderboard
           title="Top by Deal Value"
-          metric="deals"
+          data={leaderboards.deals}
           icon={<Trophy className="w-4 h-4" />}
-          formatValue={(m) => formatCurrency(m.dealValue)}
+          formatValue={(entry) => formatCurrency(entry.metric)}
         />
         <Leaderboard
           title="Top by SPICED"
-          metric="spiced"
+          data={leaderboards.spiced}
           icon={<TrendingUp className="w-4 h-4" />}
-          formatValue={(m) => formatScore(m.spicedScore)}
+          formatValue={(entry) => formatScore(entry.metric)}
         />
       </div>
 
       {/* Team Performance Bar Chart */}
       <ChartCard title="Performance Comparison" description="Deal value by team member">
-        <BarChart
-          data={teamPerformance}
-          xAxisKey="name"
-          bars={[{ dataKey: 'dealValue', name: 'Deal Value', color: '#0ea5e9' }]}
-          yAxisFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-          height={280}
-          colorByValue
-          colors={['#22c55e', '#0ea5e9', '#8b5cf6', '#f59e0b', '#ec4899', '#06b6d4', '#f97316', '#84cc16']}
-        />
+        {teamPerformance.length > 0 ? (
+          <BarChart
+            data={teamPerformance}
+            xAxisKey="name"
+            bars={[{ dataKey: 'dealValue', name: 'Deal Value', color: '#0ea5e9' }]}
+            yAxisFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+            height={280}
+            colorByValue
+            colors={['#22c55e', '#0ea5e9', '#8b5cf6', '#f59e0b', '#ec4899', '#06b6d4', '#f97316', '#84cc16']}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-[280px] text-gray-500">
+            No performance data available
+          </div>
+        )}
       </ChartCard>
 
       {/* Full Team Performance Table */}
       <ChartCard title="Team Leaderboard" description="Complete team performance breakdown">
-        <DataTable
-          data={teamPerformance}
-          columns={teamColumns}
-          keyField="id"
-          maxHeight="500px"
-          stickyHeader
-        />
+        {teamPerformance.length > 0 ? (
+          <DataTable
+            data={teamPerformance}
+            columns={teamColumns}
+            keyField="id"
+            maxHeight="500px"
+            stickyHeader
+          />
+        ) : (
+          <div className="flex items-center justify-center h-[200px] text-gray-500">
+            No team data to display.
+          </div>
+        )}
       </ChartCard>
     </div>
   )

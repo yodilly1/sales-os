@@ -66,45 +66,20 @@ export default function TranscriptsPage() {
   const loadTranscripts = async () => {
     try {
       setIsLoading(true);
-      // In real implementation, this would call the API
-      // For now, using mock data
-      const mockTranscripts: TranscriptListItem[] = [
-        {
-          id: '1',
-          title: 'Discovery Call - Acme Corp',
-          source: 'zoom',
-          duration: 2580,
-          participantCount: 3,
-          status: 'completed',
-          overallScore: 4.2,
-          crmStatus: 'synced',
-          createdAt: '2024-11-20T10:30:00Z',
-        },
-        {
-          id: '2',
-          title: 'Demo - TechStart Inc',
-          source: 'teams',
-          duration: 3420,
-          participantCount: 4,
-          status: 'completed',
-          overallScore: 3.8,
-          crmStatus: 'pending',
-          createdAt: '2024-11-19T14:00:00Z',
-        },
-        {
-          id: '3',
-          title: 'Follow-up - GlobalCo',
-          source: 'avoma',
-          duration: 1800,
-          participantCount: 2,
-          status: 'processing',
-          crmStatus: 'not_synced',
-          createdAt: '2024-11-22T09:00:00Z',
-        },
-      ];
-      setTranscripts(mockTranscripts);
+      // Try to load from API, fall back to empty list
+      try {
+        const response = await transcriptApi.list({
+          sort: { field: sortField, direction: sortDirection },
+        });
+        setTranscripts(response.data || []);
+      } catch (apiError) {
+        // API might not have a list endpoint yet, show empty state
+        console.log('Transcript list API not available, showing empty state');
+        setTranscripts([]);
+      }
     } catch (error) {
       console.error('Failed to load transcripts:', error);
+      setTranscripts([]);
     } finally {
       setIsLoading(false);
     }
@@ -122,22 +97,38 @@ export default function TranscriptsPage() {
     setUploadError(undefined);
 
     try {
-      // In real implementation, this would call the API
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Call real API based on upload type
+      if (data.type === 'paste' && data.content) {
+        // Use the parse endpoint for text content
+        const response = await transcriptApi.parse({
+          transcript_text: data.content,
+          call_title: data.title,
+          generate_tasks: true,
+          generate_call_note: true,
+        });
 
-      // Add new transcript to list
-      const newTranscript: TranscriptListItem = {
-        id: Date.now().toString(),
-        title: data.title,
-        source: data.source,
-        duration: 0,
-        participantCount: 0,
-        status: 'processing',
-        crmStatus: 'not_synced',
-        createdAt: new Date().toISOString(),
-      };
+        // Add to list with data from response
+        const newTranscript: TranscriptListItem = {
+          id: response.transcript.id,
+          title: response.transcript.title || data.title,
+          source: data.source,
+          duration: response.transcript.duration_minutes ? response.transcript.duration_minutes * 60 : 0,
+          participantCount: response.transcript.speakers?.length || 0,
+          status: 'completed',
+          crmStatus: 'not_synced',
+          createdAt: response.transcript.created_at,
+        };
+        setTranscripts((prev) => [newTranscript, ...prev]);
+      } else if (data.type === 'file' && data.file) {
+        // Use file upload endpoint
+        const response = await transcriptApi.uploadFile(data.file, data.title);
+        loadTranscripts(); // Refresh list
+      } else if (data.type === 'avoma' && data.avomaId) {
+        // Use Avoma sync endpoint
+        const response = await transcriptApi.syncFromAvoma(data.avomaId, data.title);
+        loadTranscripts(); // Refresh list
+      }
 
-      setTranscripts((prev) => [newTranscript, ...prev]);
       setShowUploadModal(false);
     } catch (error) {
       setUploadError(

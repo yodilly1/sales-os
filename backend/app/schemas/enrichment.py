@@ -14,6 +14,7 @@ class EnrichmentSource(str, Enum):
     APOLLO = "apollo"
     HUNTER = "hunter"
     LINKEDIN = "linkedin"
+    LEADMAGIC = "leadmagic"
     NEWS = "news"
     NEWS_API = "news_api"
     MANUAL = "manual"

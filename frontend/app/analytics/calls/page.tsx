@@ -1,61 +1,30 @@
 'use client'
 
-import { useState } from 'react'
-import { Phone, Clock, Award, TrendingUp } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Phone, Clock, Award, TrendingUp, Loader2, AlertCircle } from 'lucide-react'
 import { format, subDays } from 'date-fns'
 import { MetricCard, DateRangePicker, ChartCard, ExportButton } from '@/components/analytics'
 import { LineChart, BarChart, PieChart, DataTable, Column } from '@/components/charts'
 import { formatDuration, formatDate, formatScore } from '@/lib/utils/format'
-import type { DateRange } from '@/lib/types/analytics'
+import type { DateRange, MetricValue, CallVolumeData, CallDurationData, SpicedScoreData } from '@/lib/types/analytics'
 
-// Mock data
-const callVolumeData = [
-  { date: '2024-01-01', calls: 45, answered: 42, missed: 3 },
-  { date: '2024-01-02', calls: 52, answered: 48, missed: 4 },
-  { date: '2024-01-03', calls: 48, answered: 45, missed: 3 },
-  { date: '2024-01-04', calls: 61, answered: 58, missed: 3 },
-  { date: '2024-01-05', calls: 55, answered: 50, missed: 5 },
-  { date: '2024-01-06', calls: 43, answered: 40, missed: 3 },
-  { date: '2024-01-07', calls: 58, answered: 55, missed: 3 },
-  { date: '2024-01-08', calls: 65, answered: 62, missed: 3 },
-  { date: '2024-01-09', calls: 70, answered: 66, missed: 4 },
-  { date: '2024-01-10', calls: 63, answered: 60, missed: 3 },
-]
+interface CallMetricsData {
+  totalCalls: MetricValue
+  avgDuration: MetricValue
+  avgSpicedScore: MetricValue
+  answerRate: MetricValue
+}
 
-const callDurationData = [
-  { date: '2024-01-01', avgDuration: 24, minDuration: 5, maxDuration: 45 },
-  { date: '2024-01-02', avgDuration: 28, minDuration: 8, maxDuration: 52 },
-  { date: '2024-01-03', avgDuration: 26, minDuration: 6, maxDuration: 48 },
-  { date: '2024-01-04', avgDuration: 30, minDuration: 10, maxDuration: 55 },
-  { date: '2024-01-05', avgDuration: 25, minDuration: 5, maxDuration: 42 },
-  { date: '2024-01-06', avgDuration: 27, minDuration: 7, maxDuration: 50 },
-  { date: '2024-01-07', avgDuration: 32, minDuration: 12, maxDuration: 58 },
-]
+interface SpicedDistributionData {
+  name: string
+  value: number
+  color: string
+}
 
-const spicedScoreData = [
-  { date: '2024-01-01', situation: 7.5, pain: 6.8, impact: 7.2, criticalEvent: 6.5, decision: 7.0, overall: 7.0 },
-  { date: '2024-01-02', situation: 7.8, pain: 7.2, impact: 7.5, criticalEvent: 6.8, decision: 7.3, overall: 7.3 },
-  { date: '2024-01-03', situation: 8.0, pain: 7.5, impact: 7.8, criticalEvent: 7.0, decision: 7.5, overall: 7.6 },
-  { date: '2024-01-04', situation: 7.6, pain: 7.0, impact: 7.4, criticalEvent: 6.9, decision: 7.2, overall: 7.2 },
-  { date: '2024-01-05', situation: 8.2, pain: 7.8, impact: 8.0, criticalEvent: 7.2, decision: 7.8, overall: 7.8 },
-  { date: '2024-01-06', situation: 7.9, pain: 7.4, impact: 7.6, criticalEvent: 7.1, decision: 7.4, overall: 7.5 },
-  { date: '2024-01-07', situation: 8.1, pain: 7.6, impact: 7.9, criticalEvent: 7.3, decision: 7.6, overall: 7.7 },
-]
-
-const spicedDistribution = [
-  { name: 'Excellent (8-10)', value: 25, color: '#22c55e' },
-  { name: 'Good (6-8)', value: 45, color: '#0ea5e9' },
-  { name: 'Average (4-6)', value: 20, color: '#f59e0b' },
-  { name: 'Needs Work (0-4)', value: 10, color: '#ef4444' },
-]
-
-const spicedByCategory = [
-  { category: 'Situation', score: 7.8 },
-  { category: 'Pain', score: 7.2 },
-  { category: 'Impact', score: 7.5 },
-  { category: 'Critical Event', score: 6.9 },
-  { category: 'Decision', score: 7.3 },
-]
+interface SpicedByCategory {
+  category: string
+  score: number
+}
 
 interface CallRecord {
   id: string
@@ -67,16 +36,12 @@ interface CallRecord {
   rep: string
 }
 
-const recentCalls: CallRecord[] = [
-  { id: '1', date: '2024-01-10', prospect: 'Acme Corp', duration: 32, spicedScore: 8.2, outcome: 'Meeting Scheduled', rep: 'Sarah J.' },
-  { id: '2', date: '2024-01-10', prospect: 'TechStart Inc', duration: 18, spicedScore: 6.5, outcome: 'Follow-up', rep: 'Michael C.' },
-  { id: '3', date: '2024-01-09', prospect: 'Global Solutions', duration: 45, spicedScore: 9.1, outcome: 'Proposal Sent', rep: 'Emily D.' },
-  { id: '4', date: '2024-01-09', prospect: 'DataFlow Systems', duration: 28, spicedScore: 7.4, outcome: 'Qualified', rep: 'David W.' },
-  { id: '5', date: '2024-01-08', prospect: 'CloudNet Pro', duration: 22, spicedScore: 5.8, outcome: 'Not Qualified', rep: 'Sarah J.' },
-  { id: '6', date: '2024-01-08', prospect: 'InnovateTech', duration: 38, spicedScore: 8.5, outcome: 'Meeting Scheduled', rep: 'Michael C.' },
-  { id: '7', date: '2024-01-07', prospect: 'SmartBiz Ltd', duration: 25, spicedScore: 7.1, outcome: 'Follow-up', rep: 'Emily D.' },
-  { id: '8', date: '2024-01-07', prospect: 'Enterprise Plus', duration: 52, spicedScore: 9.3, outcome: 'Closed Won', rep: 'David W.' },
-]
+const defaultMetrics: CallMetricsData = {
+  totalCalls: { value: 0, change: 0, changePercent: 0, trend: 'stable' },
+  avgDuration: { value: 0, change: 0, changePercent: 0, trend: 'stable' },
+  avgSpicedScore: { value: 0, change: 0, changePercent: 0, trend: 'stable' },
+  answerRate: { value: 0, change: 0, changePercent: 0, trend: 'stable' },
+}
 
 const callColumns: Column<CallRecord>[] = [
   {
@@ -143,9 +108,167 @@ export default function CallAnalyticsPage() {
     startDate: format(subDays(new Date(), 30), 'yyyy-MM-dd'),
     endDate: format(new Date(), 'yyyy-MM-dd'),
   })
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [metrics, setMetrics] = useState<CallMetricsData>(defaultMetrics)
+  const [callVolumeData, setCallVolumeData] = useState<CallVolumeData[]>([])
+  const [callDurationData, setCallDurationData] = useState<CallDurationData[]>([])
+  const [spicedScoreData, setSpicedScoreData] = useState<SpicedScoreData[]>([])
+  const [spicedDistribution, setSpicedDistribution] = useState<SpicedDistributionData[]>([])
+  const [spicedByCategory, setSpicedByCategory] = useState<SpicedByCategory[]>([])
+  const [recentCalls, setRecentCalls] = useState<CallRecord[]>([])
+
+  useEffect(() => {
+    loadCallsData()
+  }, [dateRange])
+
+  const loadCallsData = async () => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const params = new URLSearchParams({
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+      })
+
+      // Fetch all call data in parallel
+      const [metricsRes, volumeRes, durationRes, spicedRes, distributionRes] = await Promise.all([
+        fetch(`/api/v1/analytics/calls/metrics?${params}`),
+        fetch(`/api/v1/analytics/calls/volume?${params}`),
+        fetch(`/api/v1/analytics/calls/duration?${params}`),
+        fetch(`/api/v1/analytics/calls/spiced-scores?${params}`),
+        fetch(`/api/v1/analytics/calls/spiced-distribution?${params}`),
+      ])
+
+      // Process metrics
+      if (metricsRes.ok) {
+        const data = await metricsRes.json()
+        setMetrics({
+          totalCalls: data.data?.total_calls || data.data?.totalCalls || defaultMetrics.totalCalls,
+          avgDuration: data.data?.avg_duration || data.data?.avgDuration || defaultMetrics.avgDuration,
+          avgSpicedScore: data.data?.avg_spiced_score || data.data?.avgSpicedScore || defaultMetrics.avgSpicedScore,
+          answerRate: data.data?.conversion_rate || data.data?.conversionRate || defaultMetrics.answerRate,
+        })
+      }
+
+      // Process volume data
+      if (volumeRes.ok) {
+        const data = await volumeRes.json()
+        if (Array.isArray(data.data)) {
+          setCallVolumeData(data.data)
+        }
+      }
+
+      // Process duration data
+      if (durationRes.ok) {
+        const data = await durationRes.json()
+        if (Array.isArray(data.data)) {
+          setCallDurationData(data.data.map((d: { date: string; avg_duration?: number; avgDuration?: number; min_duration?: number; minDuration?: number; max_duration?: number; maxDuration?: number }) => ({
+            date: d.date,
+            avgDuration: d.avg_duration || d.avgDuration || 0,
+            minDuration: d.min_duration || d.minDuration || 0,
+            maxDuration: d.max_duration || d.maxDuration || 0,
+          })))
+        }
+      }
+
+      // Process SPICED scores
+      if (spicedRes.ok) {
+        const data = await spicedRes.json()
+        if (Array.isArray(data.data)) {
+          setSpicedScoreData(data.data.map((d: { date: string; situation: number; pain: number; impact: number; critical_event?: number; criticalEvent?: number; decision: number; overall: number }) => ({
+            date: d.date,
+            situation: d.situation,
+            pain: d.pain,
+            impact: d.impact,
+            criticalEvent: d.critical_event || d.criticalEvent || 0,
+            decision: d.decision,
+            overall: d.overall,
+          })))
+
+          // Calculate average by category from the data
+          if (data.data.length > 0) {
+            const avgSituation = data.data.reduce((sum: number, d: { situation: number }) => sum + d.situation, 0) / data.data.length
+            const avgPain = data.data.reduce((sum: number, d: { pain: number }) => sum + d.pain, 0) / data.data.length
+            const avgImpact = data.data.reduce((sum: number, d: { impact: number }) => sum + d.impact, 0) / data.data.length
+            const avgCriticalEvent = data.data.reduce((sum: number, d: { critical_event?: number; criticalEvent?: number }) => sum + (d.critical_event || d.criticalEvent || 0), 0) / data.data.length
+            const avgDecision = data.data.reduce((sum: number, d: { decision: number }) => sum + d.decision, 0) / data.data.length
+
+            setSpicedByCategory([
+              { category: 'Situation', score: Math.round(avgSituation * 10) / 10 },
+              { category: 'Pain', score: Math.round(avgPain * 10) / 10 },
+              { category: 'Impact', score: Math.round(avgImpact * 10) / 10 },
+              { category: 'Critical Event', score: Math.round(avgCriticalEvent * 10) / 10 },
+              { category: 'Decision', score: Math.round(avgDecision * 10) / 10 },
+            ])
+          }
+        }
+      }
+
+      // Process distribution
+      if (distributionRes.ok) {
+        const data = await distributionRes.json()
+        if (Array.isArray(data.data)) {
+          const colors = ['#22c55e', '#0ea5e9', '#f59e0b', '#ef4444']
+          setSpicedDistribution(data.data.map((d: { range: string; percentage: number }, i: number) => ({
+            name: d.range,
+            value: d.percentage,
+            color: colors[i] || '#6b7280',
+          })))
+        }
+      }
+
+      // For recent calls, we don't have a specific endpoint yet, so show empty
+      setRecentCalls([])
+
+    } catch (err) {
+      console.error('Failed to load call analytics:', err)
+      setError('Failed to load call analytics data. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleExport = async (exportFormat: 'csv' | 'pdf') => {
-    console.log('Exporting calls as', exportFormat)
+    try {
+      const params = new URLSearchParams({
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+        format: exportFormat,
+      })
+      window.open(`/api/v1/analytics/calls/export?${params}`, '_blank')
+    } catch (err) {
+      console.error('Export failed:', err)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary-600 mx-auto mb-4" />
+          <p className="text-neutral-600">Loading call analytics...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-neutral-600 mb-4">{error}</p>
+          <button
+            onClick={loadCallsData}
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -167,26 +290,26 @@ export default function CallAnalyticsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
           title="Total Calls"
-          value="560"
-          metric={{ value: 560, change: 48, changePercent: 9.4, trend: 'up' }}
+          value={metrics.totalCalls.value.toLocaleString()}
+          metric={metrics.totalCalls}
           icon={<Phone className="w-6 h-6" />}
         />
         <MetricCard
           title="Avg Duration"
-          value="27m"
-          metric={{ value: 27, change: 3, changePercent: 12.5, trend: 'up' }}
+          value={`${Math.round(metrics.avgDuration.value)}m`}
+          metric={metrics.avgDuration}
           icon={<Clock className="w-6 h-6" />}
         />
         <MetricCard
           title="Avg SPICED Score"
-          value="7.5/10"
-          metric={{ value: 7.5, change: 0.4, changePercent: 5.6, trend: 'up' }}
+          value={`${metrics.avgSpicedScore.value.toFixed(1)}/10`}
+          metric={metrics.avgSpicedScore}
           icon={<Award className="w-6 h-6" />}
         />
         <MetricCard
           title="Answer Rate"
-          value="94.2%"
-          metric={{ value: 94.2, change: 1.3, changePercent: 1.4, trend: 'up' }}
+          value={`${metrics.answerRate.value.toFixed(1)}%`}
+          metric={metrics.answerRate}
           icon={<TrendingUp className="w-6 h-6" />}
         />
       </div>
@@ -194,32 +317,44 @@ export default function CallAnalyticsPage() {
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartCard title="Call Volume Trend" description="Daily call volume over time">
-          <LineChart
-            data={callVolumeData}
-            xAxisKey="date"
-            xAxisFormatter={(value) => format(new Date(value), 'MMM d')}
-            lines={[
-              { dataKey: 'calls', name: 'Total Calls', color: '#0ea5e9' },
-              { dataKey: 'answered', name: 'Answered', color: '#22c55e' },
-              { dataKey: 'missed', name: 'Missed', color: '#ef4444', dashed: true },
-            ]}
-            height={280}
-          />
+          {callVolumeData.length > 0 ? (
+            <LineChart
+              data={callVolumeData}
+              xAxisKey="date"
+              xAxisFormatter={(value) => format(new Date(value), 'MMM d')}
+              lines={[
+                { dataKey: 'calls', name: 'Total Calls', color: '#0ea5e9' },
+                { dataKey: 'answered', name: 'Answered', color: '#22c55e' },
+                { dataKey: 'missed', name: 'Missed', color: '#ef4444', dashed: true },
+              ]}
+              height={280}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-[280px] text-gray-500">
+              No call volume data available
+            </div>
+          )}
         </ChartCard>
 
         <ChartCard title="Call Duration Trend" description="Average call duration in minutes">
-          <LineChart
-            data={callDurationData}
-            xAxisKey="date"
-            xAxisFormatter={(value) => format(new Date(value), 'MMM d')}
-            yAxisFormatter={(value) => `${value}m`}
-            lines={[
-              { dataKey: 'avgDuration', name: 'Average', color: '#0ea5e9' },
-              { dataKey: 'maxDuration', name: 'Max', color: '#22c55e', dashed: true },
-              { dataKey: 'minDuration', name: 'Min', color: '#f59e0b', dashed: true },
-            ]}
-            height={280}
-          />
+          {callDurationData.length > 0 ? (
+            <LineChart
+              data={callDurationData}
+              xAxisKey="date"
+              xAxisFormatter={(value) => format(new Date(value), 'MMM d')}
+              yAxisFormatter={(value) => `${value}m`}
+              lines={[
+                { dataKey: 'avgDuration', name: 'Average', color: '#0ea5e9' },
+                { dataKey: 'maxDuration', name: 'Max', color: '#22c55e', dashed: true },
+                { dataKey: 'minDuration', name: 'Min', color: '#f59e0b', dashed: true },
+              ]}
+              height={280}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-[280px] text-gray-500">
+              No duration data available
+            </div>
+          )}
         </ChartCard>
       </div>
 
@@ -230,55 +365,79 @@ export default function CallAnalyticsPage() {
           description="Overall methodology scores over time"
           className="lg:col-span-2"
         >
-          <LineChart
-            data={spicedScoreData}
-            xAxisKey="date"
-            xAxisFormatter={(value) => format(new Date(value), 'MMM d')}
-            yAxisFormatter={(value) => value.toFixed(1)}
-            lines={[
-              { dataKey: 'overall', name: 'Overall', color: '#0ea5e9', strokeWidth: 3 },
-              { dataKey: 'situation', name: 'Situation', color: '#22c55e' },
-              { dataKey: 'pain', name: 'Pain', color: '#f59e0b' },
-              { dataKey: 'impact', name: 'Impact', color: '#8b5cf6' },
-              { dataKey: 'criticalEvent', name: 'Critical Event', color: '#ec4899' },
-              { dataKey: 'decision', name: 'Decision', color: '#06b6d4' },
-            ]}
-            height={300}
-          />
+          {spicedScoreData.length > 0 ? (
+            <LineChart
+              data={spicedScoreData}
+              xAxisKey="date"
+              xAxisFormatter={(value) => format(new Date(value), 'MMM d')}
+              yAxisFormatter={(value) => value.toFixed(1)}
+              lines={[
+                { dataKey: 'overall', name: 'Overall', color: '#0ea5e9', strokeWidth: 3 },
+                { dataKey: 'situation', name: 'Situation', color: '#22c55e' },
+                { dataKey: 'pain', name: 'Pain', color: '#f59e0b' },
+                { dataKey: 'impact', name: 'Impact', color: '#8b5cf6' },
+                { dataKey: 'criticalEvent', name: 'Critical Event', color: '#ec4899' },
+                { dataKey: 'decision', name: 'Decision', color: '#06b6d4' },
+              ]}
+              height={300}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-[300px] text-gray-500">
+              No SPICED score data available
+            </div>
+          )}
         </ChartCard>
 
         <ChartCard title="Score Distribution" description="SPICED score ranges">
-          <PieChart
-            data={spicedDistribution}
-            height={300}
-            innerRadius={50}
-            outerRadius={90}
-          />
+          {spicedDistribution.length > 0 ? (
+            <PieChart
+              data={spicedDistribution}
+              height={300}
+              innerRadius={50}
+              outerRadius={90}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-[300px] text-gray-500">
+              No distribution data available
+            </div>
+          )}
         </ChartCard>
       </div>
 
       {/* SPICED by Category */}
       <ChartCard title="SPICED by Category" description="Average scores per methodology component">
-        <BarChart
-          data={spicedByCategory}
-          xAxisKey="category"
-          bars={[{ dataKey: 'score', name: 'Score', color: '#0ea5e9' }]}
-          yAxisFormatter={(value) => value.toFixed(1)}
-          height={250}
-          colorByValue
-          colors={['#22c55e', '#0ea5e9', '#8b5cf6', '#f59e0b', '#06b6d4']}
-        />
+        {spicedByCategory.length > 0 ? (
+          <BarChart
+            data={spicedByCategory}
+            xAxisKey="category"
+            bars={[{ dataKey: 'score', name: 'Score', color: '#0ea5e9' }]}
+            yAxisFormatter={(value) => value.toFixed(1)}
+            height={250}
+            colorByValue
+            colors={['#22c55e', '#0ea5e9', '#8b5cf6', '#f59e0b', '#06b6d4']}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-[250px] text-gray-500">
+            No category data available
+          </div>
+        )}
       </ChartCard>
 
       {/* Recent Calls Table */}
       <ChartCard title="Recent Calls" description="Detailed breakdown of recent call activity">
-        <DataTable
-          data={recentCalls}
-          columns={callColumns}
-          keyField="id"
-          maxHeight="400px"
-          stickyHeader
-        />
+        {recentCalls.length > 0 ? (
+          <DataTable
+            data={recentCalls}
+            columns={callColumns}
+            keyField="id"
+            maxHeight="400px"
+            stickyHeader
+          />
+        ) : (
+          <div className="flex items-center justify-center h-[200px] text-gray-500">
+            No recent calls to display. Upload transcripts to see call data here.
+          </div>
+        )}
       </ChartCard>
     </div>
   )

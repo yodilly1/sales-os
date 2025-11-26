@@ -69,7 +69,7 @@ class Settings(BaseSettings):
     # Claude AI
     anthropic_api_key: str = ""
     claude_api_key: str = ""
-    claude_model: str = "claude-sonnet-4-20250514"
+    claude_model: str = "claude-opus-4-5-20251101"
     claude_max_tokens: int = 4096
     claude_temperature: float = 0.7
 
@@ -84,6 +84,8 @@ class Settings(BaseSettings):
     apollo_api_key: Optional[str] = None
     hunter_api_key: Optional[str] = None
     linkedin_api_key: Optional[str] = None
+    leadmagic_api_key: Optional[str] = None
+    serper_api_key: Optional[str] = None
     news_api_key: Optional[str] = None
     enrichment_batch_size: int = 50
 
